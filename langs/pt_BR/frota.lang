@@ -55,3 +55,30 @@ MyWidgetDescription = My widget description
 
 
 New = Novo
+
+#
+# Objetos da frota
+#
+FrotaVehicleActive = Ativo
+FrotaVehicleOutOfService = Fora de serviço
+FrotaDefaultFuelProduct = Produto de combustível padrão
+FrotaDefaultReservatorio = Reservatório padrão
+FrotaDateInService = Data de início de operação
+FrotaDateLastService = Data da última manutenção
+FrotaMeasuredLevel = Nível medido
+FrotaSafetyStock = Estoque de segurança (nível mínimo)
+FrotaReservatorioLastSync = Última sincronização de estoque
+QuantityPlanned = Quantidade prevista
+QuantityReal = Quantidade abastecida
+StockMovement = Movimento de estoque
+FrotaSafra = Safra
+ReservatorioNotFound = Reservatório não encontrado
+ReservatorioInsufficientStock = Combustível insuficiente no reservatório
+ErrorCreatingStockMovement = Não foi possível registrar o movimento de estoque
+ErrorUpdatingFueling = Não foi possível atualizar o abastecimento
+ErrorRevertingStockMovement = Não foi possível estornar o movimento de estoque
+QuantityRequired = Informe a quantidade
+FrotaMaintenancePreventive = Preventiva
+FrotaMaintenanceCorrective = Corretiva
+FrotaMaintenanceInspection = Inspeção
+MaintenanceType = Tipo de manutenção

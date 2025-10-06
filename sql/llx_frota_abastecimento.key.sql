@@ -15,12 +15,14 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_rowid (rowid);
+ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_entity (entity);
 ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_ref (ref);
-ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_fk_soc (fk_soc);
-ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_fk_project (fk_project);
-ALTER TABLE llx_frota_abastecimento ADD CONSTRAINT llx_frota_abastecimento_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_status (status);
+ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_fk_veiculo (fk_veiculo);
+ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_fk_reservatorio (fk_reservatorio);
+ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_fk_product (fk_product);
+ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_fk_entrepot (fk_entrepot);
+ALTER TABLE llx_frota_abastecimento ADD INDEX idx_frota_abastecimento_fk_safra (fk_safra);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_frota_abastecimento ADD UNIQUE INDEX uk_frota_abastecimento_fieldxy(fieldx, fieldy);

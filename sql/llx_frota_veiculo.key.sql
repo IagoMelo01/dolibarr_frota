@@ -15,6 +15,13 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_frota_veiculo ADD INDEX idx_frota_veiculo_entity (entity);
+ALTER TABLE llx_frota_veiculo ADD INDEX idx_frota_veiculo_ref (ref);
+ALTER TABLE llx_frota_veiculo ADD INDEX idx_frota_veiculo_status (status);
+ALTER TABLE llx_frota_veiculo ADD INDEX idx_frota_veiculo_fk_soc (fk_soc);
+ALTER TABLE llx_frota_veiculo ADD INDEX idx_frota_veiculo_fk_project (fk_project);
+ALTER TABLE llx_frota_veiculo ADD INDEX idx_frota_veiculo_fk_product_fuel (fk_product_fuel);
+ALTER TABLE llx_frota_veiculo ADD INDEX idx_frota_veiculo_fk_reservatorio (fk_default_reservatorio);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_frota_veiculo ADD UNIQUE INDEX uk_frota_veiculo_fieldxy(fieldx, fieldy);
