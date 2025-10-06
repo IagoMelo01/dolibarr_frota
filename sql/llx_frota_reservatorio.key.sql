@@ -15,6 +15,11 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_frota_reservatorio ADD INDEX idx_frota_reservatorio_entity (entity);
+ALTER TABLE llx_frota_reservatorio ADD INDEX idx_frota_reservatorio_ref (ref);
+ALTER TABLE llx_frota_reservatorio ADD INDEX idx_frota_reservatorio_status (status);
+ALTER TABLE llx_frota_reservatorio ADD INDEX idx_frota_reservatorio_fk_product (fk_product);
+ALTER TABLE llx_frota_reservatorio ADD INDEX idx_frota_reservatorio_fk_entrepot (fk_entrepot);
 ALTER TABLE llx_frota_reservatorio ADD INDEX idx_frota_reservatorio_tipo (tipo);
 -- END MODULEBUILDER INDEXES
 

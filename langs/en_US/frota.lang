@@ -52,3 +52,30 @@ MyPageName = My page name
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
+
+#
+# Fleet objects
+#
+FrotaVehicleActive = Active
+FrotaVehicleOutOfService = Out of service
+FrotaDefaultFuelProduct = Default fuel product
+FrotaDefaultReservatorio = Default reservoir
+FrotaDateInService = Date in service
+FrotaDateLastService = Last maintenance date
+FrotaMeasuredLevel = Measured level
+FrotaSafetyStock = Safety stock (min level)
+FrotaReservatorioLastSync = Last stock synchronisation
+QuantityPlanned = Planned quantity
+QuantityReal = Actual quantity
+StockMovement = Stock movement
+FrotaSafra = Crop season
+ReservatorioNotFound = Reservoir not found
+ReservatorioInsufficientStock = Insufficient fuel in the reservoir
+ErrorCreatingStockMovement = Unable to create stock movement
+ErrorUpdatingFueling = Unable to update fueling record
+ErrorRevertingStockMovement = Unable to revert stock movement
+QuantityRequired = Quantity is required
+FrotaMaintenancePreventive = Preventive
+FrotaMaintenanceCorrective = Corrective
+FrotaMaintenanceInspection = Inspection
+MaintenanceType = Maintenance type

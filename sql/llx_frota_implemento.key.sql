@@ -15,6 +15,9 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_frota_implemento ADD INDEX idx_frota_implemento_entity (entity);
+ALTER TABLE llx_frota_implemento ADD INDEX idx_frota_implemento_ref (ref);
+ALTER TABLE llx_frota_implemento ADD INDEX idx_frota_implemento_status (status);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_frota_implemento ADD UNIQUE INDEX uk_frota_implemento_fieldxy(fieldx, fieldy);
