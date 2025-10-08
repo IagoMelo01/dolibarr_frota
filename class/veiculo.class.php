@@ -139,6 +139,35 @@ class Veiculo extends CommonObject
 		'horas_op' => array('type'=>'double(12,2)', 'label'=>'Horas de operação', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'documento' => array('type'=>'varchar(255)', 'label'=>'Documento', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'potencia' => array('type'=>'integer', 'label'=>'Potência (cv)', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
+		'fk_categoria' => array(
+    'type' => 'select',
+    'label' => 'Categoria',
+    'enabled' => '1',
+    'position' => 55,
+    'notnull' => 1,
+    'visible' => 1,
+    'arrayofkeyval' => array(
+        '1'  => 'Carro de Passeio',
+        '2'  => 'Caminhonete',
+        '3'  => 'Caminhão',
+        '4'  => 'Trator Agrícola',
+        '5'  => 'Implemento Agrícola',
+        '6'  => 'Ônibus',
+        '7'  => 'Moto',
+        '8'  => 'Reboque/Trailer',
+        '9'  => 'Van/Utilitário',
+        '10' => 'Veículo Pesado Especializado',
+        '11' => 'Agrícola - Colheitadeira',
+        '12' => 'Agrícola - Pulverizador',
+        '13' => 'Utilitário Leve',
+        '14' => 'Elétrico/Híbrido',
+        '15' => 'Outro'
+    ),
+    'validate' => '1'
+),
+
+	
+	
 	);
 	public $rowid;
 	public $ref;
@@ -166,6 +195,7 @@ class Veiculo extends CommonObject
 	public $horas_op;
 	public $documento;
 	public $potencia;
+	public $fk_categorie;
 	// END MODULEBUILDER PROPERTIES
 
 
