@@ -26,12 +26,12 @@ CREATE TABLE IF NOT EXISTS llx_frota_veiculo (
     horas_op DOUBLE(12,2), 
     documento VARCHAR(255), 
     potencia INT,
-    fk_categorie INT DEFAULT NULL,
+    fk_categoria INT DEFAULT NULL,
     
     -- END MODULEBUILDER FIELDS
-    CONSTRAINT fk_frota_veiculo_categorie FOREIGN KEY (fk_categorie) 
+    CONSTRAINT fk_frota_veiculo_categoria FOREIGN KEY (fk_categoria) 
         REFERENCES llx_frota_categoria_veiculo(rowid) 
         ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX idx_frota_veiculo_categorie ON llx_frota_veiculo(fk_categorie);
+CREATE INDEX idx_frota_veiculo_categoria ON llx_frota_veiculo(fk_categoria);

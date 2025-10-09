@@ -195,7 +195,7 @@ class Veiculo extends CommonObject
 	public $horas_op;
 	public $documento;
 	public $potencia;
-	public $fk_categorie;
+	public $fk_categoria;
 	// END MODULEBUILDER PROPERTIES
 
 
