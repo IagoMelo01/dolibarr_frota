@@ -22,13 +22,12 @@ CREATE TABLE IF NOT EXISTS llx_frota_veiculo (
     ano_fab VARCHAR(10), 
     num_identificacao VARCHAR(10), 
     cap_carga INT, 
-    km DOUBLE(12,2), 
-    horas_op DOUBLE(12,2), 
+    quilometragem DECIMAL(12,2), 
+    horimetro DECIMAL(12,2), 
     documento VARCHAR(255), 
     potencia INT,
     fk_categoria INT DEFAULT NULL,
     
-    -- END MODULEBUILDER FIELDS
     CONSTRAINT fk_frota_veiculo_categoria FOREIGN KEY (fk_categoria) 
         REFERENCES llx_frota_categoria_veiculo(rowid) 
         ON DELETE SET NULL

@@ -132,11 +132,11 @@ class Veiculo extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>2000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Rascunho', '1'=>'Validado', '9'=>'Canc lado'), 'validate'=>'1',),
 		'fabricante' => array('type'=>'integer', 'label'=>'Fabricante/Marca', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>-1, 'arrayofkeyval'=>array('0'=>'John Deere', '1'=>'Case IH', '2'=>'New Holland', '3'=>'Massey Ferguson', '4'=>'Kubota', '5'=>'Fendt', '6'=>'Challenger', '7'=>'Valtra', '8'=>'Claas', '9'=>'Deutz-Fahr', '10'=>'AGCO', '11'=>'Mahindra', '12'=>'Ford', '13'=>'Caterpillar', '14'=>'Volvo', '15'=>'JCB', '16'=>'Mercedes-Benz', '17'=>'Scania', '18'=>'MAN', '19'=>'Iveco', '20'=>'Renault', '21'=>'Tesla', '22'=>'Toyota', '23'=>'Ford', '24'=>'Chevrolet', '25'=>'Volkswagen', '26'=>'Nissan', '27'=>'Audi', '28'=>'BMW', '29'=>'Mercedes-Benz', '30'=>'Fiat', '31'=>'Honda', '32'=>'Hyundai', '33'=>'Mitsubishi', '34'=>'Subaru', '35'=>'Mazda', '36'=>'Lexus', '37'=>'Jeep', '38'=>'Land Rover', '39'=>'Volvo', '40'=>'Porsche', '41'=>'Ferrari', '42'=>'Lamborghini', '43'=>'Bugatti', '44'=>'McLaren', '45'=>'Aston Martin', '46'=>'Rolls-Royce', '47'=>'Bentley', '48'=>'Lotus', '49'=>'Outro'),),
 		'modelo' => array('type'=>'varchar(255)', 'label'=>'Modelo', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>-1,),
-		'ano_fab' => array('type'=>'varchar(10)', 'label'=>'Ano de fabricação', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
+		'ano_fab' => array('type'=>'varchar(10)', 'label'	=>'Ano de fabricação', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'num_identificacao' => array('type'=>'varchar(10)', 'label'=>'Número de Série / Identificação / Placa', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'cap_carga' => array('type'=>'integer', 'label'=>'Capacidade de Carga (kg)', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
-		'km' => array('type'=>'double(12,2)', 'label'=>'Quilometragem atual', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
-		'horas_op' => array('type'=>'double(12,2)', 'label'=>'Horas de operação', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
+		'quilometragem' => array('type'=>'double', 'label'=>'Quilometragem atual', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'horimetro' => array('type'=>'double', 'label'=>'Horímetro', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'documento' => array('type'=>'varchar(255)', 'label'=>'Documento', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'potencia' => array('type'=>'integer', 'label'=>'Potência (cv)', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'fk_categoria' => array(
@@ -191,8 +191,8 @@ class Veiculo extends CommonObject
 	public $ano_fab;
 	public $num_identificacao;
 	public $cap_carga;
-	public $km;
-	public $horas_op;
+	public $quilometragem;
+	public $horimetro;
 	public $documento;
 	public $potencia;
 	public $fk_categoria;
@@ -290,7 +290,21 @@ class Veiculo extends CommonObject
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
-		//$resultvalidate = $this->validate($user, $notrigger);
+		if ($resultcreate > 0) {
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+			$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
+			$sql.= " VALUES (" . $resultcreate . ", " . 
+					($this->quilometragem ? $this->quilometragem : "0") . ", " .
+					($this->horimetro ? $this->horimetro : "0") . ", '" .
+					$this->db->idate(dol_now()) . "', " .
+					$user->id . ")";
+			$resql = $this->db->query($sql);
+			if (! $resql) {
+				$this->error = "Error " . $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+		}
 
 		return $resultcreate;
 	}
@@ -543,7 +557,52 @@ class Veiculo extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		return $this->updateCommon($user, $notrigger);
+		$error = 0;
+		$this->db->begin();
+
+		// Get current values before update
+		$sql = "SELECT quilometragem, horimetro FROM " . MAIN_DB_PREFIX . "frota_veiculo WHERE rowid = " . $this->id;
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$old_quilometragem = $obj->quilometragem;
+			$old_horimetro = $obj->horimetro;
+		} else {
+			$error++;
+			$this->error = "Error " . $this->db->lasterror();
+		}
+
+		if (!$error) {
+			$result = $this->updateCommon($user, $notrigger);
+			if ($result > 0) {
+				// Only add to history if values changed
+				if ($old_quilometragem != $this->quilometragem || $old_horimetro != $this->horimetro) {
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+					$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
+					$sql.= " VALUES (" . $this->id . ", " . 
+							($this->quilometragem ? $this->quilometragem : "0") . ", " .
+							($this->horimetro ? $this->horimetro : "0") . ", '" .
+							$this->db->idate(dol_now()) . "', " .
+							$user->id . ")";
+					
+					$resql = $this->db->query($sql);
+					if (! $resql) {
+						$error++;
+						$this->error = "Error " . $this->db->lasterror();
+					}
+				}
+			} else {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return $result;
+		}
 	}
 
 	/**
