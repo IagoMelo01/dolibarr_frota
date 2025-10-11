@@ -133,6 +133,7 @@ class Manutencao extends CommonObject
 		'tipo' => array('type'=>'integer', 'label'=>'Tipo de manutenção', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'Preventiva', '1'=>'Corretiva', '2'=>'Preditiva'),),
 		'fk_veiculo' => array('type'=>'integer:Veiculo:frota/class/veiculo.class.php:1', 'label'=>'Veículo associado', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'fk_implemento' => array('type'=>'integer:Implemento:frota/class/implemento.class.php:1', 'label'=>'Implemento associado', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'fornecedor' => array('type'=>'varchar(255)', 'label'=>'Fornecedor ou Responsável', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'data_prevista' => array('type'=>'date', 'label'=>'Data prevista para manutenção', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'data_concluida' => array('type'=>'date', 'label'=>'Data da conclusão da manutenção', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 	);
@@ -156,6 +157,7 @@ class Manutencao extends CommonObject
 	public $tipo;
 	public $fk_veiculo;
 	public $fk_implemento;
+	public $fornecedor;
 	public $data_prevista;
 	public $data_concluida;
 	// END MODULEBUILDER PROPERTIES

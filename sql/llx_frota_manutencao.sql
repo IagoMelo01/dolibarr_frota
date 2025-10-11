@@ -36,6 +36,7 @@ CREATE TABLE llx_frota_manutencao(
 	tipo integer NOT NULL, 
 	fk_veiculo integer, 
 	fk_implemento integer, 
+	fornecedor varchar(255),
 	data_prevista date, 
 	data_concluida date
 	-- END MODULEBUILDER FIELDS
