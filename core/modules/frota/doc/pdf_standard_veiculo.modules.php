@@ -513,27 +513,59 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 
 				$nexY = $tab_top + $this->tabTitleHeight;
 
-				// Loop on each lines
+				// Loop on vehicle properties
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-				for ($i = 0; $i < $nblines; $i++) {
-					$curY = $nexY;
-					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
-					$pdf->SetTextColor(0, 0, 0);
+				
+				$curY = $nexY;
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetTextColor(0, 0, 0);
 
-					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
+				$pdf->setTopMargin($tab_top_newpage);
+				$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot);
+				$pageposbefore = $pdf->getPage();
+
+				$showpricebeforepagebreak = 1;
+				$posYAfterImage = 0;
+				$posYAfterDescription = 0;
+				
+				// Print vehicle information line
+				if ($this->getColumnStatus('modelo')) {
+					$pdf->SetXY($this->getColumnContentXStart('modelo'), $curY);
+					$pdf->MultiCell($this->getColumnContentXStart('modelo'), 3, $outputlangs->convToOutputCharset($object->modelo), 0, 'L');
+				}
+				
+				if ($this->getColumnStatus('placa')) {
+					$pdf->SetXY($this->getColumnContentXStart('placa'), $curY);
+					$pdf->MultiCell($this->getColumnContentXStart('placa'), 3, $outputlangs->convToOutputCharset($object->placa), 0, 'L');
+				}
+				
+				if ($this->getColumnStatus('chassi')) {
+					$pdf->SetXY($this->getColumnContentXStart('chassi'), $curY);
+					$pdf->MultiCell($this->getColumnContentXStart('chassi'), 3, $outputlangs->convToOutputCharset($object->chassi), 0, 'L');
+				}
+				
+				if ($this->getColumnStatus('renavam')) {
+					$pdf->SetXY($this->getColumnContentXStart('renavam'), $curY);
+					$pdf->MultiCell($this->getColumnContentXStart('renavam'), 3, $outputlangs->convToOutputCharset($object->renavam), 0, 'L');
+				}
+				
+				// Photo
+				if ($this->getColumnStatus('photo')) {
+					// Handle photo if present
+					if (!empty($object->photo)) {
+						$imglinesize = pdf_getSizeForImage($object->photo);
+						if (isset($imglinesize['width']) && isset($imglinesize['height'])) {
+							$pdf->Image($object->photo, $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height']);
+							$posYAfterImage = $curY + $imglinesize['height'];
+						}
 					}
-
-					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
-					$pageposbefore = $pdf->getPage();
-
-					$showpricebeforepagebreak = 1;
-					$posYAfterImage = 0;
-					$posYAfterDescription = 0;
+				}
+				
+				if ($this->getColumnStatus('status')) {
+					$pdf->SetXY($this->getColumnContentXStart('status'), $curY);
+					$pdf->MultiCell($this->getColumnContentXStart('status'), 3, $outputlangs->convToOutputCharset($object->getLibStatut(0)), 0, 'L');
+				}
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
@@ -1049,6 +1081,31 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 			}
 		}
 
+		// Add vehicle information
+		$posy += 4;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Modelo")." : ".$outputlangs->convToOutputCharset($object->modelo), '', 'R');
+
+		$posy += 4;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Placa")." : ".$outputlangs->convToOutputCharset($object->placa), '', 'R');
+
+		if ($object->chassi) {
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Chassi")." : ".$outputlangs->convToOutputCharset($object->chassi), '', 'R');
+		}
+
+		if ($object->renavam) {
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Renavam")." : ".$outputlangs->convToOutputCharset($object->renavam), '', 'R');
+		}
+
 		$posy += 1;
 
 		$top_shift = 0;
@@ -1193,7 +1250,7 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
-			'align' => 'R', // R,C,L
+			'align' => 'L', // R,C,L
 			'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		);
 
@@ -1203,44 +1260,62 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 			'padding' => array(0.5, 0, 0.5, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		);
 
-		/*
-		 * For exemple
-		$this->cols['theColKey'] = array(
-			'rank' => $rank, // int : use for ordering columns
-			'width' => 20, // the column width in mm
-			'title' => array(
-				'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
-				'label' => ' ', // the final label : used fore final generated text
-				'align' => 'L', // text alignement :  R,C,L
-				'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-			),
-			'content' => array(
-				'align' => 'L', // text alignement :  R,C,L
-				'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-			),
-		);
-		*/
-
 		$rank = 0; // do not use negative rank
-		$this->cols['desc'] = array(
+		
+		// Modelo
+		$this->cols['modelo'] = array(
 			'rank' => $rank,
-			'width' => false, // only for desc
+			'width' => 40, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is usefull in somme case with module
+				'textkey' => 'Modelo',
 				'align' => 'L',
-				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
-				// 'label' => ' ', // the final label
-				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5, 0.5, 0.5, 0.5),
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1, 0.5, 1, 1.5),
 			),
 		);
 
-		// PHOTO
 		$rank = $rank + 10;
+		// Placa
+		$this->cols['placa'] = array(
+			'rank' => $rank,
+			'width' => 30,
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Placa'
+			),
+			'border-left' => true,
+		);
+
+		$rank = $rank + 10;
+		// Chassi
+		$this->cols['chassi'] = array(
+			'rank' => $rank,
+			'width' => 40,
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Chassi'
+			),
+			'border-left' => true,
+		);
+
+		$rank = $rank + 10;
+		// Renavam
+		$this->cols['renavam'] = array(
+			'rank' => $rank,
+			'width' => 40,
+			'status' => true,
+			'title' => array(
+				'textkey' => 'Renavam'
+			),
+			'border-left' => true,
+		);
+
+		$rank = $rank + 10;
+		// PHOTO
 		$this->cols['photo'] = array(
 			'rank' => $rank,
 			'width' => (!getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')), // in mm
@@ -1250,90 +1325,25 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0, 0, 0, 0),
 			),
-			'border-left' => false, // remove left line separator
+			'border-left' => true,
 		);
 
-		if (getDolGlobalInt('MAIN_GENERATE_INVOICES_WITH_PICTURE') && !empty($this->atleastonephoto)) {
+		if (getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITH_PICTURE') && !empty($this->atleastonephoto)) {
 			$this->cols['photo']['status'] = true;
 		}
 
-
+		// Status
 		$rank = $rank + 10;
-		$this->cols['vat'] = array(
+		$this->cols['status'] = array(
 			'rank' => $rank,
-			'status' => false,
-			'width' => 16, // in mm
-			'title' => array(
-				'textkey' => 'VAT'
-			),
-			'border-left' => true, // add left line separator
-		);
-
-		if (!getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
-			$this->cols['vat']['status'] = true;
-		}
-
-		$rank = $rank + 10;
-		$this->cols['subprice'] = array(
-			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 30,
 			'status' => true,
 			'title' => array(
-				'textkey' => 'PriceUHT'
+				'textkey' => 'Status'
 			),
-			'border-left' => true, // add left line separator
-		);
-
-		$rank = $rank + 10;
-		$this->cols['qty'] = array(
-			'rank' => $rank,
-			'width' => 16, // in mm
-			'status' => true,
-			'title' => array(
-				'textkey' => 'Qty'
-			),
-			'border-left' => true, // add left line separator
-		);
-
-		$rank = $rank + 10;
-		$this->cols['unit'] = array(
-			'rank' => $rank,
-			'width' => 11, // in mm
-			'status' => false,
-			'title' => array(
-				'textkey' => 'Unit'
-			),
-			'border-left' => true, // add left line separator
-		);
-		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			$this->cols['unit']['status'] = true;
-		}
-
-		$rank = $rank + 10;
-		$this->cols['discount'] = array(
-			'rank' => $rank,
-			'width' => 13, // in mm
-			'status' => false,
-			'title' => array(
-				'textkey' => 'ReductionShort'
-			),
-			'border-left' => true, // add left line separator
-		);
-		if ($this->atleastonediscount) {
-			$this->cols['discount']['status'] = true;
-		}
-
-		$rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
-		$this->cols['totalexcltax'] = array(
-			'rank' => $rank,
-			'width' => 26, // in mm
-			'status' => true,
-			'title' => array(
-				'textkey' => 'TotalHTShort'
-			),
-			'border-left' => true, // add left line separator
+			'border-left' => true,
 		);
 
 		// Add extrafields cols

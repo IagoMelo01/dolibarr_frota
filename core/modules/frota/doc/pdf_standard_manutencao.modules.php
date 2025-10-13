@@ -378,11 +378,19 @@ class pdf_standard_manutencao extends ModelePDFManutencao
 				if (!empty($extranote)) {
 					$notetoshow = dol_concatdesc($notetoshow, $extranote);
 				}
+				
+				// Add a title for notes
+				if ($notetoshow) {
+					$pdf->SetFont('', 'B', $default_font_size);
+					$curY += 5;
+					$pdf->SetXY($this->marge_gauche, $curY);
+					$pdf->MultiCell(100, 3, $outputlangs->trans("Notes"), 0, 'L');
+					$curY += 5;
+				}
 
 				$pagenb = $pdf->getPage();
 				if ($notetoshow) {
-					$tab_top -= 2;
-
+					$pdf->SetFont('', '', $default_font_size - 1);
 					$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 					$pageposbeforenote = $pagenb;
 
@@ -513,27 +521,45 @@ class pdf_standard_manutencao extends ModelePDFManutencao
 
 				$nexY = $tab_top + $this->tabTitleHeight;
 
-				// Loop on each lines
+				// Print maintenance details
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-				for ($i = 0; $i < $nblines; $i++) {
-					$curY = $nexY;
-					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
-					$pdf->SetTextColor(0, 0, 0);
+				
+				$curY = $nexY;
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetTextColor(0, 0, 0);
 
-					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
+				$pdf->setTopMargin($tab_top_newpage);
+				$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot);
+				$pageposbefore = $pdf->getPage();
 
-					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
-					$pageposbefore = $pdf->getPage();
-
-					$showpricebeforepagebreak = 1;
-					$posYAfterImage = 0;
-					$posYAfterDescription = 0;
+				$showpricebeforepagebreak = 1;
+				$posYAfterImage = 0;
+				$posYAfterDescription = 0;
+				
+				// Vehicle info
+				$pdf->SetXY($this->marge_gauche, $curY);
+				$pdf->MultiCell(100, 3, $outputlangs->trans("Vehicle")." : ".$object->veiculo, 0, 'L');
+				$curY = $pdf->GetY() + 2;
+				
+				// Date
+				$pdf->SetXY($this->marge_gauche, $curY);
+				$pdf->MultiCell(100, 3, $outputlangs->trans("Date")." : ".dol_print_date($object->date, 'day'), 0, 'L');
+				$curY = $pdf->GetY() + 2;
+				
+				// Type
+				$pdf->SetXY($this->marge_gauche, $curY);
+				$pdf->MultiCell(100, 3, $outputlangs->trans("Type")." : ".$object->type, 0, 'L');
+				$curY = $pdf->GetY() + 2;
+				
+				// Description
+				$pdf->SetXY($this->marge_gauche, $curY);
+				$pdf->MultiCell(180, 3, $outputlangs->trans("Description")." : ".$object->description, 0, 'L');
+				$curY = $pdf->GetY() + 2;
+				
+				// Status
+				$pdf->SetXY($this->marge_gauche, $curY);
+				$pdf->MultiCell(100, 3, $outputlangs->trans("Status")." : ".$object->getLibStatut(0), 0, 'L');
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
@@ -969,10 +995,10 @@ class pdf_standard_manutencao extends ModelePDFManutencao
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("PdfTitle");
+		$title = $outputlangs->transnoentities("MaintenanceSheet");
 		if (getDolGlobalInt('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - ';
-			$title .= $outputlangsbis->transnoentities("PdfTitle");
+			$title .= $outputlangsbis->transnoentities("MaintenanceSheet");
 		}
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
@@ -1193,7 +1219,7 @@ class pdf_standard_manutencao extends ModelePDFManutencao
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
-			'align' => 'R', // R,C,L
+			'align' => 'L', // R,C,L
 			'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 		);
 
