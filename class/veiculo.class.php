@@ -135,8 +135,8 @@ class Veiculo extends CommonObject
 		'ano_fab' => array('type'=>'varchar(10)', 'label'	=>'Ano de fabricação', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'num_identificacao' => array('type'=>'varchar(10)', 'label'=>'Número de Série / Identificação / Placa', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'cap_carga' => array('type'=>'integer', 'label'=>'Capacidade de Carga (kg)', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
-		'quilometragem' => array('type'=>'double', 'label'=>'Quilometragem atual', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'horimetro' => array('type'=>'double', 'label'=>'Horímetro', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'quilometragem_inicial' => array('type'=>'double', 'label'=>'Quilometragem inicial', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'horimetro_inicial' => array('type'=>'double', 'label'=>'Horímetro inicial', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'documento' => array('type'=>'varchar(255)', 'label'=>'Documento', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'potencia' => array('type'=>'integer', 'label'=>'Potência (cv)', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'fk_categoria' => array(
@@ -191,8 +191,8 @@ class Veiculo extends CommonObject
 	public $ano_fab;
 	public $num_identificacao;
 	public $cap_carga;
-	public $quilometragem;
-	public $horimetro;
+	public $quilometragem_inicial;
+	public $horimetro_inicial;
 	public $documento;
 	public $potencia;
 	public $fk_categoria;
@@ -294,8 +294,8 @@ class Veiculo extends CommonObject
 			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
 			$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
 			$sql.= " VALUES (" . $resultcreate . ", " . 
-					($this->quilometragem ? $this->quilometragem : "0") . ", " .
-					($this->horimetro ? $this->horimetro : "0") . ", '" .
+					($this->quilometragem_inicial ? $this->quilometragem_inicial : "0") . ", " .
+					($this->horimetro_inicial ? $this->horimetro_inicial : "0") . ", '" .
 					$this->db->idate(dol_now()) . "', " .
 					$user->id . ")";
 			$resql = $this->db->query($sql);
@@ -561,12 +561,12 @@ class Veiculo extends CommonObject
 		$this->db->begin();
 
 		// Get current values before update
-		$sql = "SELECT quilometragem, horimetro FROM " . MAIN_DB_PREFIX . "frota_veiculo WHERE rowid = " . $this->id;
+		$sql = "SELECT quilometragem_inicial, horimetro_inicial FROM " . MAIN_DB_PREFIX . "frota_veiculo WHERE rowid = " . $this->id;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$old_quilometragem = $obj->quilometragem;
-			$old_horimetro = $obj->horimetro;
+			$quilometragem_antiga = $obj->quilometragem_inicial;
+			$horimetro_antigo = $obj->horimetro_inicial;
 		} else {
 			$error++;
 			$this->error = "Error " . $this->db->lasterror();
@@ -575,15 +575,33 @@ class Veiculo extends CommonObject
 		if (!$error) {
 			$result = $this->updateCommon($user, $notrigger);
 			if ($result > 0) {
-				// Only add to history if values changed
-				if ($old_quilometragem != $this->quilometragem || $old_horimetro != $this->horimetro) {
-					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
-					$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
-					$sql.= " VALUES (" . $this->id . ", " . 
-							($this->quilometragem ? $this->quilometragem : "0") . ", " .
-							($this->horimetro ? $this->horimetro : "0") . ", '" .
-							$this->db->idate(dol_now()) . "', " .
-							$user->id . ")";
+				// Only update history if values changed
+				if ($quilometragem_antiga != $this->quilometragem_inicial || $horimetro_antigo != $this->horimetro_inicial) {
+					// Get the last history record for this vehicle
+					$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
+						   WHERE fk_veiculo = " . $this->id . " 
+						   ORDER BY date_registro DESC LIMIT 1";
+					$resql = $this->db->query($sql);
+					
+					if ($resql && $this->db->num_rows($resql) > 0) {
+						$obj = $this->db->fetch_object($resql);
+						// Update the last record
+						$sql = "UPDATE " . MAIN_DB_PREFIX . "frota_veiculo_historico SET";
+						$sql.= " quilometragem = " . ($this->quilometragem_inicial ? $this->quilometragem_inicial : "0") . ",";
+						$sql.= " horimetro = " . ($this->horimetro_inicial ? $this->horimetro_inicial : "0") . ",";
+						$sql.= " date_registro = '" . $this->db->idate(dol_now()) . "',";
+						$sql.= " fk_user = " . $user->id;
+						$sql.= " WHERE rowid = " . $obj->rowid;
+					} else {
+						// If no history exists, create new record
+						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+						$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
+						$sql.= " VALUES (" . $this->id . ", " . 
+								($this->quilometragem_inicial ? $this->quilometragem_inicial : "0") . ", " .
+								($this->horimetro_inicial ? $this->horimetro_inicial : "0") . ", '" .
+								$this->db->idate(dol_now()) . "', " .
+								$user->id . ")";
+					}
 					
 					$resql = $this->db->query($sql);
 					if (! $resql) {

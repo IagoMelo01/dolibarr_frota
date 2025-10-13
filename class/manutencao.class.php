@@ -136,7 +136,10 @@ class Manutencao extends CommonObject
 		'fornecedor' => array('type'=>'varchar(255)', 'label'=>'Fornecedor ou Responsável', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'data_prevista' => array('type'=>'date', 'label'=>'Data prevista para manutenção', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'data_concluida' => array('type'=>'date', 'label'=>'Data da conclusão da manutenção', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'quilometragem' => array('type'=>'double', 'label'=>'Quilometragem atual', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'horimetro' => array('type'=>'double', 'label'=>'Horímetro', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 	);
+
 	public $rowid;
 	public $ref;
 	public $label;
@@ -160,6 +163,8 @@ class Manutencao extends CommonObject
 	public $fornecedor;
 	public $data_prevista;
 	public $data_concluida;
+	public $quilometragem;
+	public $horimetro;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -254,7 +259,22 @@ class Manutencao extends CommonObject
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
-		//$resultvalidate = $this->validate($user, $notrigger);
+
+		if ($resultcreate > 0) {
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+			$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
+			$sql.= " VALUES (" . $this->fk_veiculo . ", " . 
+					($this->quilometragem ? $this->quilometragem : "0") . ", " .
+					($this->horimetro ? $this->horimetro : "0") . ", '" .
+					$this->db->idate($this->data_prevista) . "', " .
+					$user->id . ")";
+			$resql = $this->db->query($sql);
+			if (! $resql) {
+				$this->error = "Error " . $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+		}
 
 		return $resultcreate;
 	}

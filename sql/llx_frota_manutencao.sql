@@ -38,6 +38,8 @@ CREATE TABLE llx_frota_manutencao(
 	fk_implemento integer, 
 	fornecedor varchar(255),
 	data_prevista date, 
-	data_concluida date
+	data_concluida date,
+	quilometragem DECIMAL(12,2), 
+    horimetro DECIMAL(12,2)
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
