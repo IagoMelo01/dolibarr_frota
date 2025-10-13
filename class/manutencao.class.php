@@ -137,7 +137,7 @@ class Manutencao extends CommonObject
 		'data_prevista' => array('type'=>'date', 'label'=>'Data prevista para manutenção', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'data_concluida' => array('type'=>'date', 'label'=>'Data da conclusão da manutenção', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'quilometragem' => array('type'=>'double', 'label'=>'Quilometragem atual', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'horimetro' => array('type'=>'double', 'label'=>'Horímetro', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
+		'horimetro' => array('type'=>'double', 'label'=>'Horímetro atual', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 	);
 
 	public $rowid;
@@ -257,17 +257,49 @@ class Manutencao extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		$error = 0;
+		$this->db->begin();
+
+		# @FIX: tempo muito demorado para criar o registro!
 		$resultcreate = $this->createCommon($user, $notrigger);
 
+		if (empty($this->fk_veiculo)) {
+			$this->db->commit();
+			return $resultcreate;
+		}
 
+		// Se não houver data prevista, usa a data atual
+		if (empty($this->data_prevista)) {
+			$this->data_prevista = dol_now();
+		}
+
+		// Verifica se já existe um registro idêntico nos últimos 5 segundos
 		if ($resultcreate > 0) {
+			$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
+				   WHERE fk_veiculo = " . $this->fk_veiculo . "
+				   AND date_registro >= DATE_SUB(NOW(), INTERVAL 5 SECOND)
+				   AND quilometragem = " . (!empty($this->quilometragem) ? $this->quilometragem : "0") . "
+				   AND horimetro = " . (!empty($this->horimetro) ? $this->horimetro : "0");
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj->nb > 0) {
+					// Se encontrou registro similar recente, não cria outro
+					$this->db->commit();
+					return $resultcreate;
+				}
+			}
 			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
-			$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
-			$sql.= " VALUES (" . $this->fk_veiculo . ", " . 
-					($this->quilometragem ? $this->quilometragem : "0") . ", " .
-					($this->horimetro ? $this->horimetro : "0") . ", '" .
-					$this->db->idate($this->data_prevista) . "', " .
-					$user->id . ")";
+			$sql.= " (fk_veiculo, fk_manutenção, quilometragem, horimetro, fk_user, observacao, date_registro)";
+			$sql.= " VALUES (" . 
+					$this->fk_veiculo . ", " .
+					$this->id . ", " .  // id da manutenção recém criada
+					(!empty($this->quilometragem) ? $this->quilometragem : "0") . ", " .
+					(!empty($this->horimetro) ? $this->horimetro : "0") . ", " .
+					$user->id . ", " .
+					($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . ", " .
+					"NOW()" . // Data atual do servidor
+					")";
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$this->error = "Error " . $this->db->lasterror();
@@ -276,7 +308,13 @@ class Manutencao extends CommonObject
 			}
 		}
 
-		return $resultcreate;
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return $resultcreate;
+		}
 	}
 
 	/**
@@ -527,7 +565,63 @@ class Manutencao extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		return $this->updateCommon($user, $notrigger);
+		$error = 0;
+		$this->db->begin();
+
+		$result = $this->updateCommon($user, $notrigger);
+
+		if ($result > 0 && !empty($this->fk_veiculo)) {
+			// Se não houver data prevista, usa a data atual
+			if (empty($this->data_prevista)) {
+				$this->data_prevista = dol_now();
+			}
+
+			// Procura por registro desta manutenção
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
+				   WHERE fk_veiculo = " . $this->fk_veiculo . " 
+				   AND fk_manutenção = " . $this->id . "
+				   ORDER BY date_registro DESC LIMIT 1"; // Pega o registro mais recente
+
+			$resql = $this->db->query($sql);
+			
+			if ($resql && $this->db->num_rows($resql) > 0) {
+				// Se encontrou registro desta manutenção, atualiza o mais recente
+				$obj = $this->db->fetch_object($resql);
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "frota_veiculo_historico SET
+					   quilometragem = " . (!empty($this->quilometragem) ? $this->quilometragem : "0") . ",
+					   horimetro = " . (!empty($this->horimetro) ? $this->horimetro : "0") . ",
+					   fk_user = " . $user->id . ",
+					   observacao = " . ($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") .
+					   " WHERE rowid = " . $obj->rowid;
+			} else {
+				// Se não encontrou, insere novo registro
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+				$sql.= " (fk_veiculo, fk_manutenção, quilometragem, horimetro, fk_user, observacao, date_registro)"; 
+				$sql.= " VALUES (" . 
+						$this->fk_veiculo . ", " .
+						$this->id . ", " .  // id da manutenção 
+						(!empty($this->quilometragem) ? $this->quilometragem : "0") . ", " .
+						(!empty($this->horimetro) ? $this->horimetro : "0") . ", " .
+						$user->id . ", " .
+						($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . ", " .
+						"NOW()" . // Data atual do servidor
+						")";
+			}
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error = "Error " . $this->db->lasterror();
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return $result;
+		}
 	}
 
 	/**
@@ -539,8 +633,35 @@ class Manutencao extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
+		$error = 0;
+		$this->db->begin();
+
+		// Delete related vehicle history records
+		if (!empty($this->fk_veiculo)) {
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
+				   WHERE fk_manutenção = " . $this->id . "
+				   AND fk_veiculo = " . $this->fk_veiculo;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error = "Error " . $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			$result = $this->deleteCommon($user, $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**
