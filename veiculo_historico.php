@@ -108,19 +108,30 @@ if (!empty($fk_veiculo)) {
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre"><th>'.$langs->trans('Date').'</th><th>'.$langs->trans('Quilometragem').'</th><th>'.$langs->trans('Horimetro').'</th><th>'.$langs->trans('User').'</th><th>'.$langs->trans('Observacoes').'</th></tr>';
             
-            $chart_labels = array();
-            $chart_data = array();
+            $chart_labels_km = array();
+            $chart_data_km = array();
+            $chart_labels_horimetro = array();
+            $chart_data_horimetro = array();
             $history_rows = array();
 
             while ($objh = $db->fetch_object($res)) {
                 $history_rows[] = $objh;
-                $chart_labels[] = dol_print_date($objh->date_registro, '%d/%m/%Y');
-                $chart_data[] = $objh->quilometragem;
+                // Data for KM chart
+                $chart_labels_km[] = dol_print_date($objh->date_registro, '%d/%m/%Y');
+                $chart_data_km[] = $objh->quilometragem;
+
+                // Data for Horimetro chart
+                if ((float)$objh->horimetro > 0) {
+                    $chart_labels_horimetro[] = dol_print_date($objh->date_registro, '%d/%m/%Y');
+                    $chart_data_horimetro[] = $objh->horimetro;
+                }
             }
 
-            // Reverse data for chronological order in chart
-            $chart_labels = array_reverse($chart_labels);
-            $chart_data = array_reverse($chart_data);
+            // Reverse data for chronological order in charts
+            $chart_labels_km = array_reverse($chart_labels_km);
+            $chart_data_km = array_reverse($chart_data_km);
+            $chart_labels_horimetro = array_reverse($chart_labels_horimetro);
+            $chart_data_horimetro = array_reverse($chart_data_horimetro);
 
             foreach ($history_rows as $objh) {
                 print '<tr>';
@@ -133,7 +144,8 @@ if (!empty($fk_veiculo)) {
             }
             print '</table>';
 
-            if ($num_rows > 1) {
+            // KM Chart
+            if (count($chart_data_km) > 1) {
                 print '<div style="margin-top: 20px;">';
                 print '<h4>'.$langs->trans('ChartKm').'</h4>';
                 print '<canvas id="kmChart" width="400" height="200"></canvas>';
@@ -141,16 +153,48 @@ if (!empty($fk_veiculo)) {
 
                 print '<script>';
                 print 'document.addEventListener("DOMContentLoaded", function() {';
-                print 'var ctx = document.getElementById("kmChart").getContext("2d");';
-                print 'var kmChart = new Chart(ctx, {';
+                print 'var ctx_km = document.getElementById("kmChart").getContext("2d");';
+                print 'var kmChart = new Chart(ctx_km, {';
                 print '    type: "line",';
                 print '    data: {';
-                print '        labels: '.json_encode($chart_labels).' ,';
+                print '        labels: '.json_encode($chart_labels_km).' ,';
                 print '        datasets: [{';
                 print '            label: "'.$langs->trans("Quilometragem").'",';
-                print '            data: '.json_encode($chart_data).' ,';
+                print '            data: '.json_encode($chart_data_km).' ,';
                 print '            backgroundColor: "rgba(54, 162, 235, 0.2)",';
                 print '            borderColor: "rgba(54, 162, 235, 1)",';
+                print '            borderWidth: 1';
+                print '        }]';
+                print '    },';
+                print '    options: {';
+                print '        scales: {';
+                print '            y: { beginAtZero: false }';
+                print '        }';
+                print '    }';
+                print '});';
+                print '});';
+                print '</script>';
+            }
+
+            // Horimetro Chart
+            if (count($chart_data_horimetro) > 1) {
+                print '<div style="margin-top: 20px;">';
+                print '<h4>'.$langs->trans('ChartHorimetro').'</h4>';
+                print '<canvas id="horimetroChart" width="400" height="200"></canvas>';
+                print '</div>';
+
+                print '<script>';
+                print 'document.addEventListener("DOMContentLoaded", function() {';
+                print 'var ctx_horimetro = document.getElementById("horimetroChart").getContext("2d");';
+                print 'var horimetroChart = new Chart(ctx_horimetro, {';
+                print '    type: "line",';
+                print '    data: {';
+                print '        labels: '.json_encode($chart_labels_horimetro).' ,';
+                print '        datasets: [{';
+                print '            label: "'.$langs->trans("Horimetro").'",';
+                print '            data: '.json_encode($chart_data_horimetro).' ,';
+                print '            backgroundColor: "rgba(255, 99, 132, 0.2)",';
+                print '            borderColor: "rgba(255, 99, 132, 1)",';
                 print '            borderWidth: 1';
                 print '        }]';
                 print '    },';
