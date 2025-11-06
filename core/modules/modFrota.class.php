@@ -331,14 +331,14 @@ class modFrota extends DolibarrModules
 		$this->rights[$r][5] = 'delete';
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf('%02d', (4 * 10) + 1 + 1);
-		$this->rights[$r][1] = '';
-		$this->rights[$r][4] = '';
-		$this->rights[$r][5] = '';
+		$this->rights[$r][1] = 'Read Historico object of Frota';
+		$this->rights[$r][4] = 'historico';
+		$this->rights[$r][5] = 'read';
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf('%02d', (4 * 10) + 2 + 1);
-		$this->rights[$r][1] = '';
-		$this->rights[$r][4] = '';
-		$this->rights[$r][5] = '';
+		$this->rights[$r][1] = 'Create/Update Historico object of Frota';
+		$this->rights[$r][4] = 'historico';
+		$this->rights[$r][5] = 'write';
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf('%02d', (5 * 10) + 0 + 1);
 		$this->rights[$r][1] = 'Read Seguro object of Frota';
@@ -453,6 +453,22 @@ class modFrota extends DolibarrModules
 			 'user' => 2,
 		);
 		/* END LEFTMENU NOVO VEICULO */
+		/* LEFTMENU HISTORICO */
+		$this->menu[$r++]=array(
+			'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=veiculo',
+			'type' => 'left',
+			'titre' => 'Histórico de Uso',
+			'mainmenu' => 'frota',
+			'leftmenu' => 'frota_veiculo_historico',
+			'url' => '/frota/veiculo_historico.php',
+			'langs' => 'frota@frota',
+			'position' => 1000 + $r,
+			'enabled' => 'isModEnabled("frota")',
+			'perms' => '$user->hasRight("frota", "historico", "read")',
+			'target' => '',
+			'user' => 2,
+		);
+		/* END LEFTMENU HISTORICO */
 		/* LEFTMENU IMPLEMENTO */
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota',

@@ -48,7 +48,7 @@
 ## Semana 3 – Custos e Preventivas
 **Objetivo:** Adicionar inteligência financeira e preventiva.
 
-- [ ] Registro de custos de manutenção (valores + fornecedor)
+- [X] Registro de custos de manutenção (valores + fornecedor)
 - [ ] Cálculo automático de custo por km/hora (com base em uso e custos acumulados)
 - [ ] Definir intervalos de manutenção preventiva (por km/hora ou tempo)
 - [ ] Tela de manutenções previstas vs realizadas, com status:

@@ -84,30 +84,20 @@ class Historico extends CommonObject
     public $fields=array(
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
         'fk_veiculo' => array('type'=>'integer:Veiculo:frota/class/veiculo.class.php', 'label'=>'Veiculo', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'index'=>1),
-        'data' => array('type'=>'date', 'label'=>'Data', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1),
-        'km' => array('type'=>'double(24,8)', 'label'=>'Quilometragem', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>0),
+        'date_registro' => array('type'=>'date', 'label'=>'Data', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1),
+        'quilometragem' => array('type'=>'double(24,8)', 'label'=>'Quilometragem', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>0),
         'horimetro' => array('type'=>'double(24,8)', 'label'=>'Horímetro', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>0),
-        'observacoes' => array('type'=>'text', 'label'=>'Observações', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-        'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
-        'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
-        'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'user.rowid'),
-        'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511),
-        'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
-        'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'arrayofkeyval'=>array(0=>'Rascunho', 1=>'Validado', 9=>'Cancelado')),
+        'observacao' => array('type'=>'text', 'label'=>'Observações', 'enabled'=>1, 'visible'=>1, 'position'=>60),
+        'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'user.rowid')
     );
 
     public $rowid;
     public $fk_veiculo;
-    public $data;
-    public $km;
+    public $date_registro;
+    public $quilometragem;
     public $horimetro; 
-    public $observacoes;
-    public $date_creation;
-    public $tms;
-    public $fk_user_creat;
-    public $fk_user_modif;
-    public $import_key;
-    public $status;
+    public $observacao;
+    public $fk_user;
 
     /**
      * Constructor
