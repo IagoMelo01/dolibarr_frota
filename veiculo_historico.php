@@ -65,9 +65,12 @@ if ($resql) {
 }
 
 // Page header
-llxHeader('', $langs->trans('Historico'));
+llxHeader('', $langs->trans('Historico'), '', '', 0, 0, array(), dol_buildpath('/frota/js/chart.min.js', 1));
 
 print load_fiche_titre($langs->trans('Historico'), '', 'object_historico.png');
+
+// Instructional text
+print '<p>'.$langs->trans("SelectVehicleToSeeHistory").'</p>';
 
 // Vehicle selection form
 print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
@@ -91,19 +94,35 @@ print '</form>';
 // Show history if vehicle selected
 if (!empty($fk_veiculo)) {
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="veiculo_historico_card.php?fk_veiculo='.$fk_veiculo.'">'.$langs->trans("Novo Histórico").'</a>';
+    print '<a class="butAction" href="veiculo_historico_card.php?fk_veiculo='.$fk_veiculo.'">'.$langs->trans("NewHistory").'</a>';
     print '</div>';
 
     $sql = "SELECT h.*, u.login as user_login FROM ".MAIN_DB_PREFIX."frota_veiculo_historico h LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = h.fk_user WHERE h.fk_veiculo = ".(int)$fk_veiculo." ORDER BY h.date_registro DESC";
     $res = $db->query($sql);
     print '<h4>'.$langs->trans('History').'</h4>';
     if ($res) {
-        if ($db->num_rows($res) == 0) {
+        $num_rows = $db->num_rows($res);
+        if ($num_rows == 0) {
             print $langs->trans('NoRecordFound');
         } else {
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre"><th>'.$langs->trans('Date').'</th><th>'.$langs->trans('Quilometragem').'</th><th>'.$langs->trans('Horimetro').'</th><th>'.$langs->trans('User').'</th><th>'.$langs->trans('Observacoes').'</th></tr>';
+            
+            $chart_labels = array();
+            $chart_data = array();
+            $history_rows = array();
+
             while ($objh = $db->fetch_object($res)) {
+                $history_rows[] = $objh;
+                $chart_labels[] = dol_print_date($objh->date_registro, '%d/%m/%Y');
+                $chart_data[] = $objh->quilometragem;
+            }
+
+            // Reverse data for chronological order in chart
+            $chart_labels = array_reverse($chart_labels);
+            $chart_data = array_reverse($chart_data);
+
+            foreach ($history_rows as $objh) {
                 print '<tr>';
                 print '<td>'.dol_print_date(dol_stringtotime($objh->date_registro), 'dayhour').'</td>';
                 print '<td>'.dol_escape_htmltag($objh->quilometragem).'</td>';
@@ -113,6 +132,37 @@ if (!empty($fk_veiculo)) {
                 print '</tr>';
             }
             print '</table>';
+
+            if ($num_rows > 1) {
+                print '<div style="margin-top: 20px;">';
+                print '<h4>'.$langs->trans('ChartKm').'</h4>';
+                print '<canvas id="kmChart" width="400" height="200"></canvas>';
+                print '</div>';
+
+                print '<script>';
+                print 'document.addEventListener("DOMContentLoaded", function() {';
+                print 'var ctx = document.getElementById("kmChart").getContext("2d");';
+                print 'var kmChart = new Chart(ctx, {';
+                print '    type: "line",';
+                print '    data: {';
+                print '        labels: '.json_encode($chart_labels).' ,';
+                print '        datasets: [{';
+                print '            label: "'.$langs->trans("Quilometragem").'",';
+                print '            data: '.json_encode($chart_data).' ,';
+                print '            backgroundColor: "rgba(54, 162, 235, 0.2)",';
+                print '            borderColor: "rgba(54, 162, 235, 1)",';
+                print '            borderWidth: 1';
+                print '        }]';
+                print '    },';
+                print '    options: {';
+                print '        scales: {';
+                print '            y: { beginAtZero: false }';
+                print '        }';
+                print '    }';
+                print '});';
+                print '});';
+                print '</script>';
+            }
         }
     } else {
         print $langs->trans('ErrorRequest');

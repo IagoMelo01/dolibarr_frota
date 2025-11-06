@@ -32,8 +32,8 @@
 ## Semana 2 – Registro de Uso e Manutenções
 **Objetivo:** Começar a controlar o uso e registrar serviços feitos.
 
-- [ ] Tela de lançamento de uso por veículo (horas ou km rodados)
-- [ ] Histórico de leituras de odômetro/horímetro por data
+- [X] Tela de lançamento de uso por veículo (horas ou km rodados)
+- [X] Histórico de leituras de odômetro/horímetro por data
 - [X] Cadastro e edição de manutenções:
   - [X] Tipo
   - [X] Descrição

@@ -55,3 +55,7 @@ MyWidgetDescription = My widget description
 
 
 New = Novo
+SelectVehicleToSeeHistory=Selecione um veículo para ver o histórico
+History=Histórico
+ChartKm=Gráfico de Quilometragem
+NewHistory=Novo Histórico
