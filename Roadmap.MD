@@ -49,8 +49,8 @@
 **Objetivo:** Adicionar inteligência financeira e preventiva.
 
 - [X] Registro de custos de manutenção (valores + fornecedor)
-- [ ] Cálculo automático de custo por km/hora (com base em uso e custos acumulados)
-- [ ] Definir intervalos de manutenção preventiva (por km/hora ou tempo)
+- [X] Cálculo automático de custo por km/hora (com base em uso e custos acumulados)
+- [X] Definir intervalos de manutenção preventiva (por km/hora ou tempo)
 - [ ] Tela de manutenções previstas vs realizadas, com status:
   - [ ] Em dia
   - [ ] Atrasada

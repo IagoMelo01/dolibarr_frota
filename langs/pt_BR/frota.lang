@@ -62,3 +62,23 @@ NewHistory=Novo Histórico
 ChartHorimetro=Gráfico de Horímetro
 Horimetro=Horímetro
 Quilometragem=Quilometragem
+
+# Frota Module
+Frota=Frota
+FrotaSetup=Configuração da Frota
+Veiculo=Veículo
+Veiculos=Veículos
+NewVeiculo=Novo Veículo
+DeleteVeiculo=Excluir Veículo
+ConfirmDeleteVeiculo=Tem certeza de que deseja excluir este veículo?
+VeiculoCard=Ficha do Veículo
+UsageAndCosts=Uso e Custos
+Quilometragem/Horímetro Atual=Quilometragem/Horímetro Atual
+Custo Total=Custo Total
+Custo/km=Custo por Km
+Custo/hora=Custo por Hora
+
+FROTA_MAINTENANCE_INTERVAL_DAYS=Intervalo de Manutenção (dias)
+FROTA_MAINTENANCE_INTERVAL_DAYSHelp=Defina o intervalo padrão em dias para a próxima manutenção preventiva.
+
+MaintenanceIsDue=A manutenção preventiva deste veículo está vencida.

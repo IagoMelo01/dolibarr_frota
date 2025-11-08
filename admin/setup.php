@@ -94,6 +94,12 @@ $formSetup = new FormSetup($db);
 
 // Enter here all parameters in your setup page
 
+// Setup conf for maintenance interval
+$item = $formSetup->newItem('FROTA_MAINTENANCE_INTERVAL_DAYS');
+$item->defaultFieldValue = '180'; // Default to 6 months
+$item->nameText = 'Intervalo de Manutenção (dias)';
+$item->helpText = 'Defina o intervalo padrão em dias para a próxima manutenção preventiva.';
+
 // Setup conf for selection of an URL
 $item = $formSetup->newItem('FROTA_MYPARAM1');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];

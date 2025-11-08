@@ -442,6 +442,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+	if ($object->isMaintenanceDue()) {
+		print dol_htmloutput_mesg($langs->trans('MaintenanceIsDue'), '', 'warning');
+	}
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -453,6 +456,36 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// Usage and Costs
+	$usageAndCosts = $object->getUsageAndCosts();
+	
+	print '<tr><td colspan="2" class="titlefield">'.$langs->trans("UsageAndCosts").'</td></tr>';
+
+	// Latest Km / Horimetro
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("Quilometragem/Horímetro Atual").'</td>';
+	print '<td>'.price($usageAndCosts['latest_km']).' km / '.price($usageAndCosts['latest_horimetro']).' h</td>';
+	print '</tr>';
+
+	// Total Cost
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("Custo Total").'</td>';
+	print '<td>'.price($usageAndCosts['total_cost']).'</td>';
+	print '</tr>';
+
+	// Cost per Km
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("Custo/km").'</td>';
+	print '<td>'.price($usageAndCosts['cost_per_km']).'</td>';
+	print '</tr>';
+
+	// Cost per Hour
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans("Custo/hora").'</td>';
+	print '<td>'.price($usageAndCosts['cost_per_hour']).'</td>';
+	print '</tr>';
+
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

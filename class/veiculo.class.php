@@ -1013,6 +1013,108 @@ class Veiculo extends CommonObject
 	}
 
 	/**
+	 * Get usage and costs for the vehicle.
+	 *
+	 * @return array Array with cost and usage data.
+	 */
+	public function getUsageAndCosts()
+	{
+		global $db;
+
+		$out = array(
+			'total_cost' => 0,
+			'total_km' => 0,
+			'total_hours' => 0,
+			'cost_per_km' => 0,
+			'cost_per_hour' => 0,
+			'latest_km' => 0,
+			'latest_horimetro' => 0
+		);
+
+		// Get total costs
+		$sql_costs = "SELECT SUM(t.amount) as total FROM (";
+		$sql_costs .= " SELECT amount FROM ".MAIN_DB_PREFIX."frota_abastecimento WHERE fk_veiculo = ".$this->id;
+		$sql_costs .= " UNION ALL ";
+		$sql_costs .= " SELECT amount FROM ".MAIN_DB_PREFIX."frota_manutencao WHERE fk_veiculo = ".$this->id;
+		$sql_costs .= " UNION ALL ";
+		$sql_costs .= " SELECT amount FROM ".MAIN_DB_PREFIX."frota_seguro WHERE fk_veiculo = ".$this->id;
+		$sql_costs .= " UNION ALL ";
+		$sql_costs .= " SELECT amount FROM ".MAIN_DB_PREFIX."frota_aluguel WHERE veiculo = ".$this->id;
+		$sql_costs .= ") as t";
+
+		$resql = $db->query($sql_costs);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			$out['total_cost'] = (float) $obj->total;
+		}
+
+		// Get latest usage
+		$sql_usage = "SELECT MAX(quilometragem) as latest_km, MAX(horimetro) as latest_horimetro";
+		$sql_usage .= " FROM ".MAIN_DB_PREFIX."frota_veiculo_historico";
+		$sql_usage .= " WHERE fk_veiculo = ".$this->id;
+
+		$resql_usage = $db->query($sql_usage);
+		if ($resql_usage) {
+			$obj_usage = $db->fetch_object($resql_usage);
+			$out['latest_km'] = (float) $obj_usage->latest_km;
+			$out['latest_horimetro'] = (float) $obj_usage->latest_horimetro;
+		}
+
+		// Calculate total usage
+		$out['total_km'] = $out['latest_km'] - (float) $this->quilometragem_inicial;
+		$out['total_hours'] = $out['latest_horimetro'] - (float) $this->horimetro_inicial;
+
+		// Calculate costs per usage
+		if ($out['total_km'] > 0) {
+			$out['cost_per_km'] = $out['total_cost'] / $out['total_km'];
+		}
+		if ($out['total_hours'] > 0) {
+			$out['cost_per_hour'] = $out['total_cost'] / $out['total_hours'];
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Check if maintenance is due.
+	 *
+	 * @return bool True if maintenance is due, false otherwise.
+	 */
+	public function isMaintenanceDue()
+	{
+		global $db, $conf;
+
+		$interval_days = !empty($conf->global->FROTA_MAINTENANCE_INTERVAL_DAYS) ? $conf->global->FROTA_MAINTENANCE_INTERVAL_DAYS : 180;
+
+		// Get the date of the last preventive maintenance
+		$sql = "SELECT MAX(data_concluida) as last_maintenance_date";
+		$sql .= " FROM ".MAIN_DB_PREFIX."frota_manutencao";
+		$sql .= " WHERE fk_veiculo = ".$this->id;
+		$sql .= " AND tipo = 1"; // Assuming '1' is for 'Preventiva'
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			$last_maintenance_date = $obj->last_maintenance_date;
+
+			if ($last_maintenance_date) {
+				$last_maintenance_timestamp = dol_stringtotime($last_maintenance_date, 'auto');
+				$due_timestamp = strtotime('+'.$interval_days.' days', $last_maintenance_timestamp);
+				$now = dol_now();
+
+				if ($now > $due_timestamp) {
+					return true; // Maintenance is overdue
+				}
+			} else {
+				// No preventive maintenance has been recorded, so it's considered due.
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 *	Return a thumb for kanban views
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
