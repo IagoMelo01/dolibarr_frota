@@ -136,7 +136,7 @@ class Abastecimento extends CommonObject
 		'qty_real' => array('type'=>'double(12,2)', 'label'=>'Quantidade de combustível abastecida (litros)', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>4, 'default'=>'0,0',),
 		'km' => array('type'=>'double(12,2)', 'label'=>'Quilometragem no momento do abastecimento', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>4,),
 		'horas_op' => array('type'=>'double(12,2)', 'label'=>'Horimetro no momento do abastecimento', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>4,),
-		'data_ab' => array('type'=>'datetime', 'label'=>'Data e hora do abastecimento', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>4,),
+		'data_ab' => array('type'=>'datetime', 'label'=>'Data e hora do abastecimento', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1,),
 	);
 	public $rowid;
 	public $ref;
