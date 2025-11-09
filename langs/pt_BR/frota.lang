@@ -82,3 +82,6 @@ FROTA_MAINTENANCE_INTERVAL_DAYS=Intervalo de Manutenção (dias)
 FROTA_MAINTENANCE_INTERVAL_DAYSHelp=Defina o intervalo padrão em dias para a próxima manutenção preventiva.
 
 MaintenanceIsDue=A manutenção preventiva deste veículo está vencida.
+ActiveVehicles=Veículos Ativos
+VehiclesInMaintenance=Veículos em Manutenção
+TotalMonthlyExpenses=Gastos Totais do Mês

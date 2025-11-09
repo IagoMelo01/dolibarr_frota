@@ -66,10 +66,10 @@
   - [ ] Custos
   - [ ] Manutenções realizadas
   - [ ] Próximas preventivas
-- [ ] Dashboard simples da frota:
-  - [ ] Veículos ativos
-  - [ ] Veículos em manutenção
-  - [ ] Custos totais do mês
+- [X] Dashboard simples da frota:
+  - [X] Veículos ativos
+  - [X] Veículos em manutenção
+  - [X] Custos totais do mês
 - [ ] Exportação de relatórios para Excel/PDF
 - [ ] Alertas básicos:
   - [ ] “Trator X precisa de revisão – 10h atrasado”
