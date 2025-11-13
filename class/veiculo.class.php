@@ -291,6 +291,7 @@ class Veiculo extends CommonObject
 		$resultcreate = $this->createCommon($user, $notrigger);
 
 		if ($resultcreate > 0) {
+			// Create initial history record
 			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
 			$sql.= " (fk_veiculo, quilometragem, horimetro, date_registro, fk_user)";
 			$sql.= " VALUES (" . $resultcreate . ", " . 
@@ -303,6 +304,24 @@ class Veiculo extends CommonObject
 				$this->error = "Error " . $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
+			}
+
+			// Create default preventive maintenances
+			$default_maintenances = array(
+				array('tipo' => 'Troca de Óleo', 'km' => 10000, 'horas' => 0, 'dias' => 180),
+				array('tipo' => 'Revisão Geral', 'km' => 50000, 'horas' => 0, 'dias' => 365)
+			);
+
+			foreach ($default_maintenances as $maintenance) {
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_manutencao_preventiva";
+				$sql.= " (fk_veiculo, tipo_manutencao, intervalo_km, intervalo_horas, intervalo_dias)";
+				$sql.= " VALUES (" . $resultcreate . ", '" . $this->db->escape($maintenance['tipo']) . "', " . $maintenance['km'] . ", " . $maintenance['horas'] . ", " . $maintenance['dias'] . ")";
+				$resql = $this->db->query($sql);
+				if (! $resql) {
+					$this->error = "Error " . $this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
 			}
 		}
 

@@ -263,49 +263,53 @@ class Manutencao extends CommonObject
 		# @FIX: tempo muito demorado para criar o registro!
 		$resultcreate = $this->createCommon($user, $notrigger);
 
-		if (empty($this->fk_veiculo)) {
-			$this->db->commit();
-			return $resultcreate;
-		}
-
-		// Se não houver data prevista, usa a data atual
-		if (empty($this->data_prevista)) {
-			$this->data_prevista = dol_now();
-		}
-
-		// Verifica se já existe um registro idêntico nos últimos 5 segundos
 		if ($resultcreate > 0) {
-			$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
-				   WHERE fk_veiculo = " . $this->fk_veiculo . "
-				   AND date_registro >= DATE_SUB(NOW(), INTERVAL 5 SECOND)
-				   AND quilometragem = " . (!empty($this->quilometragem) ? $this->quilometragem : "0") . "
-				   AND horimetro = " . (!empty($this->horimetro) ? $this->horimetro : "0");
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$obj = $this->db->fetch_object($resql);
-				if ($obj->nb > 0) {
-					// Se encontrou registro similar recente, não cria outro
-					$this->db->commit();
-					return $resultcreate;
+			if (!empty($this->fk_veiculo)) {
+				// Se não houver data prevista, usa a data atual
+				if (empty($this->data_prevista)) {
+					$this->data_prevista = dol_now();
+				}
+
+				// Verifica se já existe um registro idêntico nos últimos 5 segundos
+				$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
+					WHERE fk_veiculo = " . $this->fk_veiculo . "
+					AND date_registro >= DATE_SUB(NOW(), INTERVAL 5 SECOND)
+					AND quilometragem = " . (!empty($this->quilometragem) ? $this->quilometragem : "0") . "
+					AND horimetro = " . (!empty($this->horimetro) ? $this->horimetro : "0");
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj->nb == 0) {
+						$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+						$sql_insert.= " (fk_veiculo, fk_manutenção, quilometragem, horimetro, fk_user, observacao, date_registro)";
+						$sql_insert.= " VALUES (" . 
+								$this->fk_veiculo . ", " .
+								$this->id . ", " .  // id da manutenção recém criada
+								(!empty($this->quilometragem) ? $this->quilometragem : "0") . ", " .
+								(!empty($this->horimetro) ? $this->horimetro : "0") . ", " .
+								$user->id . ", " .
+								($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . ", " .
+								"NOW()" . // Data atual do servidor
+								")";
+						$resql_insert = $this->db->query($sql_insert);
+						if (! $resql_insert) {
+							$this->error = "Error " . $this->db->lasterror();
+							$error++;
+						}
+					}
+				} else {
+					$this->error = "Error " . $this->db->lasterror();
+					$error++;
 				}
 			}
-			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
-			$sql.= " (fk_veiculo, fk_manutenção, quilometragem, horimetro, fk_user, observacao, date_registro)";
-			$sql.= " VALUES (" . 
-					$this->fk_veiculo . ", " .
-					$this->id . ", " .  // id da manutenção recém criada
-					(!empty($this->quilometragem) ? $this->quilometragem : "0") . ", " .
-					(!empty($this->horimetro) ? $this->horimetro : "0") . ", " .
-					$user->id . ", " .
-					($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . ", " .
-					"NOW()" . // Data atual do servidor
-					")";
-			$resql = $this->db->query($sql);
-			if (! $resql) {
-				$this->error = "Error " . $this->db->lasterror();
-				$this->db->rollback();
-				return -1;
+
+			if (!$error) {
+				if ($this->updatePreventiveMaintenance($user) < 0) {
+					$error++;
+				}
 			}
+		} else {
+			$error++;
 		}
 
 		if ($error) {
@@ -612,6 +616,12 @@ class Manutencao extends CommonObject
 			if (!$resql) {
 				$error++;
 				$this->error = "Error " . $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			if ($this->updatePreventiveMaintenance($user) < 0) {
+				$error++;
 			}
 		}
 
@@ -1354,6 +1364,65 @@ class Manutencao extends CommonObject
 		dol_syslog(__METHOD__." end", LOG_INFO);
 
 		return $error;
+	}
+
+	/**
+	 * Update preventive maintenance table after a maintenance is done.
+	 *
+	 * @param  User $user      User that modifies
+	 * @return int             0 if OK, <0 if KO
+	 */
+	private function updatePreventiveMaintenance(User $user)
+	{
+		if ($this->tipo == 0 && !empty($this->fk_veiculo) && !empty($this->label)) {
+			// It's a preventive maintenance, let's update the preventive maintenance table.
+			if (!class_exists('VeiculoManutencaoPreventiva')) {
+				require_once __DIR__.'/veiculo_manutencao_preventiva.class.php';
+			}
+
+			$preventiva = new VeiculoManutencaoPreventiva($this->db);
+			$filters = array('fk_veiculo' => $this->fk_veiculo, 'tipo_manutencao' => $this->label);
+			
+			// fetchAll returns an array of objects
+			$records = $preventiva->fetchAll('', '', 1, 0, $filters);
+
+			if (is_array($records) && count($records) > 0) {
+				$preventiva_to_update = $records[0];
+				
+				$preventiva_to_update->ultima_manutencao_km = $this->quilometragem;
+				$preventiva_to_update->ultima_manutencao_horas = $this->horimetro;
+				
+				$data_base_ts = 0;
+				if (!empty($this->data_concluida)) {
+					$data_base_ts = $this->data_concluida;
+				} elseif (!empty($this->data_prevista)) {
+					$data_base_ts = $this->data_prevista;
+				}
+
+				if ($data_base_ts > 0) {
+					$preventiva_to_update->ultima_manutencao_data = $data_base_ts;
+				} else {
+                    $preventiva_to_update->ultima_manutencao_data = dol_now();
+                }
+
+				if (!empty($preventiva_to_update->intervalo_km) && $preventiva_to_update->intervalo_km > 0) {
+					$preventiva_to_update->proxima_manutencao_km = $this->quilometragem + $preventiva_to_update->intervalo_km;
+				}
+				if (!empty($preventiva_to_update->intervalo_horas) && $preventiva_to_update->intervalo_horas > 0) {
+					$preventiva_to_update->proxima_manutencao_horas = $this->horimetro + $preventiva_to_update->intervalo_horas;
+				}
+				if (!empty($preventiva_to_update->intervalo_dias) && $preventiva_to_update->intervalo_dias > 0) {
+                    $base_ts_for_next = $data_base_ts > 0 ? $data_base_ts : dol_now();
+					$preventiva_to_update->proxima_manutencao_data = $base_ts_for_next + ($preventiva_to_update->intervalo_dias * 24 * 60 * 60);
+				}
+
+				if ($preventiva_to_update->update($user) < 0) {
+					$this->error = $preventiva_to_update->error;
+					return -1;
+				}
+			}
+		}
+		return 0;
 	}
 }
 

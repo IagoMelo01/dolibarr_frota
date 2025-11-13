@@ -192,22 +192,22 @@ print '</div>';
 print '<div class="clearboth"></div>';
 
 // List Active Vehicles
-print '<h3>'.$langs->trans("ActiveVehicles").'</h3>';
-print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<th>'.$langs->trans("Ref").'</th>';
-print '<th>'.$langs->trans("Label").'</th>';
-print '<th>'.$langs->trans("Modelo").'</th>';
-print '<th>'.$langs->trans("Ano de fabricação").'</th>';
-print '</tr>';
-
 $sql_active_vehicles_list = "SELECT rowid FROM ".MAIN_DB_PREFIX."frota_veiculo WHERE status = 1 ORDER BY ref ASC";
 $res_active_vehicles_list = $db->query($sql_active_vehicles_list);
 
 if ($res_active_vehicles_list) {
     $num = $db->num_rows($res_active_vehicles_list);
     if ($num > 0) {
+        print '<h3>'.$langs->trans("ActiveVehicles").'</h3>';
+        print '<div class="div-table-responsive">';
+        print '<table class="noborder centpercent">';
+        print '<tr class="liste_titre">';
+        print '<th>'.$langs->trans("Ref").'</th>';
+        print '<th>'.$langs->trans("Label").'</th>';
+        print '<th>'.$langs->trans("Modelo").'</th>';
+        print '<th>'.$langs->trans("Ano de fabricação").'</th>';
+        print '</tr>';
+
         $veiculo_static = new Veiculo($db);
         while ($obj_veiculo = $db->fetch_object($res_active_vehicles_list)) {
             $veiculo_static->fetch($obj_veiculo->rowid);
@@ -218,33 +218,31 @@ if ($res_active_vehicles_list) {
             print '<td>'.$veiculo_static->ano_fab.'</td>';
             print '</tr>';
         }
-    } else {
-        print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '</table>';
+        print '</div>';
     }
     $db->free($res_active_vehicles_list);
 } else {
     dol_print_error($db);
 }
-print '</table>';
-print '</div>';
 
 // List Vehicles in Maintenance
-print '<h3>'.$langs->trans("VehiclesInMaintenance").'</h3>';
-print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<th>'.$langs->trans("MaintenanceRef").'</th>';
-print '<th>'.$langs->trans("VehicleRef").'</th>';
-print '<th>'.$langs->trans("ScheduledDate").'</th>';
-print '<th>'.$langs->trans("EstimatedCost").'</th>';
-print '</tr>';
-
 $sql_maintenance_vehicles_list = "SELECT m.rowid, m.ref, m.data_prevista, m.amount, m.fk_veiculo FROM ".MAIN_DB_PREFIX."frota_manutencao as m WHERE m.status = 0 AND (m.data_concluida IS NULL OR m.data_concluida > NOW()) ORDER BY m.data_prevista ASC";
 $res_maintenance_vehicles_list = $db->query($sql_maintenance_vehicles_list);
 
 if ($res_maintenance_vehicles_list) {
     $num = $db->num_rows($res_maintenance_vehicles_list);
     if ($num > 0) {
+        print '<h3>'.$langs->trans("VehiclesInMaintenance").'</h3>';
+        print '<div class="div-table-responsive">';
+        print '<table class="noborder centpercent">';
+        print '<tr class="liste_titre">';
+        print '<th>'.$langs->trans("MaintenanceRef").'</th>';
+        print '<th>'.$langs->trans("VehicleRef").'</th>';
+        print '<th>'.$langs->trans("ScheduledDate").'</th>';
+        print '<th>'.$langs->trans("EstimatedCost").'</th>';
+        print '</tr>';
+
         $manutencao_static = new Manutencao($db);
         $veiculo_static = new Veiculo($db);
         while ($obj_manutencao = $db->fetch_object($res_maintenance_vehicles_list)) {
@@ -257,29 +255,16 @@ if ($res_maintenance_vehicles_list) {
             print '<td>'.price($obj_manutencao->amount).'</td>';
             print '</tr>';
         }
-    } else {
-        print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '</table>';
+        print '</div>';
     }
     $db->free($res_maintenance_vehicles_list);
 } else {
     dol_print_error($db);
 }
-print '</table>';
-print '</div>';
 print '</div>';
 
 // List of Total Monthly Expenses
-print '<div class="fichecenter">';
-print '<h3>'.$langs->trans("TotalMonthlyExpenses").'</h3>';
-print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<th>'.$langs->trans("Date").'</th>';
-print '<th>'.$langs->trans("Type").'</th>';
-print '<th>'.$langs->trans("Description").'</th>';
-print '<th>'.$langs->trans("Amount").'</th>';
-print '</tr>';
-
 $current_month_start = date('Y-m-01 00:00:00');
 $current_month_end = date('Y-m-t 23:59:59');
 
@@ -315,6 +300,17 @@ usort($all_expenses, function($a, $b) {
 });
 
 if (count($all_expenses) > 0) {
+    print '<div class="fichecenter">';
+    print '<h3>'.$langs->trans("TotalMonthlyExpenses").'</h3>';
+    print '<div class="div-table-responsive">';
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre">';
+    print '<th>'.$langs->trans("Date").'</th>';
+    print '<th>'.$langs->trans("Type").'</th>';
+    print '<th>'.$langs->trans("Description").'</th>';
+    print '<th>'.$langs->trans("Amount").'</th>';
+    print '</tr>';
+
     foreach ($all_expenses as $expense) {
         print '<tr class="oddeven">';
         print '<td>'.dol_print_date($db->jdate($expense->date), 'day').'</td>';
@@ -323,12 +319,10 @@ if (count($all_expenses) > 0) {
         print '<td>'.price($expense->amount).'</td>';
         print '</tr>';
     }
-} else {
-    print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    print '</table>';
+    print '</div>';
+    print '</div>';
 }
-print '</table>';
-print '</div>';
-print '</div>';
 
 
 
@@ -406,28 +400,22 @@ END MODULEBUILDER DRAFT MYOBJECT */
 
 
 
-
-print '<div class="fichecenter">';
-print '<h3> Reservatórios (últimos 8) </h3>';
-
-print '<div style="display: flex; flex: 1; flex-wrap: wrap; width: 100%;">';
-
 $reservoir = new Reservatorio($db);
 $reservoirs = $reservoir->fetchAll('DESC','rowid',8);
-$reservoirs_js = [];
-foreach($reservoirs as $key){
-	print $key->getKanbanView(0);
-	$reservoirs_js[] = [$key->ref, $key->nivel];
-}
-// print $reservoir->getKanbanView(0);
-// echo '<pre>';
+if (!empty($reservoirs)) {
+    print '<div class="fichecenter">';
+    print '<h3> Reservatórios (últimos 8) </h3>';
 
-// print_r($reservoirs_js);
+    print '<div style="display: flex; flex: 1; flex-wrap: wrap; width: 100%;">';
 
-// echo '</pre>';
+    $reservoirs_js = [];
+    foreach($reservoirs as $key){
+        print $key->getKanbanView(0);
+        $reservoirs_js[] = [$key->ref, $key->nivel];
+    }
 
-print '</div>'; // Closes the flex div for reservoirs
-print '</div>'; // Closes the fichecenter for reservoirs
+    print '</div>'; // Closes the flex div for reservoirs
+    print '</div>'; // Closes the fichecenter for reservoirs
 ?>
 
 
@@ -476,7 +464,9 @@ print '</div>'; // Closes the fichecenter for reservoirs
         });
     </script>
 
-
+<?php
+}
+?>
 
 
 <style>
