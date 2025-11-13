@@ -489,7 +489,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=implemento',
 			 'type' => 'left',
-			 'titre' => 'Lista deImplementos',
+			 'titre' => 'Lista de Implementos',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_implemento_list',
 			 'url' => '/frota/implemento_list.php',
@@ -745,7 +745,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=aluguel',
 			 'type' => 'left',
-			 'titre' => 'New Aluguel',
+			 'titre' => 'Adicionar Aluguel',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_aluguel_new',
 			 'url' => '/frota/aluguel_card.php?action=create',

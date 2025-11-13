@@ -152,179 +152,321 @@ if ($res_fuel_expenses) {
 
 $total_monthly_expenses = $maintenance_expenses + $fuel_expenses;
 
-print '<div class="dashboard-container">';
+print '<style>
+.dashboard-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
 
-// Active Vehicles Box
-print '<div class="dashboard-item-container">';
-print '<div class="dashboard-item">';
-print '<div class="dashboard-item-content">';
-print '<div class="dashboard-item-title">'.$langs->trans("ActiveVehicles").'</div>';
-print '<div class="dashboard-item-value">'.$active_vehicles.'</div>';
-print '</div>';
-print '<div class="dashboard-item-icon"><i class="fa fa-car"></i></div>';
-print '</div>';
-print '</div>';
+.dashboard-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 90%;
+}
 
-// Vehicles in Maintenance Box
-print '<div class="dashboard-item-container">';
-print '<div class="dashboard-item">';
-print '<div class="dashboard-item-content">';
-print '<div class="dashboard-item-title">'.$langs->trans("VehiclesInMaintenance").'</div>';
-print '<div class="dashboard-item-value">'.$vehicles_in_maintenance.'</div>';
-print '</div>';
-print '<div class="dashboard-item-icon"><i class="fa fa-wrench"></i></div>';
-print '</div>';
-print '</div>';
+.dashboard-card {
+    position: relative;
+    flex: 1;
+    min-width: 280px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
 
-// Total Monthly Expenses Box
-print '<div class="dashboard-item-container">';
-print '<div class="dashboard-item">';
-print '<div class="dashboard-item-content">';
-print '<div class="dashboard-item-title">'.$langs->trans("TotalMonthlyExpenses").'</div>';
-print '<div class="dashboard-item-value">'.price($total_monthly_expenses).'</div>';
-print '</div>';
-print '<div class="dashboard-item-icon"><i class="fa fa-money"></i></div>';
-print '</div>';
-print '</div>';
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
 
-print '</div>';
+.dashboard-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 6px;
+    border-radius: 12px 0 0 12px;
+}
 
-print '<div class="clearboth"></div>';
+.border-green::before { background: linear-gradient(180deg, #2ecc71, #27ae60); }
+.border-orange::before { background: linear-gradient(180deg, #ffb74d, #f57c00); }
+.border-blue::before { background: linear-gradient(180deg, #42a5f5, #1e88e5); }
 
-// List Active Vehicles
+.dashboard-icon {
+    font-size: 36px;
+    margin-right: 15px;
+    color: #555;
+    opacity: 0.9;
+    transition: color 0.3s ease;
+}
+
+.dashboard-card:hover .dashboard-icon {
+    color: #000;
+    opacity: 1;
+}
+
+.dashboard-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.dashboard-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #222;
+}
+
+/* Seções */
+.dashboard-section {
+    margin-top: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 20px 25px;
+    transition: box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-section:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.dashboard-section::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 6px;
+    border-radius: 10px 0 0 10px;
+}
+
+.border-green-section::before { background: linear-gradient(180deg, #2ecc71, #27ae60); }
+.border-orange-section::before { background: linear-gradient(180deg, #ffb74d, #f57c00); }
+.border-blue-section::before { background: linear-gradient(180deg, #42a5f5, #1e88e5); }
+
+.section-title {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.section-title i {
+    margin-right: 8px;
+    font-size: 22px;
+}
+
+/* Tabelas modernas */
+.modern-table {
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.modern-table thead tr {
+    background: #f0f2f5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.modern-table th, 
+.modern-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modern-table tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.modern-table tr:hover {
+    background: #f3faff;
+    transition: background 0.3s ease;
+}
+</style>';
+
+
+// ======= DASHBOARD CARDS =======
+print '
+<div class="dashboard-wrapper">
+    <div class="dashboard-row">
+
+        <div class="dashboard-card border-green">
+            <div class="dashboard-icon"><i class="fa fa-car"></i></div>
+            <div class="dashboard-info">
+                <div class="dashboard-title">'.$langs->trans("ActiveVehicles").'</div>
+                <div class="dashboard-value">'.$active_vehicles.'</div>
+            </div>
+        </div>
+
+        <div class="dashboard-card border-orange">
+            <div class="dashboard-icon"><i class="fa fa-wrench"></i></div>
+            <div class="dashboard-info">
+                <div class="dashboard-title">'.$langs->trans("VehiclesInMaintenance").'</div>
+                <div class="dashboard-value">'.$vehicles_in_maintenance.'</div>
+            </div>
+        </div>
+
+        <div class="dashboard-card border-blue">
+            <div class="dashboard-icon"><i class="fa fa-money"></i></div>
+            <div class="dashboard-info">
+                <div class="dashboard-title">'.$langs->trans("TotalMonthlyExpenses").'</div>
+                <div class="dashboard-value">'.price($total_monthly_expenses).'</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="clearboth"></div>
+';
+
+
+// ======= ACTIVE VEHICLES LIST =======
 $sql_active_vehicles_list = "SELECT rowid FROM ".MAIN_DB_PREFIX."frota_veiculo WHERE status = 1 ORDER BY ref ASC";
 $res_active_vehicles_list = $db->query($sql_active_vehicles_list);
 
-if ($res_active_vehicles_list) {
-    $num = $db->num_rows($res_active_vehicles_list);
-    if ($num > 0) {
-        print '<h3>'.$langs->trans("ActiveVehicles").'</h3>';
-        print '<div class="div-table-responsive">';
-        print '<table class="noborder centpercent">';
-        print '<tr class="liste_titre">';
-        print '<th>'.$langs->trans("Ref").'</th>';
-        print '<th>'.$langs->trans("Label").'</th>';
-        print '<th>'.$langs->trans("Modelo").'</th>';
-        print '<th>'.$langs->trans("Ano de fabricação").'</th>';
-        print '</tr>';
+if ($res_active_vehicles_list && $db->num_rows($res_active_vehicles_list) > 0) {
+    print '<div class="dashboard-section border-green-section">';
+    print '<h3 class="section-title"><i class="fa fa-car"></i> '.$langs->trans("ActiveVehicles").'</h3>';
+    print '<div class="div-table-responsive">';
+    print '<table class="noborder centpercent modern-table">';
+    print '<thead><tr class="liste_titre">';
+    print '<th>'.$langs->trans("Ref").'</th>';
+    print '<th>'.$langs->trans("Label").'</th>';
+    print '<th>'.$langs->trans("Modelo").'</th>';
+    print '<th>'.$langs->trans("Ano de fabricação").'</th>';
+    print '</tr></thead><tbody>';
 
-        $veiculo_static = new Veiculo($db);
-        while ($obj_veiculo = $db->fetch_object($res_active_vehicles_list)) {
-            $veiculo_static->fetch($obj_veiculo->rowid);
-            print '<tr class="oddeven">';
-            print '<td>'.$veiculo_static->getNomUrl(1).'</td>';
-            print '<td>'.$veiculo_static->label.'</td>';
-            print '<td>'.$veiculo_static->modelo.'</td>';
-            print '<td>'.$veiculo_static->ano_fab.'</td>';
-            print '</tr>';
-        }
-        print '</table>';
-        print '</div>';
+    $veiculo_static = new Veiculo($db);
+    while ($obj_veiculo = $db->fetch_object($res_active_vehicles_list)) {
+        $veiculo_static->fetch($obj_veiculo->rowid);
+        print '<tr>';
+        print '<td>'.$veiculo_static->getNomUrl(1).'</td>';
+        print '<td>'.$veiculo_static->label.'</td>';
+        print '<td>'.$veiculo_static->modelo.'</td>';
+        print '<td>'.$veiculo_static->ano_fab.'</td>';
+        print '</tr>';
     }
+    print '</tbody></table></div></div>';
     $db->free($res_active_vehicles_list);
-} else {
-    dol_print_error($db);
 }
 
-// List Vehicles in Maintenance
-$sql_maintenance_vehicles_list = "SELECT m.rowid, m.ref, m.data_prevista, m.amount, m.fk_veiculo FROM ".MAIN_DB_PREFIX."frota_manutencao as m WHERE m.status = 0 AND (m.data_concluida IS NULL OR m.data_concluida > NOW()) ORDER BY m.data_prevista ASC";
+
+// ======= VEHICLES IN MAINTENANCE =======
+$sql_maintenance_vehicles_list = "
+    SELECT m.rowid, m.ref, m.data_prevista, m.amount, m.fk_veiculo 
+    FROM ".MAIN_DB_PREFIX."frota_manutencao AS m
+    WHERE m.status = 0 AND (m.data_concluida IS NULL OR m.data_concluida > NOW())
+    ORDER BY m.data_prevista ASC
+";
 $res_maintenance_vehicles_list = $db->query($sql_maintenance_vehicles_list);
 
-if ($res_maintenance_vehicles_list) {
-    $num = $db->num_rows($res_maintenance_vehicles_list);
-    if ($num > 0) {
-        print '<h3>'.$langs->trans("VehiclesInMaintenance").'</h3>';
-        print '<div class="div-table-responsive">';
-        print '<table class="noborder centpercent">';
-        print '<tr class="liste_titre">';
-        print '<th>'.$langs->trans("MaintenanceRef").'</th>';
-        print '<th>'.$langs->trans("VehicleRef").'</th>';
-        print '<th>'.$langs->trans("ScheduledDate").'</th>';
-        print '<th>'.$langs->trans("EstimatedCost").'</th>';
+if ($res_maintenance_vehicles_list && $db->num_rows($res_maintenance_vehicles_list) > 0) {
+    print '<div class="dashboard-section border-orange-section">';
+    print '<h3 class="section-title"><i class="fa fa-wrench"></i> '.$langs->trans("VehiclesInMaintenance").'</h3>';
+    print '<div class="div-table-responsive">';
+    print '<table class="noborder centpercent modern-table">';
+    print '<thead><tr class="liste_titre">';
+    print '<th><i class="fa fa-tools"></i> '.$langs->trans("REF.").'</th>';
+    print '<th><i class="fa fa-car"></i> '.$langs->trans("VEÍCULO REF.").'</th>';
+    print '<th><i class="fa fa-calendar"></i> '.$langs->trans("DATA").'</th>';
+    print '<th><i class="fa fa-dollar"></i> '.$langs->trans("ESTIMATIVA DE PREÇO").'</th>';
+    print '</tr></thead><tbody>';
+
+    $manutencao_static = new Manutencao($db);
+    $veiculo_static = new Veiculo($db);
+    while ($obj_manutencao = $db->fetch_object($res_maintenance_vehicles_list)) {
+        $manutencao_static->fetch($obj_manutencao->rowid);
+        $veiculo_static->fetch($obj_manutencao->fk_veiculo);
+        print '<tr>';
+        print '<td>'.$manutencao_static->getNomUrl(1).'</td>';
+        print '<td>'.$veiculo_static->getNomUrl(1).'</td>';
+        print '<td>'.dol_print_date($db->jdate($obj_manutencao->data_prevista), "day").'</td>';
+        print '<td>'.price($obj_manutencao->amount).'</td>';
         print '</tr>';
-
-        $manutencao_static = new Manutencao($db);
-        $veiculo_static = new Veiculo($db);
-        while ($obj_manutencao = $db->fetch_object($res_maintenance_vehicles_list)) {
-            $manutencao_static->fetch($obj_manutencao->rowid);
-            $veiculo_static->fetch($obj_manutencao->fk_veiculo);
-            print '<tr class="oddeven">';
-            print '<td>'.$manutencao_static->getNomUrl(1).'</td>';
-            print '<td>'.$veiculo_static->getNomUrl(1).'</td>';
-            print '<td>'.dol_print_date($db->jdate($obj_manutencao->data_prevista), 'day').'</td>';
-            print '<td>'.price($obj_manutencao->amount).'</td>';
-            print '</tr>';
-        }
-        print '</table>';
-        print '</div>';
     }
+    print '</tbody></table></div></div>';
     $db->free($res_maintenance_vehicles_list);
-} else {
-    dol_print_error($db);
 }
-print '</div>';
 
-// List of Total Monthly Expenses
-$current_month_start = date('Y-m-01 00:00:00');
-$current_month_end = date('Y-m-t 23:59:59');
 
+// ======= TOTAL MONTHLY EXPENSES =======
+$current_month_start = date("Y-m-01 00:00:00");
+$current_month_end = date("Y-m-t 23:59:59");
 $all_expenses = [];
 
-// Fetch completed maintenance expenses for the current month
-$sql_maintenance_expenses_list = "SELECT rowid, data_concluida as date, 'Maintenance' as type, ref as description, amount FROM ".MAIN_DB_PREFIX."frota_manutencao WHERE status = 1 AND data_concluida BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'";
+// Maintenance expenses
+$sql_maintenance_expenses_list = "
+    SELECT rowid, data_concluida AS date, 'Maintenance' AS type, ref AS description, amount 
+    FROM ".MAIN_DB_PREFIX."frota_manutencao 
+    WHERE status = 1 AND data_concluida BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'
+";
 $res_maintenance_expenses_list = $db->query($sql_maintenance_expenses_list);
 if ($res_maintenance_expenses_list) {
-    while ($obj = $db->fetch_object($res_maintenance_expenses_list)) {
-        $all_expenses[] = $obj;
-    }
+    while ($obj = $db->fetch_object($res_maintenance_expenses_list)) $all_expenses[] = $obj;
     $db->free($res_maintenance_expenses_list);
-} else {
-    dol_print_error($db);
 }
 
-// Fetch fuel expenses for the current month
-$sql_fuel_expenses_list = "SELECT rowid, data_ab as date, 'Fuel' as type, CONCAT('Abastecimento ', ref) as description, amount FROM ".MAIN_DB_PREFIX."frota_abastecimento WHERE data_ab BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'";
+// Fuel expenses
+$sql_fuel_expenses_list = "
+    SELECT rowid, data_ab AS date, 'Fuel' AS type, CONCAT('Abastecimento ', ref) AS description, amount 
+    FROM ".MAIN_DB_PREFIX."frota_abastecimento 
+    WHERE data_ab BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'
+";
 $res_fuel_expenses_list = $db->query($sql_fuel_expenses_list);
 if ($res_fuel_expenses_list) {
-    while ($obj = $db->fetch_object($res_fuel_expenses_list)) {
-        $all_expenses[] = $obj;
-    }
+    while ($obj = $db->fetch_object($res_fuel_expenses_list)) $all_expenses[] = $obj;
     $db->free($res_fuel_expenses_list);
-} else {
-    dol_print_error($db);
 }
 
-// Sort all expenses by date in descending order
-usort($all_expenses, function($a, $b) {
-    return strtotime($b->date) - strtotime($a->date);
-});
+usort($all_expenses, fn($a, $b) => strtotime($b->date) - strtotime($a->date));
 
 if (count($all_expenses) > 0) {
-    print '<div class="fichecenter">';
-    print '<h3>'.$langs->trans("TotalMonthlyExpenses").'</h3>';
+    print '<div class="dashboard-section border-blue-section">';
+    print '<h3 class="section-title"><i class="fa fa-money"></i> '.$langs->trans("TotalMonthlyExpenses").'</h3>';
     print '<div class="div-table-responsive">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
+    print '<table class="noborder centpercent modern-table">';
+    print '<thead><tr class="liste_titre">';
     print '<th>'.$langs->trans("Date").'</th>';
     print '<th>'.$langs->trans("Type").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
     print '<th>'.$langs->trans("Amount").'</th>';
-    print '</tr>';
-
+    print '</tr></thead><tbody>';
     foreach ($all_expenses as $expense) {
-        print '<tr class="oddeven">';
-        print '<td>'.dol_print_date($db->jdate($expense->date), 'day').'</td>';
+        print '<tr>';
+        print '<td>'.dol_print_date($db->jdate($expense->date), "day").'</td>';
         print '<td>'.$langs->trans($expense->type).'</td>';
         print '<td>'.$expense->description.'</td>';
         print '<td>'.price($expense->amount).'</td>';
         print '</tr>';
     }
-    print '</table>';
-    print '</div>';
-    print '</div>';
+    print '</tbody></table></div></div>';
 }
-
-
 
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
@@ -499,63 +641,15 @@ if (!empty($reservoirs)) {
     }
 }
 
-.dashboard-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,.05);
-    height: 100px; /* Fixed height for consistency */
+.section-title.blue {
+    border-left: 6px solid #007bff;
 }
-.dashboard-item-content {
-    flex-grow: 1;
+.section-title.blue i {
+    color: #007bff;
 }
-.dashboard-item-title {
-    font-size: 14px;
-    color: #777;
-    margin-bottom: 5px;
-}
-.dashboard-item-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-}
-.dashboard-item-icon {
-    font-size: 40px;
-    color: #007bff; /* Dolibarr primary color */
-    margin-left: 15px;
-}
-.fichehalfleft {
-    width: 100%;
-    float: none;
-}
-.fichehalfright {
-    display: none; /* Hide the right column if not needed */
-}
-.div-table-responsive {
-    overflow-x: auto;
-}
-.notopnoleftnoright {
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
-}
-</style>
 
-<style>
-.veiculo {
-	width: 100%;
-	border-collapse: collapse;
-}
-.veiculo, .veic_th, .veic_td {
-	border: 1px solid black;
-	padding: 8px;
-	text-align: left;
-}
-</style>
+
+     
 
 
 <?php
@@ -573,34 +667,45 @@ $manutencoes = $manutencoes_obj->fetchAll('DESC', 'rowid', 8, 0, $filter_mainten
 function formatarData($data) {
     return date("d/m/Y", strtotime($data));
 }
+if (count($manutencoes) > 0) {
+    print '<div class="dashboard-section border-blue">';
+    print '<h3 class="section-title blue"><i class="fa fa-history"></i> '.$langs->trans("LatestVehicleMaintenances").'</h3>';
 
-if(count($manutencoes) > 0) {
-    echo '<div class="fichecenter">';
-    echo '<h2>Últimas Manutenções de Veículos</h2>';
-    echo '<table class="veiculo">';
-    echo '<tr>';
-    echo '<th class="veic_th">Manutenção</th>';
-    echo '<th class="veic_th">Veículo</th>';
-    echo '<th class="veic_th">Data Prevista</th>';
-    echo '<th class="veic_th">Data Realizada</th>';
-    echo '<th class="veic_th">Custo</th>';
-    echo '</tr>';
+    print '<div class="div-table-responsive">';
+    print '<table class="noborder centpercent modern-table">';
+    print '<thead>';
+    print '<tr class="liste_titre">';
+    print '<th><i class="fa fa-tools"></i> '.$langs->trans("MaintenanceRef").'</th>';
+    print '<th><i class="fa fa-car"></i> '.$langs->trans("VehicleRef").'</th>';
+    print '<th><i class="fa fa-calendar-check-o"></i> '.$langs->trans("ScheduledDate").'</th>';
+    print '<th><i class="fa fa-calendar"></i> '.$langs->trans("CompletionDate").'</th>';
+    print '<th><i class="fa fa-dollar"></i> '.$langs->trans("Cost").'</th>';
+    print '</tr>';
+    print '</thead>';
+    print '<tbody>';
+
     foreach ($manutencoes as $manutencao) {
-		$veiculo = new Veiculo($db);
-		$veiculo->fetch($manutencao->fk_veiculo);
-        echo '<tr>';
-        echo '<td class="veic_td"><i class="fas fa-wrench"></i>		' . $manutencao->ref . '</td>';
-        echo '<td class="veic_td">' . $veiculo->ref . '</td>';
-        echo '<td class="veic_td">' . formatarData($manutencao->data_prevista) . '</td>';
-        echo '<td class="veic_td">' . ($manutencao->data_concluida ? formatarData($manutencao->data_concluida) : '-') . '</td>';
-        echo '<td class="veic_td">'.price($manutencao->amount).'</td>';
-        echo '</tr>';
+        $veiculo = new Veiculo($db);
+        $veiculo->fetch($manutencao->fk_veiculo);
+
+        print '<tr>';
+        print '<td><i class="fa fa-wrench"></i> '.$manutencao->ref.'</td>';
+        print '<td>'.$veiculo->getNomUrl(1).'</td>';
+        print '<td>'.dol_print_date($db->jdate($manutencao->data_prevista), 'day').'</td>';
+        print '<td>'.($manutencao->data_concluida ? dol_print_date($db->jdate($manutencao->data_concluida), 'day') : '-').'</td>';
+        print '<td>'.price($manutencao->amount).'</td>';
+        print '</tr>';
     }
-    echo '</table>';
-    echo '</div>';
+
+    print '</tbody>';
+    print '</table>';
+    print '</div>'; // div-table-responsive
+    print '</div>'; // dashboard-section
 };
 
 print '</div>'; // Closes the main fichecenter
+
+
 
 ?>
 
