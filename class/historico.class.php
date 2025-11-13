@@ -83,7 +83,7 @@ class Historico extends CommonObject
      */
     public $fields=array(
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-        'fk_veiculo' => array('type'=>'integer:Veiculo:frota/class/veiculo.class.php', 'label'=>'Veiculo', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'index'=>1),
+        'fk_veiculo' => array('type'=>'integer:Veiculo:frota/class/veiculo.class.php', 'label'=>'Veiculo ', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'index'=>1),
         'date_registro' => array('type'=>'date', 'label'=>'Data', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1),
         'quilometragem' => array('type'=>'double(24,8)', 'label'=>'Quilometragem', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>0),
         'horimetro' => array('type'=>'double(24,8)', 'label'=>'Horímetro', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>0),
@@ -117,7 +117,7 @@ class Historico extends CommonObject
             $this->fields['entity']['enabled'] = 0;
         }
 
-        // Unset fields that are disabled
+        // Unset fields that are isabled
         foreach ($this->fields as $key => $val) {
             if (isset($val['enabled']) && empty($val['enabled'])) {
                 unset($this->fields[$key]);
@@ -152,7 +152,7 @@ class Historico extends CommonObject
      * Load object in memory from the database
      *
      * @param int    $id   Id object
-     * @param string $ref  Ref
+     * @param string $ref  Refd
      * @return int         <0 if KO, 0 if not found, >0 if OK
      */
     public function fetch($id, $ref = null)

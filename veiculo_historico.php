@@ -67,7 +67,7 @@ if ($resql) {
 // Page header
 llxHeader('', $langs->trans('Historico'), '', '', 0, 0, array(), dol_buildpath('/frota/js/chart.min.js', 1));
 
-print load_fiche_titre($langs->trans('Historico'), '', 'object_historico.png');
+print load_fiche_titre($langs->trans('Historico'), '', 'fa-car');
 
 // Instructional text
 print '<p>'.$langs->trans("SelectVehicleToSeeHistory").'</p>';
@@ -75,7 +75,7 @@ print '<p>'.$langs->trans("SelectVehicleToSeeHistory").'</p>';
 // Vehicle selection form
 print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
 print '<table class="border centpercent">';
-print '<tr class="pair"><td class="titlefieldcreate fieldrequired">'.$langs->trans('Vehicle').'</td><td>';
+print '<tr class="pair"><td class="titlefieldcreate fieldrequired">'.$langs->trans('SelectVehicle').'</td><td>';
 if (empty($vehicles)) {
     print '<div class="warning">'.$langs->trans('NoVehicleRegistered').'</div>';
 } else {

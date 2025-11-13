@@ -119,9 +119,9 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="create">';
 
 print '<table class="border centpercent">';
-print '<tr class="pair"><td class="titlefieldcreate fieldrequired">'.$langs->trans('Vehicle').'</td><td>';
+print '<tr class="pair"><td class="titlefieldcreate fieldrequired">'.$langs->trans('SelectVehicle').'</td><td>';
 if (empty($vehicles)) {
-    print '<div class="warning">'.$langs->trans('NoVehicleRegistered').'</div>';
+    print '<div class="warning">'.$langs->trans('Nenhum veículo cadastrado').'</div>';
 } else {
     print '<select class="flat minwidth300" id="fk_veiculo" name="fk_veiculo">';
     print '<option value="">&nbsp;</option>';

@@ -62,7 +62,7 @@ class Veiculo extends CommonObject
 	/**
 	 * @var string String with name of icon for veiculo. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'veiculo@frota' if picto is file 'img/object_veiculo.png'.
 	 */
-	public $picto = 'fa-file';
+	public $picto = 'fa-car';
 
 
 	const STATUS_DRAFT = 0;
