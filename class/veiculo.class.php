@@ -115,7 +115,7 @@ class Veiculo extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(V-)', 'index'=>1, 'searchall'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'alwayseditable'=>'1', 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1',),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'alwayseditable'=>'1', 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Apelido do veículo", 'showoncombobox'=>'2', 'validate'=>'1',),
 		'amount' => array('type'=>'price', 'label'=>'Amount', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help text for amount", 'validate'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150', 'help'=>"OrganizationEventLinkToThirdParty", 'validate'=>'1',),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150', 'validate'=>'1',),
@@ -304,24 +304,6 @@ class Veiculo extends CommonObject
 				$this->error = "Error " . $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
-			}
-
-			// Create default preventive maintenances
-			$default_maintenances = array(
-				array('tipo' => 'Troca de Óleo', 'km' => 10000, 'horas' => 0, 'dias' => 180),
-				array('tipo' => 'Revisão Geral', 'km' => 50000, 'horas' => 0, 'dias' => 365)
-			);
-
-			foreach ($default_maintenances as $maintenance) {
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_manutencao_preventiva";
-				$sql.= " (fk_veiculo, tipo_manutencao, intervalo_km, intervalo_horas, intervalo_dias)";
-				$sql.= " VALUES (" . $resultcreate . ", '" . $this->db->escape($maintenance['tipo']) . "', " . $maintenance['km'] . ", " . $maintenance['horas'] . ", " . $maintenance['dias'] . ")";
-				$resql = $this->db->query($sql);
-				if (! $resql) {
-					$this->error = "Error " . $this->db->lasterror();
-					$this->db->rollback();
-					return -1;
-				}
 			}
 		}
 
@@ -1092,45 +1074,6 @@ class Veiculo extends CommonObject
 		}
 
 		return $out;
-	}
-
-	/**
-	 * Check if maintenance is due.
-	 *
-	 * @return bool True if maintenance is due, false otherwise.
-	 */
-	public function isMaintenanceDue()
-	{
-		global $db, $conf;
-
-		$interval_days = !empty($conf->global->FROTA_MAINTENANCE_INTERVAL_DAYS) ? $conf->global->FROTA_MAINTENANCE_INTERVAL_DAYS : 180;
-
-		// Get the date of the last preventive maintenance
-		$sql = "SELECT MAX(data_concluida) as last_maintenance_date";
-		$sql .= " FROM ".MAIN_DB_PREFIX."frota_manutencao";
-		$sql .= " WHERE fk_veiculo = ".$this->id;
-		$sql .= " AND tipo = 1"; // Assuming '1' is for 'Preventiva'
-
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$last_maintenance_date = $obj->last_maintenance_date;
-
-			if ($last_maintenance_date) {
-				$last_maintenance_timestamp = dol_stringtotime($last_maintenance_date, 'auto');
-				$due_timestamp = strtotime('+'.$interval_days.' days', $last_maintenance_timestamp);
-				$now = dol_now();
-
-				if ($now > $due_timestamp) {
-					return true; // Maintenance is overdue
-				}
-			} else {
-				// No preventive maintenance has been recorded, so it's considered due.
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**

@@ -303,11 +303,6 @@ class Manutencao extends CommonObject
 				}
 			}
 
-			if (!$error) {
-				if ($this->updatePreventiveMaintenance($user) < 0) {
-					$error++;
-				}
-			}
 		} else {
 			$error++;
 		}
@@ -616,12 +611,6 @@ class Manutencao extends CommonObject
 			if (!$resql) {
 				$error++;
 				$this->error = "Error " . $this->db->lasterror();
-			}
-		}
-
-		if (!$error) {
-			if ($this->updatePreventiveMaintenance($user) < 0) {
-				$error++;
 			}
 		}
 
@@ -1366,64 +1355,7 @@ class Manutencao extends CommonObject
 		return $error;
 	}
 
-	/**
-	 * Update preventive maintenance table after a maintenance is done.
-	 *
-	 * @param  User $user      User that modifies
-	 * @return int             0 if OK, <0 if KO
-	 */
-	private function updatePreventiveMaintenance(User $user)
-	{
-		if ($this->tipo == 0 && !empty($this->fk_veiculo) && !empty($this->label)) {
-			// It's a preventive maintenance, let's update the preventive maintenance table.
-			if (!class_exists('VeiculoManutencaoPreventiva')) {
-				require_once __DIR__.'/veiculo_manutencao_preventiva.class.php';
-			}
 
-			$preventiva = new VeiculoManutencaoPreventiva($this->db);
-			$filters = array('fk_veiculo' => $this->fk_veiculo, 'tipo_manutencao' => $this->label);
-			
-			// fetchAll returns an array of objects
-			$records = $preventiva->fetchAll('', '', 1, 0, $filters);
-
-			if (is_array($records) && count($records) > 0) {
-				$preventiva_to_update = $records[0];
-				
-				$preventiva_to_update->ultima_manutencao_km = $this->quilometragem;
-				$preventiva_to_update->ultima_manutencao_horas = $this->horimetro;
-				
-				$data_base_ts = 0;
-				if (!empty($this->data_concluida)) {
-					$data_base_ts = $this->data_concluida;
-				} elseif (!empty($this->data_prevista)) {
-					$data_base_ts = $this->data_prevista;
-				}
-
-				if ($data_base_ts > 0) {
-					$preventiva_to_update->ultima_manutencao_data = $data_base_ts;
-				} else {
-                    $preventiva_to_update->ultima_manutencao_data = dol_now();
-                }
-
-				if (!empty($preventiva_to_update->intervalo_km) && $preventiva_to_update->intervalo_km > 0) {
-					$preventiva_to_update->proxima_manutencao_km = $this->quilometragem + $preventiva_to_update->intervalo_km;
-				}
-				if (!empty($preventiva_to_update->intervalo_horas) && $preventiva_to_update->intervalo_horas > 0) {
-					$preventiva_to_update->proxima_manutencao_horas = $this->horimetro + $preventiva_to_update->intervalo_horas;
-				}
-				if (!empty($preventiva_to_update->intervalo_dias) && $preventiva_to_update->intervalo_dias > 0) {
-                    $base_ts_for_next = $data_base_ts > 0 ? $data_base_ts : dol_now();
-					$preventiva_to_update->proxima_manutencao_data = $base_ts_for_next + ($preventiva_to_update->intervalo_dias * 24 * 60 * 60);
-				}
-
-				if ($preventiva_to_update->update($user) < 0) {
-					$this->error = $preventiva_to_update->error;
-					return -1;
-				}
-			}
-		}
-		return 0;
-	}
 }
 
 
