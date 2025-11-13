@@ -425,7 +425,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=veiculo',
 			 'type' => 'left',
-			 'titre' => 'Lista Veiculo',
+			 'titre' => 'Lista de Veiculos',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_veiculo_list',
 			 'url' => '/frota/veiculo_list.php',
@@ -441,7 +441,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=veiculo',
 			 'type' => 'left',
-			 'titre' => 'Novo Veiculo',
+			 'titre' => 'Adicionar Veiculo',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_veiculo_new',
 			 'url' => '/frota/veiculo_card.php?action=create',
@@ -457,7 +457,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=veiculo',
 			'type' => 'left',
-			'titre' => 'Histórico de Uso',
+			'titre' => 'Histórico do Veículo',
 			'mainmenu' => 'frota',
 			'leftmenu' => 'frota_veiculo_historico',
 			'url' => '/frota/veiculo_historico.php',
@@ -489,7 +489,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=implemento',
 			 'type' => 'left',
-			 'titre' => 'Lista Implemento',
+			 'titre' => 'Lista deImplementos',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_implemento_list',
 			 'url' => '/frota/implemento_list.php',
@@ -505,7 +505,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=implemento',
 			 'type' => 'left',
-			 'titre' => 'Novo Implemento',
+			 'titre' => 'Adicionar Implemento',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_implemento_new',
 			 'url' => '/frota/implemento_card.php?action=create',
@@ -537,7 +537,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=reservatorio',
 			 'type' => 'left',
-			 'titre' => 'Lista Reservatorio',
+			 'titre' => 'Lista de Reservatórios',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_reservatorio_list',
 			 'url' => '/frota/reservatorio_list.php',
@@ -553,7 +553,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=reservatorio',
 			 'type' => 'left',
-			 'titre' => 'Novo Reservatorio',
+			 'titre' => 'Adicionar Reservatório',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_reservatorio_new',
 			 'url' => '/frota/reservatorio_card.php?action=create',
@@ -585,7 +585,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=manutencao',
 			 'type' => 'left',
-			 'titre' => 'Lista Manutenção',
+			 'titre' => 'Lista de Manutenções',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_manutencao_list',
 			 'url' => '/frota/manutencao_list.php',
@@ -601,7 +601,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=manutencao',
 			 'type' => 'left',
-			 'titre' => 'Nova Manutencao',
+			 'titre' => 'Adicionar Manutenção',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_manutencao_new',
 			 'url' => '/frota/manutencao_card.php?action=create',
@@ -633,7 +633,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=seguro',
 			 'type' => 'left',
-			 'titre' => 'List Seguro',
+			 'titre' => 'Lista de Seguros',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_seguro_list',
 			 'url' => '/frota/seguro_list.php',
@@ -649,7 +649,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=seguro',
 			 'type' => 'left',
-			 'titre' => 'New Seguro',
+			 'titre' => 'Adicionar Seguro',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_seguro_new',
 			 'url' => '/frota/seguro_card.php?action=create',
@@ -681,7 +681,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=abastecimento',
 			 'type' => 'left',
-			 'titre' => 'List Abastecimento',
+			 'titre' => 'Lista de Abastecimentos',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_abastecimento_list',
 			 'url' => '/frota/abastecimento_list.php',
@@ -697,7 +697,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=abastecimento',
 			 'type' => 'left',
-			 'titre' => 'New Abastecimento',
+			 'titre' => 'Adicionar Abastecimento',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_abastecimento_new',
 			 'url' => '/frota/abastecimento_card.php?action=create',
@@ -729,7 +729,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=aluguel',
 			 'type' => 'left',
-			 'titre' => 'List Aluguel',
+			 'titre' => 'Lista de Aluguéis',
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'frota_aluguel_list',
 			 'url' => '/frota/aluguel_list.php',
@@ -763,7 +763,7 @@ class modFrota extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=frota',
 			'type'=>'left',
-			'titre'=>'CompraCombustivel',
+			'titre'=>'Combustível',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'frota',
 			'leftmenu'=>'compracombustivel',
@@ -778,7 +778,7 @@ class modFrota extends DolibarrModules
         $this->menu[$r++]=array(
             'fk_menu'=>'fk_mainmenu=frota,fk_leftmenu=compracombustivel',
             'type'=>'left',
-            'titre'=>'List CompraCombustivel',
+            'titre'=>'Lista de Combustíveis',
             'mainmenu'=>'frota',
             'leftmenu'=>'frota_compracombustivel_list',
             'url'=>'/frota/compracombustivel_list.php',
@@ -792,7 +792,7 @@ class modFrota extends DolibarrModules
         $this->menu[$r++]=array(
             'fk_menu'=>'fk_mainmenu=frota,fk_leftmenu=compracombustivel',
             'type'=>'left',
-            'titre'=>'New CompraCombustivel',
+            'titre'=>'Adicionar Combustível',
             'mainmenu'=>'frota',
             'leftmenu'=>'frota_compracombustivel_new',
             'url'=>'/frota/compracombustivel_card.php?action=create',

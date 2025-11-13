@@ -67,7 +67,7 @@
   - [ ] Manutenções realizadas
   - [ ] Próximas preventivas
 - [X] Dashboard simples da frota:
-  - [X] Veículos ativos
+  - [X] Veículos ativos   
   - [X] Veículos em manutenção
   - [X] Custos totais do mês
 - [ ] Exportação de relatórios para Excel/PDF
