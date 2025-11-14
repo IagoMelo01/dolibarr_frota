@@ -45,7 +45,7 @@ $fk_veiculo = GETPOST('fk_veiculo', 'int');
 $data = GETPOST('data', 'alpha');
 $km = GETPOST('km', 'alpha');
 $horimetro = GETPOST('horimetro', 'alpha');
-$observacoes = GETPOST('observacoes', 'text');
+$observacoes = GETPOST('observacoes', 'alpha');
 
 // Security and permissions
 if (!isModEnabled('frota')) accessforbidden();
@@ -57,6 +57,15 @@ $errors = array();
 // Define constants for thresholds
 const KM_THRESHOLD = 1000; // Threshold for quilometragem
 const HORIMETRO_THRESHOLD = 50; // Threshold for horímetro
+
+// Function to schedule preventive maintenance
+function schedulePreventiveMaintenance($db, $langs, $fk_veiculo, $ref, $user, $reason) {
+    $description = $langs->trans('PreventiveMaintenanceDescription') . ' ' . $langs->trans('DueTo') . ' ' . $reason;
+    $nextMonthDate = date('Y-m-d', strtotime('+1 month'));
+    $sql_insert = "INSERT INTO ".MAIN_DB_PREFIX."frota_manutencao (fk_veiculo, tipo, ref, label, description, date_creation, fk_user_creat, status, data_prevista)
+                   VALUES (".(int)$fk_veiculo.", 0, '".$db->escape($ref)."', '".$db->escape($langs->trans('PreventiveMaintenance'))."', '".$db->escape($description)."', '".date('Y-m-d')."', " .(int)$user->id. ", 0, '".$nextMonthDate."')";
+    return $db->query($sql_insert);
+}
 
 // Create
 if ($action === 'create') {
@@ -99,14 +108,15 @@ if ($action === 'create') {
         $km_diff = $obj->quilometragem - $last_km;
         $horimetro_diff = $obj->horimetro - $last_horimetro;
 
-        // Generate a reference for the maintenance entry
-        $ref = 'PREV-' . strtoupper(uniqid());
-
         if ($km_diff > KM_THRESHOLD || $horimetro_diff > HORIMETRO_THRESHOLD) {
+            // Generate a reference for the maintenance entry
+            $ref = 'preventiva-' . (int)$fk_veiculo;
+
+            // Determine the reason for preventive maintenance
+            $reason = $km_diff > KM_THRESHOLD ? $langs->trans('HighMileage') : $langs->trans('HighHourmeter');
+
             // Schedule a preventive maintenance
-            $sql_insert = "INSERT INTO ".MAIN_DB_PREFIX."frota_manutencao (fk_veiculo, tipo, ref, label, description, date_creation, fk_user_creat)
-                           VALUES (".(int)$fk_veiculo.", 1, '".$db->escape($ref)."', '".$db->escape($langs->trans('PreventiveMaintenance'))."', '".$db->escape($langs->trans('PreventiveMaintenanceDescription'))."', '".date('Y-m-d')."', ".(int)$user->id.")";
-            $res_insert = $db->query($sql_insert);
+            $res_insert = schedulePreventiveMaintenance($db, $langs, $fk_veiculo, $ref, $user, $reason);
 
             if ($res_insert) {
                 setEventMessages($langs->trans('PreventiveMaintenanceScheduled'), null);
