@@ -91,22 +91,87 @@ print '</td></tr>';
 print '</table>';
 print '</form>';
 
+function renderChart($id, $title, $label, $labelsData, $datasetData, $bgColor, $borderColor)
+{
+    if (count($datasetData) <= 1) return;
+
+    print '
+        <div style="margin-top: 20px; text-align: center;">
+            <h4>'.$title.'</h4>
+
+            <div style="display: inline-block; width: 600px; max-width: 100%;">
+                <canvas id="'.$id.'" style="width: 100%; height: 350px;"></canvas>
+            </div>
+        </div>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById("'.$id.'").getContext("2d");
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: '.json_encode($labelsData).',
+                    datasets: [{
+                        label: "'.$label.'",
+                        data: '.json_encode($datasetData).',
+                        backgroundColor: "'.$bgColor.'",
+                        borderColor: "'.$borderColor.'",
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: false }
+                    }
+                }
+            });
+        });
+        </script>
+    ';
+}
+
+
+
+// Handle delete action
+$action = GETPOST('action', 'alpha');
+if ($action === 'delete') {
+    $rowid = GETPOST('rowid', 'int');
+    $token = GETPOST('token', 'alpha');
+
+    if (!empty($rowid) && !empty($token) && $token === newToken()) {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."frota_veiculo_historico WHERE rowid = ".(int)$rowid;
+        $resql = $db->query($sql);
+
+        if ($resql) {
+            setEventMessages($langs->trans('RecordDeleted'), null);
+        } else {
+            setEventMessages($langs->trans('ErrorRecordNotDeleted').': '.$db->lasterror(), null, 'errors');
+        }
+    } else {
+        setEventMessages($langs->trans('ErrorInvalidTokenOrRowID'), null, 'errors');
+    }
+
+    header('Location: '.$_SERVER['PHP_SELF'].'?fk_veiculo='.$fk_veiculo);
+    exit;
+}
+
 // Show history if vehicle selected
 if (!empty($fk_veiculo)) {
-    print '<div class="tabsAction">';
-    print '<a class="butAction" href="veiculo_historico_card.php?fk_veiculo='.$fk_veiculo.'">'.$langs->trans("NewHistory").'</a>';
-    print '</div>';
 
     $sql = "SELECT h.*, u.login as user_login FROM ".MAIN_DB_PREFIX."frota_veiculo_historico h LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = h.fk_user WHERE h.fk_veiculo = ".(int)$fk_veiculo." ORDER BY h.date_registro DESC";
     $res = $db->query($sql);
     print '<h4>'.$langs->trans('History').'</h4>';
+
     if ($res) {
         $num_rows = $db->num_rows($res);
         if ($num_rows == 0) {
             print $langs->trans('NoRecordFound');
         } else {
             print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre"><th>'.$langs->trans('Date').'</th><th>'.$langs->trans('Quilometragem').'</th><th>'.$langs->trans('Horimetro').'</th><th>'.$langs->trans('User').'</th><th>'.$langs->trans('Observacoes').'</th></tr>';
+            print '<tr class="liste_titre"><th>'.$langs->trans('Date').'</th><th>'.$langs->trans('Quilometragem').'</th><th>'.$langs->trans('Horimetro').'</th><th>'.$langs->trans('User').'</th><th>'.$langs->trans('Observacoes').'</th><th>'.$langs->trans('Ações').'</th></tr>';
             
             $chart_labels_km = array();
             $chart_data_km = array();
@@ -133,80 +198,77 @@ if (!empty($fk_veiculo)) {
             $chart_labels_horimetro = array_reverse($chart_labels_horimetro);
             $chart_data_horimetro = array_reverse($chart_data_horimetro);
 
+            // Render charts before the table
+            print '<div style="display: flex; gap: 20px; margin-top: 20px; justify-content: center; align-items: center;">';
+
+
+                if (count($chart_data_km) > 1) {
+                    renderChart(
+                        "kmChart",
+                        $langs->trans("ChartKm"),
+                        $langs->trans("Quilometragem"),
+                        $chart_labels_km,
+                        $chart_data_km,
+                        "rgba(54, 162, 235, 0.2)",
+                        "rgba(54, 162, 235, 1)"
+                    );
+                }
+
+                if (count($chart_data_horimetro) > 1) {
+                    renderChart(
+                        "horimetroChart",
+                        $langs->trans("ChartHorimetro"),
+                        $langs->trans("Horimetro"),
+                        $chart_labels_horimetro,
+                        $chart_data_horimetro,
+                        "rgba(255, 99, 132, 0.2)",
+                        "rgba(255, 99, 132, 1)"
+                    );
+                }
+
+            print '</div>';
+
+             print '<div class="tabsAction">';
+            print '<a class="butAction" href="veiculo_historico_card.php?fk_veiculo='.$fk_veiculo.'">'.$langs->trans("NewHistory").'</a>';
+            print '</div>';
+
             foreach ($history_rows as $objh) {
                 print '<tr>';
-                print '<td>'.dol_print_date(dol_stringtotime($objh->date_registro), 'dayhour').'</td>';
-                print '<td>'.dol_escape_htmltag($objh->quilometragem).'</td>';
-                print '<td>'.dol_escape_htmltag($objh->horimetro).'</td>';
-                print '<td>'.dol_escape_htmltag($objh->user_login).'</td>';
-                print '<td>'.dol_escape_htmltag($objh->observacao).'</td>';
+                print '<td>' . dol_print_date(dol_stringtotime($objh->date_registro), 'dayhour') . '</td>';
+                print '<td>' . dol_escape_htmltag($objh->quilometragem) . '</td>';
+                print '<td>' . dol_escape_htmltag($objh->horimetro) . '</td>';
+                print '<td>' . dol_escape_htmltag($objh->user_login) . '</td>';
+                print '<td>' . dol_escape_htmltag($objh->observacao) . '</td>';
+
+                // CSRF token
+                $token = newToken();
+
+                // Ações
+                print '<td style="text-align:center; white-space: nowrap;">';
+
+                // Edit button
+                print '<a class="butAction" 
+                            title="'.$langs->trans("Edit").'" 
+                            href="veiculo_historico_card.php?action=edit&rowid='.$objh->rowid.'" 
+                            style="margin-right:5px;">
+                            <i class="fa fa-edit"></i>
+                    </a>';
+
+                // Delete button
+                print '<a class="butActionDelete" 
+                            title="'.$langs->trans("Delete").'" 
+                            href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$objh->rowid.'&token='.$token.'" 
+                            onclick="return confirm(\''.$langs->trans("ConfirmDelete").'\');">
+                            <i class="fa fa-trash"></i>
+                    </a>';
+
+                print '</td>';
+
                 print '</tr>';
             }
             print '</table>';
 
-            // KM Chart
-            if (count($chart_data_km) > 1) {
-                print '<div style="margin-top: 20px;">';
-                print '<h4>'.$langs->trans('ChartKm').'</h4>';
-                print '<canvas id="kmChart" width="400" height="200"></canvas>';
-                print '</div>';
-
-                print '<script>';
-                print 'document.addEventListener("DOMContentLoaded", function() {';
-                print 'var ctx_km = document.getElementById("kmChart").getContext("2d");';
-                print 'var kmChart = new Chart(ctx_km, {';
-                print '    type: "line",';
-                print '    data: {';
-                print '        labels: '.json_encode($chart_labels_km).' ,';
-                print '        datasets: [{';
-                print '            label: "'.$langs->trans("Quilometragem").'",';
-                print '            data: '.json_encode($chart_data_km).' ,';
-                print '            backgroundColor: "rgba(54, 162, 235, 0.2)",';
-                print '            borderColor: "rgba(54, 162, 235, 1)",';
-                print '            borderWidth: 1';
-                print '        }]';
-                print '    },';
-                print '    options: {';
-                print '        scales: {';
-                print '            y: { beginAtZero: false }';
-                print '        }';
-                print '    }';
-                print '});';
-                print '});';
-                print '</script>';
-            }
-
-            // Horimetro Chart
-            if (count($chart_data_horimetro) > 1) {
-                print '<div style="margin-top: 20px;">';
-                print '<h4>'.$langs->trans('ChartHorimetro').'</h4>';
-                print '<canvas id="horimetroChart" width="400" height="200"></canvas>';
-                print '</div>';
-
-                print '<script>';
-                print 'document.addEventListener("DOMContentLoaded", function() {';
-                print 'var ctx_horimetro = document.getElementById("horimetroChart").getContext("2d");';
-                print 'var horimetroChart = new Chart(ctx_horimetro, {';
-                print '    type: "line",';
-                print '    data: {';
-                print '        labels: '.json_encode($chart_labels_horimetro).' ,';
-                print '        datasets: [{';
-                print '            label: "'.$langs->trans("Horimetro").'",';
-                print '            data: '.json_encode($chart_data_horimetro).' ,';
-                print '            backgroundColor: "rgba(255, 99, 132, 0.2)",';
-                print '            borderColor: "rgba(255, 99, 132, 1)",';
-                print '            borderWidth: 1';
-                print '        }]';
-                print '    },';
-                print '    options: {';
-                print '        scales: {';
-                print '            y: { beginAtZero: false }';
-                print '        }';
-                print '    }';
-                print '});';
-                print '});';
-                print '</script>';
-            }
+            
         }
     } else {
         print $langs->trans('ErrorRequest');

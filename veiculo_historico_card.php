@@ -54,6 +54,10 @@ if (empty($user->rights->frota->write) && empty($user->admin)) accessforbidden()
 
 $errors = array();
 
+// Define constants for thresholds
+const KM_THRESHOLD = 1000; // Threshold for quilometragem
+const HORIMETRO_THRESHOLD = 50; // Threshold for horímetro
+
 // Create
 if ($action === 'create') {
     // CSRF token
@@ -68,14 +72,50 @@ if ($action === 'create') {
         $obj = new Historico($db);
         // set fields expected by createCommon
         $obj->fk_veiculo = $fk_veiculo;
-        // Historico->data is date type, ensure format YYYY-MM-DD
         $ts = strtotime($data);
-        if ($ts === false) $obj->date_registro = date('Y-m-d'); else $obj->date_registro = date('Y-m-d', $ts);
+        // Format the date to only include day, month, and year
+        $obj->date_registro = $ts === false ? date('Y-m-d') : date('Y-m-d', $ts);
         $obj->quilometragem = $km !== '' ? (float)$km : 0;
         $obj->horimetro = $horimetro !== '' ? (float)$horimetro : 0;
         $obj->observacao = $observacoes !== '' ? $observacoes : null;
         $obj->fk_user = $user->id;
 
+        // Fetch the last historical record for the vehicle
+        $sql = "SELECT quilometragem, horimetro FROM ".MAIN_DB_PREFIX."frota_veiculo_historico
+                WHERE fk_veiculo = ".(int)$fk_veiculo."
+                ORDER BY date_registro DESC, rowid DESC LIMIT 1";
+        $resql = $db->query($sql);
+        $last_km = 0;
+        $last_horimetro = 0;
+        if ($resql) {
+            $last_record = $db->fetch_object($resql);
+            if ($last_record) {
+                $last_km = (float)$last_record->quilometragem;
+                $last_horimetro = (float)$last_record->horimetro;
+            }
+        }
+
+        // Check if the increase is too large
+        $km_diff = $obj->quilometragem - $last_km;
+        $horimetro_diff = $obj->horimetro - $last_horimetro;
+
+        // Generate a reference for the maintenance entry
+        $ref = 'PREV-' . strtoupper(uniqid());
+
+        if ($km_diff > KM_THRESHOLD || $horimetro_diff > HORIMETRO_THRESHOLD) {
+            // Schedule a preventive maintenance
+            $sql_insert = "INSERT INTO ".MAIN_DB_PREFIX."frota_manutencao (fk_veiculo, tipo, ref, label, description, date_creation, fk_user_creat)
+                           VALUES (".(int)$fk_veiculo.", 1, '".$db->escape($ref)."', '".$db->escape($langs->trans('PreventiveMaintenance'))."', '".$db->escape($langs->trans('PreventiveMaintenanceDescription'))."', '".date('Y-m-d')."', ".(int)$user->id.")";
+            $res_insert = $db->query($sql_insert);
+
+            if ($res_insert) {
+                setEventMessages($langs->trans('PreventiveMaintenanceScheduled'), null);
+            } else {
+                setEventMessages($langs->trans('ErrorPreventiveMaintenance').': '.$db->lasterror(), null, 'errors');
+            }
+        }
+
+        // Save the historical record
         $rescreate = $obj->create($user);
         if ($rescreate > 0) {
             setEventMessages($langs->trans('RecordSaved'), null);
