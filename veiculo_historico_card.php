@@ -41,11 +41,14 @@ $langs->load('frota@frota');
 
 // Parameters
 $action = GETPOST('action', 'alpha');
+$rowid = GETPOST('rowid', 'int');
 $fk_veiculo = GETPOST('fk_veiculo', 'int');
 $data = GETPOST('data', 'alpha');
 $km = GETPOST('km', 'alpha');
 $horimetro = GETPOST('horimetro', 'alpha');
 $observacoes = GETPOST('observacoes', 'alpha');
+
+$object = new Historico($db);
 
 // Security and permissions
 if (!isModEnabled('frota')) accessforbidden();
@@ -65,6 +68,22 @@ function schedulePreventiveMaintenance($db, $langs, $fk_veiculo, $ref, $user, $r
     $sql_insert = "INSERT INTO ".MAIN_DB_PREFIX."frota_manutencao (fk_veiculo, tipo, ref, label, description, date_creation, fk_user_creat, status, data_prevista)
                    VALUES (".(int)$fk_veiculo.", 0, '".$db->escape($ref)."', '".$db->escape($langs->trans('PreventiveMaintenance'))."', '".$db->escape($description)."', '".date('Y-m-d')."', " .(int)$user->id. ", 0, '".$nextMonthDate."')";
     return $db->query($sql_insert);
+}
+
+// Load data for edit
+if ($action === 'edit' && $rowid) {
+    $res = $object->fetch($rowid);
+    if ($res > 0) {
+        $fk_veiculo = $object->fk_veiculo;
+        $data = dol_print_date($object->date_registro, '%Y-%m-%d');
+        $km = $object->quilometragem;
+        $horimetro = $object->horimetro;
+        $observacoes = $object->observacao;
+    } else {
+        setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+        header('Location: veiculo_historico.php');
+        exit;
+    }
 }
 
 // Create
@@ -136,6 +155,38 @@ if ($action === 'create') {
         }
     }
 }
+// Update
+elseif ($action === 'update') {
+    if (empty($_POST['token']) || $_POST['token'] !== newToken()) {
+        $errors[] = $langs->trans('ErrorBadFormSent');
+    }
+    if (empty($fk_veiculo)) $errors[] = $langs->trans('SelectVehicle');
+    if ($data === '') $errors[] = $langs->trans('DateIsRequired');
+    if ($km === '' && $horimetro === '') $errors[] = $langs->trans('ProvideKmOrHour');
+
+    if (empty($errors)) {
+        $res = $object->fetch($rowid);
+        if ($res > 0) {
+            $object->fk_veiculo = $fk_veiculo;
+            $ts = strtotime($data);
+            $object->date_registro = $ts === false ? date('Y-m-d') : date('Y-m-d', $ts);
+            $object->quilometragem = $km !== '' ? (float)$km : 0;
+            $object->horimetro = $horimetro !== '' ? (float)$horimetro : 0;
+            $object->observacao = $observacoes !== '' ? $observacoes : null;
+            
+            $resupdate = $object->update($user);
+            if ($resupdate > 0) {
+                setEventMessages($langs->trans('RecordSaved'), null);
+                header('Location: veiculo_historico.php?fk_veiculo='.$fk_veiculo);
+                exit;
+            } else {
+                $errors[] = $langs->trans('ErrorOnSave');
+            }
+        } else {
+            $errors[] = $langs->trans('ErrorRecordNotFound');
+        }
+    }
+}
 
 // Fetch vehicles for select
 $vehicles = array();
@@ -159,14 +210,20 @@ if ($resql) {
 // Page header
 llxHeader('', $langs->trans('Historico'));
 
-print load_fiche_titre($langs->trans('Novo Histórico'), '', 'object_historico.png');
+$page_title = ($action === 'edit') ? $langs->trans('EditHistory') : $langs->trans('Novo Histórico');
+print load_fiche_titre($page_title, '', 'object_historico.png');
 
 foreach ($errors as $e) print '<div class="error">'.dol_escape_htmltag($e)."</div>";
 
 // Form
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="create">';
+if ($action === 'edit') {
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+} else {
+    print '<input type="hidden" name="action" value="create">';
+}
 
 print '<table class="border centpercent">';
 print '<tr class="pair"><td class="titlefieldcreate fieldrequired">'.$langs->trans('SelectVehicle').'</td><td>';
