@@ -88,3 +88,13 @@ MaintenanceIsDue=A manutenção preventiva deste veículo está vencida.
 ActiveVehicles=Veículos Ativos
 VehiclesInMaintenance=Veículos em Manutenção
 TotalMonthlyExpenses=Gastos Totais do Mês
+MaintenanceReport=Relatório de Manutenção
+MaintenanceReportPrevVsReal=Relatório de Manutenções: Previstas vs. Realizadas
+Scheduled=Prevista
+Completed=Realizada
+Late=Atrasada
+Pending=Pendente
+MaintenanceType=Tipo de Manutenção
+ScheduledDate=Data Prevista
+CompletedDate=Data de Conclusão
+

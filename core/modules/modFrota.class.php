@@ -613,6 +613,22 @@ class modFrota extends DolibarrModules
 			 'user' => 2,
 		);
 		/* END LEFTMENU NOVA MANUTENCAO */
+		/* LEFTMENU RELATORIO MANUTENCAO */
+		$this->menu[$r++]=array(
+			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=manutencao',
+			 'type' => 'left',
+			 'titre' => 'MaintenanceReport',
+			 'mainmenu' => 'frota',
+			 'leftmenu' => 'frota_manutencao_relatorio',
+			 'url' => '/frota/manutencao_relatorio.php',
+			 'langs' => 'frota@frota',
+			 'position' => 1000 + $r,
+			 'enabled' => 'isModEnabled(\'frota\')',
+			 'perms' => '$user->hasRight(\'frota\', \'manutencao\', \'read\')',
+			 'target' => '',
+			 'user' => 2,
+		);
+		/* END LEFTMENU RELATORIO MANUTENCAO */
 		/* LEFTMENU SEGURO */
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota',
