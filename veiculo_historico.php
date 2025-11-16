@@ -36,107 +36,32 @@ if (!$res) {
 // Classes
 dol_include_once('/frota/class/historico.class.php');
 dol_include_once('/frota/class/veiculo.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 $langs->load('frota@frota');
 
 // Parameters
 $fk_veiculo = GETPOST('fk_veiculo', 'int');
+$action = GETPOST('action', 'alpha');
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+if (empty($page) || $page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if (!$sortfield) $sortfield = "h.date_registro";
+if (!$sortorder) $sortorder = "DESC";
 
 // Security and permissions
 if (!isModEnabled('frota')) accessforbidden();
 if (empty($user->rights->frota->read) && empty($user->admin)) accessforbidden();
 
-// Fetch vehicles for select
-$vehicles = array();
-$sqlv = "SELECT rowid, label
-         FROM ".MAIN_DB_PREFIX."frota_veiculo
-         ORDER BY label";
-
-$resql = $db->query($sqlv);
-$vehicles = array();
-
-if ($resql) {
-    while ($objv = $db->fetch_object($resql)) {
-        $vehicles[] = array(
-            'rowid' => $objv->rowid,
-            'label' => $objv->label
-        );
-    }
-}
-
-// Page header
-llxHeader('', $langs->trans('Historico'), '', '', 0, 0, array(), dol_buildpath('/frota/js/chart.min.js', 1));
-
-print load_fiche_titre($langs->trans('Historico'), '', 'fa-car');
-
-// Instructional text
-print '<p>'.$langs->trans("SelectVehicleToSeeHistory").'</p>';
-
-// Vehicle selection form
-print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
-print '<table class="border centpercent">';
-print '<tr class="pair"><td class="titlefieldcreate fieldrequired">'.$langs->trans('SelectVehicle').'</td><td>';
-if (empty($vehicles)) {
-    print '<div class="warning">'.$langs->trans('NoVehicleRegistered').'</div>';
-} else {
-    print '<select class="flat minwidth300" id="fk_veiculo" name="fk_veiculo" onchange="this.form.submit()">';
-    print '<option value="">&nbsp;</option>';
-    foreach ($vehicles as $v) {
-        $sel = ($fk_veiculo == $v['rowid']) ? ' selected' : '';
-        print '<option value="'.(int)$v['rowid'].'"'.$sel.'>'.dol_escape_htmltag($v['label']).'</option>';
-    }
-    print '</select>';
-}
-print '</td></tr>';
-print '</table>';
-print '</form>';
-
-function renderChart($id, $title, $label, $labelsData, $datasetData, $bgColor, $borderColor)
-{
-    if (count($datasetData) <= 1) return;
-
-    print '
-        <div style="margin-top: 20px; text-align: center;">
-            <h4>'.$title.'</h4>
-
-            <div style="display: inline-block; width: 600px; max-width: 100%;">
-                <canvas id="'.$id.'" style="width: 100%; height: 350px;"></canvas>
-            </div>
-        </div>
-
-        <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var ctx = document.getElementById("'.$id.'").getContext("2d");
-
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: '.json_encode($labelsData).',
-                    datasets: [{
-                        label: "'.$label.'",
-                        data: '.json_encode($datasetData).',
-                        backgroundColor: "'.$bgColor.'",
-                        borderColor: "'.$borderColor.'",
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: false }
-                    }
-                }
-            });
-        });
-        </script>
-    ';
-}
-
-
-
 // Handle delete action
-$action = GETPOST('action', 'alpha');
 if ($action === 'delete') {
     $rowid = GETPOST('rowid', 'int');
     $token = GETPOST('token', 'alpha');
@@ -158,120 +83,180 @@ if ($action === 'delete') {
     exit;
 }
 
+
+// Fetch vehicles for select
+$veiculo_static = new Veiculo($db);
+$all_veiculos = $veiculo_static->fetchAll('ASC', 'label');
+
+// Page header
+llxHeader('', $langs->trans('Historico'), '', '', 0, 0, array(), dol_buildpath('/frota/js/chart.min.js', 1));
+
+$form = new Form($db);
+
+print load_fiche_titre($langs->trans('Historico'), '', 'fa-history');
+
+// Vehicle selection form
+print '<div class="div-table-responsive-no-min">';
+print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
+print '<table class="noborder centpercent">';
+print '<tbody><tr class="pair"><td class="titlefieldcreate">'.$langs->trans('SelectVehicle').'</td><td>';
+if (empty($all_veiculos)) {
+    print '<div class="warning">'.$langs->trans('NoVehicleRegistered').'</div>';
+} else {
+    $options = '<option value="">&nbsp;</option>';
+    if (is_array($all_veiculos)) {
+        foreach ($all_veiculos as $v) {
+            $selected = ($fk_veiculo == $v->id) ? ' selected' : '';
+            $options .= '<option value="'.$v->id.'"'.$selected.'>'.dol_escape_htmltag($v->label).'</option>';
+        }
+    }
+    print '<select class="flat minwidth300" id="fk_veiculo" name="fk_veiculo" onchange="this.form.submit()">'.$options.'</select>';
+}
+print '</td></tr></tbody>';
+print '</table>';
+print '</form>';
+print '</div><br>';
+
+
+function renderChart($id, $title, $label, $labelsData, $datasetData, $bgColor, $borderColor)
+{
+    if (count($datasetData) <= 1) return;
+
+    $out = '
+        <div style="text-align: center; flex: 1; min-width: 300px;">
+            <h4>'.$title.'</h4>
+            <div style="position: relative; height:300px; width:100%">
+                <canvas id="'.$id.'"></canvas>
+            </div>
+        </div>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctx = document.getElementById("'.$id.'").getContext("2d");
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: '.json_encode($labelsData).',
+                    datasets: [{
+                        label: "'.$label.'",
+                        data: '.json_encode($datasetData).',
+                        backgroundColor: "'.$bgColor.'",
+                        borderColor: "'.$borderColor.'",
+                        borderWidth: 2,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: false }
+                    }
+                }
+            });
+        });
+        </script>
+    ';
+    return $out;
+}
+
+
 // Show history if vehicle selected
 if (!empty($fk_veiculo)) {
 
-    $sql = "SELECT h.*, u.login as user_login FROM ".MAIN_DB_PREFIX."frota_veiculo_historico h LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = h.fk_user WHERE h.fk_veiculo = ".(int)$fk_veiculo." ORDER BY h.date_registro DESC";
-    $res = $db->query($sql);
-    print '<h4>'.$langs->trans('History').'</h4>';
+    // --- Charts ---
+    $sql_chart = "SELECT date_registro, quilometragem, horimetro FROM ".MAIN_DB_PREFIX."frota_veiculo_historico WHERE fk_veiculo = ".(int)$fk_veiculo." ORDER BY date_registro ASC";
+    $res_chart = $db->query($sql_chart);
+    if ($res_chart) {
+        $chart_labels_km = array();
+        $chart_data_km = array();
+        $chart_labels_horimetro = array();
+        $chart_data_horimetro = array();
+
+        while ($obj = $db->fetch_object($res_chart)) {
+            // Data for KM chart
+            $chart_labels_km[] = dol_print_date($obj->date_registro, '%d/%m/%Y');
+            $chart_data_km[] = $obj->quilometragem;
+
+            // Data for Horimetro chart
+            if ((float)$obj->horimetro > 0) {
+                $chart_labels_horimetro[] = dol_print_date($obj->date_registro, '%d/%m/%Y');
+                $chart_data_horimetro[] = $obj->horimetro;
+            }
+        }
+
+        $charts_html = '';
+        $charts_html .= renderChart("kmChart", $langs->trans("ChartKm"), $langs->trans("Quilometragem"), $chart_labels_km, $chart_data_km, "rgba(54, 162, 235, 0.2)", "rgba(54, 162, 235, 1)");
+        $charts_html .= renderChart("horimetroChart", $langs->trans("ChartHorimetro"), $langs->trans("Horimetro"), $chart_labels_horimetro, $chart_data_horimetro, "rgba(255, 99, 132, 0.2)", "rgba(255, 99, 132, 1)");
+
+        if (!empty(trim($charts_html))) {
+            print '<div class="box" style="margin-bottom: 20px;"><div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; align-items: center;">';
+            print $charts_html;
+            print '</div></div>';
+        }
+    }
+
+
+    // --- History List ---
+    $sql = " FROM ".MAIN_DB_PREFIX."frota_veiculo_historico h LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = h.fk_user WHERE h.fk_veiculo = ".(int)$fk_veiculo;
+    
+    $sql_count = "SELECT COUNT(*) as total".$sql;
+    $res_count = $db->query($sql_count);
+    $nbtotalofrecords = $db->fetch_object($res_count)->total;
+
+    $sql_list = "SELECT h.*, u.login as user_login".$sql.$db->order($sortfield, $sortorder).$db->plimit($limit, $offset);
+    $res = $db->query($sql_list);
 
     if ($res) {
         $num_rows = $db->num_rows($res);
-        if ($num_rows == 0) {
-            print $langs->trans('NoRecordFound');
-        } else {
-            print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre"><th>'.$langs->trans('Date').'</th><th>'.$langs->trans('Quilometragem').'</th><th>'.$langs->trans('Horimetro').'</th><th>'.$langs->trans('User').'</th><th>'.$langs->trans('Observacoes').'</th><th>'.$langs->trans('Ações').'</th></tr>';
-            
-            $chart_labels_km = array();
-            $chart_data_km = array();
-            $chart_labels_horimetro = array();
-            $chart_data_horimetro = array();
-            $history_rows = array();
+        
+        $param = '&fk_veiculo='.$fk_veiculo;
+        $newcardbutton = dolGetButtonTitle($langs->trans('NewHistory'), '', 'fa fa-plus-circle', 'veiculo_historico_card.php?fk_veiculo='.$fk_veiculo);
 
+        print_barre_liste($langs->trans('History'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $newcardbutton, $num_rows, $nbtotalofrecords, 'title_generic.png');
+
+        print '<div class="div-table-responsive">';
+        print '<table class="tagtable nobottomiftotal liste">';
+        
+        // Table Header
+        print '<tr class="liste_titre">';
+        print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER['PHP_SELF'], 'h.date_registro', '', $param, 'class="center"', $sortfield, $sortorder);
+        print getTitleFieldOfList($langs->trans('Quilometragem'), 0, $_SERVER['PHP_SELF'], 'h.quilometragem', '', $param, 'class="right"', $sortfield, $sortorder);
+        print getTitleFieldOfList($langs->trans('Horimetro'), 0, $_SERVER['PHP_SELF'], 'h.horimetro', '', $param, 'class="right"', $sortfield, $sortorder);
+        print getTitleFieldOfList($langs->trans('User'), 0, $_SERVER['PHP_SELF'], 'u.login', '', $param, '', $sortfield, $sortorder);
+        print getTitleFieldOfList($langs->trans('Observacoes'), 0, $_SERVER['PHP_SELF'], 'h.observacao', '', $param, '', $sortfield, $sortorder);
+        print '<th class="center">'.$langs->trans('Actions').'</th>';
+        print '</tr>';
+
+        if ($num_rows > 0) {
             while ($objh = $db->fetch_object($res)) {
-                $history_rows[] = $objh;
-                // Data for KM chart
-                $chart_labels_km[] = dol_print_date($objh->date_registro, '%d/%m/%Y');
-                $chart_data_km[] = $objh->quilometragem;
-
-                // Data for Horimetro chart
-                if ((float)$objh->horimetro > 0) {
-                    $chart_labels_horimetro[] = dol_print_date($objh->date_registro, '%d/%m/%Y');
-                    $chart_data_horimetro[] = $objh->horimetro;
-                }
-            }
-
-            // Reverse data for chronological order in charts
-            $chart_labels_km = array_reverse($chart_labels_km);
-            $chart_data_km = array_reverse($chart_data_km);
-            $chart_labels_horimetro = array_reverse($chart_labels_horimetro);
-            $chart_data_horimetro = array_reverse($chart_data_horimetro);
-
-            // Render charts before the table
-            print '<div style="display: flex; gap: 20px; margin-top: 20px; justify-content: center; align-items: center;">';
-
-
-                if (count($chart_data_km) > 1) {
-                    renderChart(
-                        "kmChart",
-                        $langs->trans("ChartKm"),
-                        $langs->trans("Quilometragem"),
-                        $chart_labels_km,
-                        $chart_data_km,
-                        "rgba(54, 162, 235, 0.2)",
-                        "rgba(54, 162, 235, 1)"
-                    );
-                }
-
-                if (count($chart_data_horimetro) > 1) {
-                    renderChart(
-                        "horimetroChart",
-                        $langs->trans("ChartHorimetro"),
-                        $langs->trans("Horimetro"),
-                        $chart_labels_horimetro,
-                        $chart_data_horimetro,
-                        "rgba(255, 99, 132, 0.2)",
-                        "rgba(255, 99, 132, 1)"
-                    );
-                }
-
-            print '</div>';
-
-             print '<div class="tabsAction">';
-            print '<a class="butAction" href="veiculo_historico_card.php?fk_veiculo='.$fk_veiculo.'">'.$langs->trans("NewHistory").'</a>';
-            print '</div>';
-
-            foreach ($history_rows as $objh) {
-                print '<tr>';
-                print '<td>' . dol_print_date(dol_stringtotime($objh->date_registro), 'dayhour') . '</td>';
-                print '<td>' . dol_escape_htmltag($objh->quilometragem) . '</td>';
-                print '<td>' . dol_escape_htmltag($objh->horimetro) . '</td>';
+                print '<tr class="oddeven">';
+                print '<td class="center">' . dol_print_date(dol_stringtotime($objh->date_registro), 'dayhour') . '</td>';
+                print '<td class="right">' . dol_escape_htmltag($objh->quilometragem) . '</td>';
+                print '<td class="right">' . dol_escape_htmltag($objh->horimetro) . '</td>';
                 print '<td>' . dol_escape_htmltag($objh->user_login) . '</td>';
                 print '<td>' . dol_escape_htmltag($objh->observacao) . '</td>';
 
-                // CSRF token
+                // Actions
+                print '<td class="center" style="white-space: nowrap;">';
                 $token = newToken();
-
-                // Ações
-                print '<td style="text-align:center; white-space: nowrap;">';
-
                 // Edit button
-                print '<a class="butAction" 
-                            title="'.$langs->trans("Edit").'" 
-                            href="veiculo_historico_card.php?action=edit&rowid='.$objh->rowid.'" 
-                            style="margin-right:5px;">
-                            <i class="fa fa-edit"></i>
-                    </a>';
-
+                print '<a class="btn-actions" title="'.$langs->trans("Edit").'" href="veiculo_historico_card.php?action=edit&rowid='.$objh->rowid.'"><span class="fa fa-edit"></span></a>';
                 // Delete button
-                print '<a class="butActionDelete" 
-                            title="'.$langs->trans("Delete").'" 
-                            href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$objh->rowid.'&token='.$token.'" 
-                            onclick="return confirm(\''.$langs->trans("ConfirmDelete").'\');">
-                            <i class="fa fa-trash"></i>
-                    </a>';
-
+                print '<a class="btn-actions" title="'.$langs->trans("Delete").'" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$objh->rowid.'&fk_veiculo='.$fk_veiculo.'&token='.$token.'" onclick="return confirm(\''.$langs->trans("ConfirmDelete").'\');"><span class="fa fa-trash"></span></a>';
                 print '</td>';
 
                 print '</tr>';
             }
-            print '</table>';
-
-            
+        } else {
+            print '<tr><td colspan="6" class="center">'.$langs->trans('NoRecordFound').'</td></tr>';
         }
+        
+        print '</table>';
+        print '</div>';
+
     } else {
-        print $langs->trans('ErrorRequest');
+        dol_print_error($db);
     }
 }
 

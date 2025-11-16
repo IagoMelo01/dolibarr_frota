@@ -52,9 +52,9 @@
 - [X] Cálculo automático de custo por km/hora (com base em uso e custos acumulados)
 - [X] Definir intervalos de manutenção preventiva (por km/hora ou tempo)
 - [X] Tela de manutenções previstas vs realizadas, com status:
-  - [ ] Em dia
-  - [ ] Atrasada
-- [ ] Relatório simples de custos por veículo
+  - [x] Em dia
+  - [x] Atrasada
+- [x] Relatório simples de custos por veículo
 
 ---
 
