@@ -48,8 +48,24 @@ if (!$user->hasRight('frota', 'manutencao', 'read')) {
 // Parameters
 $fk_veiculo = GETPOST('fk_veiculo', 'int');
 $search_status = GETPOST('search_status', 'alpha');
-$start_date = GETPOST('start_date', 'alpha');
-$end_date = GETPOST('end_date', 'alpha');
+
+// Date range
+$start_date_day = GETPOST('start_dateday', 'int');
+$start_date_month = GETPOST('start_datemonth', 'int');
+$start_date_year = GETPOST('start_dateyear', 'int');
+$start_date = 0;
+if ($start_date_year && $start_date_month && $start_date_day) {
+    $start_date = dol_mktime(0, 0, 0, $start_date_month, $start_date_day, $start_date_year);
+}
+
+$end_date_day = GETPOST('end_dateday', 'int');
+$end_date_month = GETPOST('end_datemonth', 'int');
+$end_date_year = GETPOST('end_dateyear', 'int');
+$end_date = 0;
+if ($end_date_year && $end_date_month && $end_date_day) {
+    $end_date = dol_mktime(23, 59, 59, $end_date_month, $end_date_day, $end_date_year);
+}
+
 
 // Page header
 llxHeader('', $langs->trans("MaintenanceReport"));
@@ -58,12 +74,48 @@ $form = new Form($db);
 
 print load_fiche_titre($langs->trans("MaintenanceReportPrevVsReal"), '', 'fa-tasks');
 
-// Filter form
-print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
-print '<table class="border" width="100%">';
+// --- Summary ---
+$sql_summary = "SELECT
+    SUM(CASE WHEN m.data_concluida IS NOT NULL THEN 1 ELSE 0 END) as count_realizada,
+    SUM(CASE WHEN m.data_concluida IS NULL AND m.data_prevista > NOW() THEN 1 ELSE 0 END) as count_prevista,
+    SUM(CASE WHEN m.data_concluida IS NULL AND m.data_prevista <= NOW() THEN 1 ELSE 0 END) as count_atrasada
+    FROM ".MAIN_DB_PREFIX."frota_manutencao as m";
+if (!empty($fk_veiculo)) {
+    $sql_summary .= " WHERE m.fk_veiculo = ".(int)$fk_veiculo;
+}
 
-// Vehicle filter
-print '<tr><td class="titlefield">'.$langs->trans('Veiculo').'</td><td>';
+$res_summary = $db->query($sql_summary);
+if ($res_summary) {
+    $summary = $db->fetch_object($res_summary);
+    print '<div class="ficheaddleft">';
+    print '<div class="div-table-responsive">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre_infoproduit">';
+    print '<td class="center">'.$langs->trans("Completed").'</td>';
+    print '<td class="center">'.$langs->trans("Scheduled").'</td>';
+    print '<td class="center">'.$langs->trans("Late").'</td>';
+    print '</tr>';
+    print '<tr class="oddeven">';
+    print '<td class="center" style="padding: 5px;"><span class="badge badge-status4" style="font-size: 1.5em;">'.(int)$summary->count_realizada.'</span></td>';
+    print '<td class="center" style="padding: 5px;"><span class="badge badge-status5" style="font-size: 1.5em;">'.(int)$summary->count_prevista.'</span></td>';
+    print '<td class="center" style="padding: 5px;"><span class="badge badge-status6" style="font-size: 1.5em;">'.(int)$summary->count_atrasada.'</span></td>';
+    print '</tr>';
+    print '</table>';
+    print '</div>';
+    print '</div>';
+}
+
+
+// --- Filter form ---
+print '<div class="ficheaddright">';
+print '<div class="box">';
+print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
+print '<table class="noborder" width="100%">';
+
+// Line 1
+print '<tr>';
+print '<td class="titlefield">'.$langs->trans('Veiculo').'</td>';
+print '<td>';
 $veiculo = new Veiculo($db);
 $all_veiculos = $veiculo->fetchAll('ASC', 'label');
 $options = '<option value="">'.$langs->trans("All").'</option>';
@@ -74,10 +126,10 @@ if (is_array($all_veiculos)) {
     }
 }
 print '<select class="flat" name="fk_veiculo">'.$options.'</select>';
-print '</td></tr>';
+print '</td>';
 
-// Status filter
-print '<tr><td class="titlefield">'.$langs->trans('Status').'</td><td>';
+print '<td class="titlefield">'.$langs->trans('Status').'</td>';
+print '<td>';
 $status_options = array(
     '' => $langs->trans("All"),
     'prevista' => $langs->trans("Scheduled"),
@@ -85,18 +137,28 @@ $status_options = array(
     'atrasada' => $langs->trans("Late")
 );
 print $form->selectarray('search_status', $status_options, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
-print '</td></tr>';
+print '</td>';
 
-// Date range filter
-print '<tr><td class="titlefield">'.$langs->trans('ScheduledDate').'</td><td>';
-print $langs->trans('From').' '.$form->selectDate($start_date ? dol_stringtotime($start_date) : '', 'start_date', 0, 0, 1, '', 1, 0, 1);
-print ' '.$langs->trans('to').' '.$form->selectDate($end_date ? dol_stringtotime($end_date) : '', 'end_date', 0, 0, 1, '', 1, 0, 1);
-print '</td></tr>';
+print '<td class="right" rowspan="2" valign="middle">';
+print '<input type="submit" class="button" value="'.$langs->trans('Search').'">';
+print '</td>';
+print '</tr>';
 
-print '<tr><td colspan="2" class="center"><input type="submit" class="button" value="'.$langs->trans('Search').'"></td></tr>';
+// Line 2
+print '<tr>';
+print '<td class="titlefield">'.$langs->trans('ScheduledDate').'</td>';
+print '<td colspan="3">';
+print $langs->trans('From').' '.$form->selectDate($start_date, 'start_date', 0, 0, 1, '', 1);
+print ' '.$langs->trans('to').' '.$form->selectDate($end_date, 'end_date', 0, 0, 1, '', 1);
+print '</td>';
+print '</tr>';
 
 print '</table>';
-print '</form><br>';
+print '</form>';
+print '</div>';
+print '</div>';
+
+print '<div style="clear:both"></div><br>';
 
 
 // Build SQL query
@@ -114,10 +176,10 @@ if (!empty($fk_veiculo)) {
     $sql .= " AND m.fk_veiculo = ".(int)$fk_veiculo;
 }
 if (!empty($start_date)) {
-    $sql .= " AND m.data_prevista >= '".$db->idate(dol_stringtotime($start_date))."'";
+    $sql .= " AND m.data_prevista >= '".$db->idate($start_date)."'";
 }
 if (!empty($end_date)) {
-    $sql .= " AND m.data_prevista <= '".$db->idate(dol_stringtotime($end_date))."'";
+    $sql .= " AND m.data_prevista <= '".$db->idate($end_date)."'";
 }
 
 // The HAVING clause must be after WHERE and before ORDER BY
@@ -135,7 +197,7 @@ if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans('Veiculo').'</th>';
     print '<th>'.$langs->trans('MaintenanceType').'</th>';
@@ -170,7 +232,7 @@ if ($resql) {
                 $status_label = $langs->trans('Late');
                 $status_class = 'badge-status6'; // Red
             }
-            print '<td><span class="badge '.$status_class.'">'.$status_label.'</span></td>';
+            print '<td class="center"><span class="badge '.$status_class.'">'.$status_label.'</span></td>';
 
             print '</tr>';
             $i++;
