@@ -61,18 +61,18 @@
 ## Semana 4 – Relatórios e Consolidação
 **Objetivo:** Unir tudo em visão gerencial e preparar espaço para futuras expansões.
 
-- [ ] Relatório consolidado por veículo:
-  - [ ] Uso total
-  - [ ] Custos
-  - [ ] Manutenções realizadas
-  - [ ] Próximas preventivas
+- [X] Relatório consolidado por veículo:
+  - [X] Uso total
+  - [X] Custos
+  - [X] Manutenções realizadas
+  - [X] Próximas preventivas
 - [X] Dashboard simples da frota:
   - [X] Veículos ativos   
   - [X] Veículos em manutenção
   - [X] Custos totais do mês
 - [ ] Exportação de relatórios para Excel/PDF
-- [ ] Alertas básicos:
-  - [ ] “Trator X precisa de revisão – 10h atrasado”
+- [X] Alertas básicos:
+  - [X] “Trator X precisa de revisão – 10h atrasado”
 - [ ] Documentação inicial de uso do módulo
 
 ---

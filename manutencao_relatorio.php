@@ -70,6 +70,22 @@ if ($end_date_year && $end_date_month && $end_date_day) {
 // Page header
 llxHeader('', $langs->trans("MaintenanceReport"));
 
+// --- Overdue Maintenance Alerts ---
+$sql_overdue = "SELECT v.label as veiculo_label, TIMESTAMPDIFF(HOUR, m.data_prevista, NOW()) as horas_atraso
+                FROM ".MAIN_DB_PREFIX."frota_manutencao as m
+                LEFT JOIN ".MAIN_DB_PREFIX."frota_veiculo as v ON m.fk_veiculo = v.rowid
+                WHERE m.data_concluida IS NULL AND m.data_prevista <= NOW() AND v.label IS NOT NULL";
+
+$res_overdue = $db->query($sql_overdue);
+if ($res_overdue) {
+    while ($obj = $db->fetch_object($res_overdue)) {
+        if ($obj->horas_atraso > 0) {
+            $message = sprintf("%s precisa de revisão – %sh atrasado", $obj->veiculo_label, $obj->horas_atraso);
+            print dol_htmloutput_mesg($message, '', 'warning');
+        }
+    }
+}
+
 $form = new Form($db);
 
 print load_fiche_titre($langs->trans("MaintenanceReportPrevVsReal"), '', 'fa-tasks');
