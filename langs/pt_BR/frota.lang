@@ -98,4 +98,6 @@ MaintenanceType=Tipo de Manutenção
 ScheduledDate=Data Prevista
 CompletedDate=Data de Conclusão
 OnSchedule=Em dia
+ManutencoesDoVeiculo=Manutenções do Veículo
+NoMaintenanceFound=Nenhum registro de manutenção encontrado.
 

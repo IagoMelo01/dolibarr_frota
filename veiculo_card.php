@@ -81,6 +81,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 dol_include_once('/frota/class/veiculo.class.php');
+dol_include_once('/frota/class/manutencao.class.php');
 dol_include_once('/frota/lib/frota_veiculo.lib.php');
 
 // Load translation files required by the page
@@ -497,6 +498,50 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
+
+	// Manutenções do Veículo
+	$manutencao_static = new Manutencao($db);
+	$manutencoes = $manutencao_static->fetchAll('DESC', 't.data_prevista', 0, 0, array('t.fk_veiculo' => $object->id));
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">'."\n";
+	
+	print '<tr><td colspan="8" class="titlefield">'.$langs->trans("ManutencoesDoVeiculo").'</td></tr>';
+	
+	
+	if (is_array($manutencoes) && count($manutencoes) > 0) {
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Ref").'</td>';
+		print '<td>'.$langs->trans("Label").'</td>';
+		print '<td>'.$langs->trans("Tipo de manutenção").'</td>';
+		print '<td>'.$langs->trans("Data prevista para manutenção").'</td>';
+		print '<td>'.$langs->trans("Data da conclusão da manutenção").'</td>';
+		print '<td>'.$langs->trans("Quilometragem atual").'</td>';
+		print '<td>'.$langs->trans("Amount").'</td>';
+		print '<td>'.$langs->trans("Status").'</td>';
+		print '</tr>';
+
+		$tipo_map = $manutencao_static->fields['tipo']['arrayofkeyval'];
+		
+		foreach ($manutencoes as $manutencao) {
+			print '<tr class="oddeven">';
+			print '<td>'.$manutencao->getNomUrl(1).'</td>';
+			print '<td>'.$manutencao->label.'</td>';
+			print '<td>'.(isset($tipo_map[$manutencao->tipo]) ? $tipo_map[$manutencao->tipo] : $manutencao->tipo).'</td>';
+			print '<td>'.dol_print_date($manutencao->data_prevista, 'day').'</td>';
+			print '<td>'.dol_print_date($manutencao->data_concluida, 'day').'</td>';
+			print '<td>'.price($manutencao->quilometragem).'</td>';
+			print '<td>'.price($manutencao->amount).'</td>';
+			print '<td>'.$manutencao->getLibStatut(5).'</td>';
+			print '</tr>';
+		}
+	} else {
+		print '<tr><td>'.$langs->trans("NoMaintenanceFound").'</td></tr>';
+	}
+	
+	print '</table>';
+	print '</div>';
 
 
 	/*

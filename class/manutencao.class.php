@@ -488,14 +488,14 @@ class Manutencao extends CommonObject
 				} elseif (isset($this->fields[$columnName])) {
 					$type = $this->fields[$columnName]['type'];
 					if (preg_match('/^integer/', $type)) {
-						if (is_int($value)) {
-							// single value
-							$sqlwhere[] = $key . " = " . intval($value);
-						} elseif (is_array($value)) {
+						if (is_array($value)) {
 							if (empty($value)) {
 								continue;
 							}
 							$sqlwhere[] = $key . ' IN (' . $this->db->sanitize(implode(',', array_map('intval', $value))) . ')';
+						} else {
+							// single value
+							$sqlwhere[] = $key . " = " . intval($value);
 						}
 						continue;
 					} elseif (in_array($type, array('date', 'datetime', 'timestamp'))) {
