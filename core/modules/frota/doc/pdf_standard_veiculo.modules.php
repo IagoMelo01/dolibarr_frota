@@ -256,23 +256,17 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 
 		//if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
-		if (getMultidirOutput($object)) {
+		if (1) {
 			$object->fetch_thirdparty();
+
+			$dir = $conf->dolibarr_temp;
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = getMultidirOutput($object);
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = getMultidirOutput($object)."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
-			}
-			if (!file_exists($dir)) {
-				if (dol_mkdir($dir) < 0) {
-					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
-					return 0;
-				}
 			}
 
 			if (file_exists($dir)) {
@@ -532,22 +526,22 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 				// Print vehicle information line
 				if ($this->getColumnStatus('modelo')) {
 					$pdf->SetXY($this->getColumnContentXStart('modelo'), $curY);
-					$pdf->MultiCell($this->getColumnContentXStart('modelo'), 3, $outputlangs->convToOutputCharset($object->modelo), 0, 'L');
+					$pdf->MultiCell($this->cols['modelo']['width'], 3, $outputlangs->convToOutputCharset($object->modelo), 0, 'L');
 				}
 				
 				if ($this->getColumnStatus('placa')) {
 					$pdf->SetXY($this->getColumnContentXStart('placa'), $curY);
-					$pdf->MultiCell($this->getColumnContentXStart('placa'), 3, $outputlangs->convToOutputCharset($object->placa), 0, 'L');
+					$pdf->MultiCell($this->cols['placa']['width'], 3, $outputlangs->convToOutputCharset($object->placa), 0, 'L');
 				}
 				
 				if ($this->getColumnStatus('chassi')) {
 					$pdf->SetXY($this->getColumnContentXStart('chassi'), $curY);
-					$pdf->MultiCell($this->getColumnContentXStart('chassi'), 3, $outputlangs->convToOutputCharset($object->chassi), 0, 'L');
+					$pdf->MultiCell($this->cols['chassi']['width'], 3, $outputlangs->convToOutputCharset($object->chassi), 0, 'L');
 				}
 				
 				if ($this->getColumnStatus('renavam')) {
 					$pdf->SetXY($this->getColumnContentXStart('renavam'), $curY);
-					$pdf->MultiCell($this->getColumnContentXStart('renavam'), 3, $outputlangs->convToOutputCharset($object->renavam), 0, 'L');
+					$pdf->MultiCell($this->cols['renavam']['width'], 3, $outputlangs->convToOutputCharset($object->renavam), 0, 'L');
 				}
 				
 				// Photo
@@ -564,74 +558,8 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 				
 				if ($this->getColumnStatus('status')) {
 					$pdf->SetXY($this->getColumnContentXStart('status'), $curY);
-					$pdf->MultiCell($this->getColumnContentXStart('status'), 3, $outputlangs->convToOutputCharset($object->getLibStatut(0)), 0, 'L');
+					$pdf->MultiCell($this->cols['status']['width'], 3, $outputlangs->convToOutputCharset($object->getLibStatut(0)), 0, 'L');
 				}
-
-					if ($this->getColumnStatus('photo')) {
-						// We start with Photo of product line
-						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
-							$pdf->AddPage('', '', true);
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
-							}
-							$pdf->setPage($pageposbefore + 1);
-
-							$curY = $tab_top_newpage;
-
-							// Allows data in the first page if description is long enough to break in multiples pages
-							if (getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-								$showpricebeforepagebreak = 1;
-							} else {
-								$showpricebeforepagebreak = 0;
-							}
-						}
-
-						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
-							// $pdf->Image does not increase value return by getY, so we save it manually
-							$posYAfterImage = $curY + $imglinesize['height'];
-						}
-					}
-
-					// Description of product line
-					if ($this->getColumnStatus('desc')) {
-						$pdf->startTransaction();
-
-						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-						$pageposafter = $pdf->getPage();
-
-						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
-							$pdf->rollbackTransaction(true);
-							$pageposafter = $pageposbefore;
-							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-
-							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
-
-							$pageposafter = $pdf->getPage();
-							$posyafter = $pdf->GetY();
-							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
-								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
-									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) {
-										$pdf->useTemplate($tplidx);
-									}
-									$pdf->setPage($pageposafter + 1);
-								}
-							} else {
-								// We found a page break
-								// Allows data in the first page if description is long enough to break in multiples pages
-								if (getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-									$showpricebeforepagebreak = 1;
-								} else {
-									$showpricebeforepagebreak = 0;
-								}
-							}
-						} else {	// No pagebreak
-							$pdf->commitTransaction();
-						}
-						$posYAfterDescription = $pdf->GetY();
-					}
 
 					$nexY = max($pdf->GetY(), $posYAfterImage);
 
@@ -747,6 +675,7 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					$nexY = max($nexY, $posYAfterImage);
+
 
 					// Add line
 					if (getDolGlobalInt('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
@@ -975,9 +904,9 @@ class pdf_standard_veiculo extends ModelePDFVeiculo
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty(getMultidirOutput($object, 'mycompany'))) {
+				/*if (!empty(getMultidirOutput($object, 'mycompany'))) {
 					$logodir = getMultidirOutput($object, 'mycompany');
-				}
+				}*/
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				} else {

@@ -925,12 +925,10 @@ class modFrota extends DolibarrModules
 		// Document templates
 		$moduledir = dol_sanitizeFileName('frota');
 		$myTmpObjects = array();
-		$myTmpObjects['Veiculo'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['Veiculo'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Veiculo') {
-				continue;
-			}
+			
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_veiculos.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

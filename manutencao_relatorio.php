@@ -88,8 +88,6 @@ if ($res_overdue) {
 
 $form = new Form($db);
 
-print load_fiche_titre($langs->trans("MaintenanceReportPrevVsReal"), '', 'fa-tasks');
-
 // --- Summary ---
 $sql_summary = "SELECT
     SUM(CASE WHEN m.data_concluida IS NOT NULL THEN 1 ELSE 0 END) as count_realizada,
@@ -213,14 +211,40 @@ if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
+    $param = '';
+    if (!empty($fk_veiculo)) {
+        $param .= '&fk_veiculo=' . urlencode($fk_veiculo);
+    }
+    if (!empty($search_status)) {
+        $param .= '&search_status=' . urlencode($search_status);
+    }
+    if (!empty($start_date)) {
+        $param .= '&start_dateday=' . $start_date_day . '&start_datemonth=' . $start_date_month . '&start_dateyear=' . $start_date_year;
+    }
+    if (!empty($end_date)) {
+        $param .= '&end_dateday=' . $end_date_day . '&end_datemonth=' . $end_date_month . '&end_dateyear=' . $end_date_year;
+    }
+
+    $title = $langs->trans("MaintenanceReportPrevVsReal");
+
+    $arrayfields = array(
+        'veiculo_label' => array('label' => $langs->trans("Veiculo"), 'checked' => 1),
+        'tipo' => array('label' => $langs->trans("MaintenanceType"), 'checked' => 1),
+        'desc_manutencao' => array('label' => $langs->trans("Description"), 'checked' => 1),
+        'data_prevista' => array('label' => $langs->trans("ScheduledDate"), 'checked' => 1, 'type' => 'date'),
+        'data_concluida' => array('label' => $langs->trans("CompletedDate"), 'checked' => 1, 'type' => 'date'),
+        'status_calc' => array('label' => $langs->trans("Status"), 'checked' => 1),
+    );
+
+    print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, 'm.data_prevista', 'DESC', '', $num, $num, 'fa-tasks');
+
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print '<th>'.$langs->trans('Veiculo').'</th>';
-    print '<th>'.$langs->trans('MaintenanceType').'</th>';
-    print '<th>'.$langs->trans('Description').'</th>';
-    print '<th>'.$langs->trans('ScheduledDate').'</th>';
-    print '<th>'.$langs->trans('CompletedDate').'</th>';
-    print '<th>'.$langs->trans('Status').'</th>';
+    foreach ($arrayfields as $key => $val) {
+        if (!empty($val['checked'])) {
+            print '<th>'.$val['label'].'</th>';
+        }
+    }
     print '</tr>';
 
     if ($num > 0) {

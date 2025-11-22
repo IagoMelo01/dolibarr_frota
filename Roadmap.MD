@@ -82,3 +82,10 @@
 - **Semana 2:** Operações principais (uso + manutenções)
 - **Semana 3:** Custos e preventivas
 - **Semana 4:** Consolidação (relatórios + alertas)
+
+---
+
+# Oque ainda falta
+- [ ] Melhorar visual
+- [ ] Corrigir bugs na parte de combustível
+- [ ] Colocar delete em cascata para histórico de veículo
