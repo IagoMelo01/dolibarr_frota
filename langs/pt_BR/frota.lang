@@ -80,6 +80,7 @@ Custo Total=Custo Total
 Custo/km=Custo por Km
 Custo/hora=Custo por Hora
 SelectVehicle=Selecione um veículo
+NoVehicleRegistered=Não há veículos cadastrados.
 
 FROTA_MAINTENANCE_INTERVAL_DAYS=Intervalo de Manutenção (dias)
 FROTA_MAINTENANCE_INTERVAL_DAYSHelp=Defina o intervalo padrão em dias para a próxima manutenção preventiva.
