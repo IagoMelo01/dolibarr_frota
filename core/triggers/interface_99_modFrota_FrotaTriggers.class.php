@@ -163,6 +163,19 @@ class InterfaceFrotaTriggers extends DolibarrTriggers
 
 			break;
 
+			case "VEICULO_DELETE":
+				// Delete linked maintenances when a vehicle is deleted
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."frota_manutencao WHERE fk_veiculo = ".((int)$object->id);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					while ($obj_man = $this->db->fetch_object($resql)) {
+						$manutencao = new Manutencao($this->db);
+						$manutencao->fetch($obj_man->rowid);
+						$manutencao->delete($user);
+					}
+				}
+			break;
+
 			case "MANUTENCAO_CREATE":
 
 				$manutencao = new Manutencao($object->db);
