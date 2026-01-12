@@ -472,19 +472,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Total Cost
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Custo Total").'</td>';
-	print '<td>'.price($usageAndCosts['total_cost']).'</td>';
+	print '<td>'.price($usageAndCosts['total_cost'], 0, $langs, 0, -1, -1, 'BRL').'</td>';
 	print '</tr>';
 
 	// Cost per Km
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Custo/km").'</td>';
-	print '<td>'.price($usageAndCosts['cost_per_km']).'</td>';
+	print '<td>'.price($usageAndCosts['cost_per_km'], 0, $langs, 0, -1, -1, 'BRL').'</td>';
 	print '</tr>';
 
 	// Cost per Hour
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Custo/hora").'</td>';
-	print '<td>'.price($usageAndCosts['cost_per_hour']).'</td>';
+	print '<td>'.price($usageAndCosts['cost_per_hour'], 0, $langs, 0, -1, -1, 'BRL').'</td>';
 	print '</tr>';
 
 
@@ -532,7 +532,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td>'.dol_print_date($manutencao->data_prevista, 'day').'</td>';
 			print '<td>'.dol_print_date($manutencao->data_concluida, 'day').'</td>';
 			print '<td>'.price($manutencao->quilometragem).'</td>';
-			print '<td>'.price($manutencao->amount).'</td>';
+			print '<td>'.price($manutencao->amount, 0, $langs, 0, -1, -1, 'BRL').'</td>';
 			print '<td>'.$manutencao->getLibStatut(5).'</td>';
 			print '</tr>';
 		}

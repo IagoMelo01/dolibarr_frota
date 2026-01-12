@@ -55,6 +55,7 @@ MyWidgetDescription = My widget description
 
 
 New = Novo
+Create=Criar
 SelectVehicleToSeeHistory=Selecione um veículo para ver o histórico
 History=Histórico
 ChartKm=Gráfico de Quilometragem
@@ -67,6 +68,7 @@ EditHistory=Editar Histórico
 
 # Frota Module
 Frota=Frota
+HelpAmount=Valor do veículo
 FrotaSetup=Configuração da Frota
 Veiculo=Veículo
 Veiculos=Veículos
