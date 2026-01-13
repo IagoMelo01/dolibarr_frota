@@ -500,47 +500,95 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 	// Manutenções do Veículo
+	// Manutenções do Veículo
 	$manutencao_static = new Manutencao($db);
-	$manutencoes = $manutencao_static->fetchAll('DESC', 't.data_prevista', 0, 0, array('t.fk_veiculo' => $object->id));
+	$manutencoes = $manutencao_static->fetchAll(
+		'DESC',
+		't.data_prevista',
+		0,
+		0,
+		array('t.fk_veiculo' => $object->id)
+	);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">'."\n";
-	
-	print '<tr><td colspan="8" class="titlefield">'.$langs->trans("ManutencoesDoVeiculo").'</td></tr>';
-	
-	
+
+	// Título no padrão Dolibarr
+	print_barre_liste(
+		$langs->trans("ManutencoesDoVeiculo"),
+		0,
+		'',
+		'',
+		'',
+		'',
+		'',
+		is_array($manutencoes) ? count($manutencoes) : 0,
+		is_array($manutencoes) ? count($manutencoes) : 0,
+		'fa-tools'
+	);
+
+	print '<div class="div-table-responsive">';
+	print '<table class="liste centpercent">';
+
+	print '<tr class="liste_titre">';
+	print '<th>'.$langs->trans("Ref").'</th>';
+	print '<th>'.$langs->trans("Label").'</th>';
+	print '<th>'.$langs->trans("MaintenanceType").'</th>';
+	print '<th class="center">'.$langs->trans("ScheduledDate").'</th>';
+	print '<th class="center">'.$langs->trans("CompletedDate").'</th>';
+	print '<th class="right">'.$langs->trans("CurrentMileage").'</th>';
+	print '<th class="right">'.$langs->trans("Amount").'</th>';
+	print '<th class="center">'.$langs->trans("Status").'</th>';
+	print '</tr>';
+
 	if (is_array($manutencoes) && count($manutencoes) > 0) {
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Ref").'</td>';
-		print '<td>'.$langs->trans("Label").'</td>';
-		print '<td>'.$langs->trans("Tipo de manutenção").'</td>';
-		print '<td>'.$langs->trans("Data prevista para manutenção").'</td>';
-		print '<td>'.$langs->trans("Data da conclusão da manutenção").'</td>';
-		print '<td>'.$langs->trans("Quilometragem atual").'</td>';
-		print '<td>'.$langs->trans("Amount").'</td>';
-		print '<td>'.$langs->trans("Status").'</td>';
-		print '</tr>';
 
 		$tipo_map = $manutencao_static->fields['tipo']['arrayofkeyval'];
-		
+
 		foreach ($manutencoes as $manutencao) {
 			print '<tr class="oddeven">';
+
 			print '<td>'.$manutencao->getNomUrl(1).'</td>';
-			print '<td>'.$manutencao->label.'</td>';
-			print '<td>'.(isset($tipo_map[$manutencao->tipo]) ? $tipo_map[$manutencao->tipo] : $manutencao->tipo).'</td>';
-			print '<td>'.dol_print_date($manutencao->data_prevista, 'day').'</td>';
-			print '<td>'.dol_print_date($manutencao->data_concluida, 'day').'</td>';
-			print '<td>'.price($manutencao->quilometragem).'</td>';
-			print '<td>'.price($manutencao->amount, 0, $langs, 0, -1, -1, 'BRL').'</td>';
-			print '<td>'.$manutencao->getLibStatut(5).'</td>';
+			print '<td>'.dol_escape_htmltag($manutencao->label).'</td>';
+
+			print '<td>'.dol_escape_htmltag(
+				isset($tipo_map[$manutencao->tipo]) ? $tipo_map[$manutencao->tipo] : $manutencao->tipo
+			).'</td>';
+
+			print '<td class="center">'.dol_print_date($manutencao->data_prevista, 'day').'</td>';
+			print '<td class="center">'.(
+				$manutencao->data_concluida
+					? dol_print_date($manutencao->data_concluida, 'day')
+					: $langs->trans('NotCompleted')
+			).'</td>';
+
+			print '<td class="right">'.price($manutencao->quilometragem).'</td>';
+
+			print '<td class="right">'.price(
+				$manutencao->amount,
+				0,
+				$langs,
+				0,
+				-1,
+				-1,
+				$conf->currency
+			).'</td>';
+
+			print '<td class="center">'.$manutencao->getLibStatut(5).'</td>';
+
 			print '</tr>';
 		}
+
 	} else {
-		print '<tr><td>'.$langs->trans("NoMaintenanceFound").'</td></tr>';
+		print '<tr>';
+		print '<td colspan="8" class="opacitymedium center">';
+		print $langs->trans("NoMaintenanceFound");
+		print '</td>';
+		print '</tr>';
 	}
-	
+
 	print '</table>';
+	print '</div>';
 	print '</div>';
 
 
