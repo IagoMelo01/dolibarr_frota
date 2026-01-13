@@ -345,20 +345,34 @@ if (!empty($fk_veiculo)) {
                 // Actions
                 print '<td class="center nowrap">';
 
-                // Edit button
-                print '<a class="btn-actions" href="veiculo_historico_card.php?action=edit&rowid='.$objh->rowid.'">';
-                print '<span class="fa fa-edit"></span>';
-                print '</a>';
+                // Edit
+                print dolGetButtonTitle(
+                    $langs->trans('Modify'),
+                    '',
+                    'fa fa-edit',
+                    'veiculo_historico_card.php?action=edit&rowid='.$objh->rowid
+                );
 
-                // Delete button
-                $token = newToken();
-                print '<a class="btn-actions" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$objh->rowid.'&fk_veiculo='.$fk_veiculo.'&token='.$token.'"';
-                print ' onclick="return confirm(\''.$langs->trans("ConfirmDelete").'\');">';
-                print '<span class="fa fa-trash"></span>';
-                print '</a>';
+                // Delete
+                $deleteUrl = $_SERVER['PHP_SELF']
+                    .'?action=delete'
+                    .'&rowid='.$objh->rowid
+                    .'&fk_veiculo='.$fk_veiculo
+                    .'&token='.newToken();
+
+                print dolGetButtonTitle(
+                    $langs->trans('Delete'),
+                    '',
+                    'fa fa-trash',
+                    $deleteUrl,
+                    '',
+                    1,
+                    array(
+                        'confirm' => $langs->trans('ConfirmDelete')
+                    )
+                );
 
                 print '</td>';
-                print '</tr>';
             }
 
         } else {
