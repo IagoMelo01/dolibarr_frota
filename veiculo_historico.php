@@ -245,40 +245,131 @@ if (!empty($fk_veiculo)) {
         print_barre_liste($langs->trans('History'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $newcardbutton, $num_rows, $nbtotalofrecords, 'title_generic.png');
 
         print '<div class="div-table-responsive">';
-        print '<table class="tagtable nobottomiftotal liste">';
+        print '<table class="liste centpercent">';
+
         
         // Table Header
         print '<tr class="liste_titre">';
-        print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER['PHP_SELF'], 'h.date_registro', '', $param, 'class="center"', $sortfield, $sortorder);
-        print getTitleFieldOfList($langs->trans('Quilometragem'), 0, $_SERVER['PHP_SELF'], 'h.quilometragem', '', $param, 'class="right"', $sortfield, $sortorder);
-        print getTitleFieldOfList($langs->trans('Horimetro'), 0, $_SERVER['PHP_SELF'], 'h.horimetro', '', $param, 'class="right"', $sortfield, $sortorder);
-        print getTitleFieldOfList($langs->trans('User'), 0, $_SERVER['PHP_SELF'], 'u.login', '', $param, '', $sortfield, $sortorder);
-        print getTitleFieldOfList($langs->trans('Observacoes'), 0, $_SERVER['PHP_SELF'], 'h.observacao', '', $param, '', $sortfield, $sortorder);
-        print '<th class="center">'.$langs->trans('Actions').'</th>';
+
+        print getTitleFieldOfList(
+            $langs->trans('Date'),
+            0,
+            $_SERVER['PHP_SELF'],
+            'h.date_registro',
+            '',
+            $param,
+            'class="center"',
+            $sortfield,
+            $sortorder
+        );
+
+        print getTitleFieldOfList(
+            $langs->trans('Quilometragem'),
+            0,
+            $_SERVER['PHP_SELF'],
+            'h.quilometragem',
+            '',
+            $param,
+            'class="right"',
+            $sortfield,
+            $sortorder
+        );
+
+        print getTitleFieldOfList(
+            $langs->trans('Horimetro'),
+            0,
+            $_SERVER['PHP_SELF'],
+            'h.horimetro',
+            '',
+            $param,
+            'class="right"',
+            $sortfield,
+            $sortorder
+        );
+
+        print getTitleFieldOfList(
+            $langs->trans('User'),
+            0,
+            $_SERVER['PHP_SELF'],
+            'u.login',
+            '',
+            $param,
+            '',
+            $sortfield,
+            $sortorder
+        );
+
+        print getTitleFieldOfList(
+            $langs->trans('Observacoes'),
+            0,
+            $_SERVER['PHP_SELF'],
+            'h.observacao',
+            '',
+            $param,
+            '',
+            $sortfield,
+            $sortorder
+        );
+
+        // Actions (sem ordenação)
+        print '<th class="center nowrap">'.$langs->trans('Actions').'</th>';
+
         print '</tr>';
+
 
         if ($num_rows > 0) {
             while ($objh = $db->fetch_object($res)) {
-                print '<tr class="oddeven">';
-                print '<td class="center">' . dol_print_date(dol_stringtotime($objh->date_registro), 'dayhour') . '</td>';
-                print '<td class="right">' . dol_escape_htmltag($objh->quilometragem) . '</td>';
-                print '<td class="right">' . dol_escape_htmltag($objh->horimetro) . '</td>';
-                print '<td>' . dol_escape_htmltag($objh->user_login) . '</td>';
-                print '<td>' . dol_escape_htmltag($objh->observacao) . '</td>';
 
-                // Actions
-                print '<td class="center" style="white-space: nowrap;">';
-                $token = newToken();
-                // Edit button
-                print '<a class="btn-actions" title="'.$langs->trans("Edit").'" href="veiculo_historico_card.php?action=edit&rowid='.$objh->rowid.'"><span class="fa fa-edit"></span></a>';
-                // Delete button
-                print '<a class="btn-actions" title="'.$langs->trans("Delete").'" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$objh->rowid.'&fk_veiculo='.$fk_veiculo.'&token='.$token.'" onclick="return confirm(\''.$langs->trans("ConfirmDelete").'\');"><span class="fa fa-trash"></span></a>';
+                print '<tr class="oddeven">';
+
+                print '<td class="center">';
+                print dol_print_date($db->jdate($objh->date_registro), 'dayhour');
                 print '</td>';
 
+                print '<td class="right">';
+                print price($objh->quilometragem);
+                print '</td>';
+
+                print '<td class="right">';
+                print price($objh->horimetro);
+                print '</td>';
+
+                print '<td>';
+                print dol_escape_htmltag($objh->user_login);
+                print '</td>';
+
+                print '<td>';
+                print dol_escape_htmltag($objh->observacao);
+                print '</td>';
+
+                // Actions
+                print '<td class="center nowrap">';
+
+                // Edit button
+                print '<a class="btn-actions" href="veiculo_historico_card.php?action=edit&rowid='.$objh->rowid.'">';
+                print '<span class="fa fa-edit"></span>';
+                print '</a>';
+
+                // Delete button
+                $token = newToken();
+                print '<a class="btn-actions" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$objh->rowid.'&fk_veiculo='.$fk_veiculo.'&token='.$token.'"';
+                print ' onclick="return confirm(\''.$langs->trans("ConfirmDelete").'\');">';
+                print '<span class="fa fa-trash"></span>';
+                print '</a>';
+
+                print '</td>';
                 print '</tr>';
             }
+
         } else {
-            print '<tr><td colspan="6" class="center">'.$langs->trans('NoRecordFound').'</td></tr>';
+            if ($num_rows == 0) {
+                print '<tr>';
+                print '<td class="center" colspan="6">';
+                print $langs->trans('NoRecordFound');
+                print '</td>';
+                print '</tr>';
+            }
+
         }
         
         print '</table>';
