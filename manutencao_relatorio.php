@@ -121,58 +121,104 @@ if ($res_summary) {
 
 
 // --- Filter form ---
-print '<div class="ficheaddright">';
-print '<div class="box">';
 print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
-print '<table class="noborder" width="100%">';
 
-// Line 1
-print '<tr>';
-print '<td class="titlefield">'.$langs->trans('Veiculo').'</td>';
-print '<td>';
-$veiculo = new Veiculo($db);
-$all_veiculos = $veiculo->fetchAll('ASC', 'label');
-$options = '<option value="">'.$langs->trans("All").'</option>';
-if (is_array($all_veiculos)) {
-    foreach ($all_veiculos as $v) {
-        $selected = ($fk_veiculo == $v->id) ? ' selected' : '';
-        $options .= '<option value="'.$v->id.'"'.$selected.'>'.dol_escape_htmltag($v->label).'</option>';
-    }
-}
-print '<select class="flat" name="fk_veiculo">'.$options.'</select>';
-print '</td>';
+print '<div class="fichecenter">';
+print '<table class="noborder centpercent">';
 
-print '<td class="titlefield">'.$langs->trans('Status').'</td>';
-print '<td>';
-$status_options = array(
-    '' => $langs->trans("All"),
-    'prevista' => $langs->trans("Scheduled"),
-    'realizada' => $langs->trans("Completed"),
-    'atrasada' => $langs->trans("Late")
-);
-print $form->selectarray('search_status', $status_options, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
-print '</td>';
-
-print '<td class="right" rowspan="2" valign="middle">';
-print '<input type="submit" class="button" value="'.$langs->trans('Search').'">';
-print '</td>';
+// Header
+print '<tr class="liste_titre">';
+print '<td colspan="6">'.$langs->trans('Filters').'</td>';
 print '</tr>';
 
-// Line 2
-print '<tr>';
+// Line 1
+print '<tr class="oddeven">';
+
+// Veículo
+print '<td class="titlefield">'.$langs->trans('Veiculo').'</td>';
+print '<td>';
+
+$veiculo = new Veiculo($db);
+$all_veiculos = $veiculo->fetchAll('ASC', 'label');
+$veiculo_options = array('' => $langs->trans('All'));
+
+if (is_array($all_veiculos)) {
+    foreach ($all_veiculos as $v) {
+        $veiculo_options[$v->id] = $v->label;
+    }
+}
+
+print $form->selectarray(
+    'fk_veiculo',
+    $veiculo_options,
+    $fk_veiculo,
+    0,
+    0,
+    0,
+    '',
+    0,
+    0,
+    0,
+    'minwidth150'
+);
+
+print '</td>';
+
+// Status
+print '<td class="titlefield">'.$langs->trans('Status').'</td>';
+print '<td>';
+
+$status_options = array(
+    '' => $langs->trans('All'),
+    'prevista' => $langs->trans('Scheduled'),
+    'realizada' => $langs->trans('Completed'),
+    'atrasada' => $langs->trans('Late')
+);
+
+print $form->selectarray(
+    'search_status',
+    $status_options,
+    $search_status,
+    0,
+    0,
+    0,
+    '',
+    0,
+    0,
+    0,
+    'minwidth150'
+);
+
+print '</td>';
+
+// Search button
+print '<td class="center nowrap" rowspan="2">';
+print '<input type="submit" class="button" value="'.$langs->trans('Search').'">';
+print '</td>';
+
+print '</tr>';
+
+// Line 2 – Dates
+print '<tr class="oddeven">';
+
 print '<td class="titlefield">'.$langs->trans('ScheduledDate').'</td>';
 print '<td colspan="3">';
-print $langs->trans('From').' '.$form->selectDate($start_date, 'start_date', 0, 0, 1, '', 1);
-print ' '.$langs->trans('to').' '.$form->selectDate($end_date, 'end_date', 0, 0, 1, '', 1);
+
+print $langs->trans('From').' ';
+print $form->selectDate($start_date, 'start_date', 0, 0, 1, '', 1);
+
+print ' '.$langs->trans('to').' ';
+print $form->selectDate($end_date, 'end_date', 0, 0, 1, '', 1);
+
 print '</td>';
+
 print '</tr>';
 
 print '</table>';
-print '</form>';
-print '</div>';
 print '</div>';
 
-print '<div style="clear:both"></div><br>';
+print '</form>';
+print '<br>';
 
 
 // Build SQL query
