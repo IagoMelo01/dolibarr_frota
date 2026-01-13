@@ -83,6 +83,13 @@ if ($action === 'delete') {
     exit;
 }
 
+$veiculo_options = array();
+
+if (is_array($all_veiculos)) {
+    foreach ($all_veiculos as $v) {
+        $veiculo_options[$v->id] = $v->label;
+    }
+}
 
 // Fetch vehicles for select
 $veiculo_static = new Veiculo($db);
@@ -99,20 +106,42 @@ print load_fiche_titre($langs->trans('Historico'), '', 'fa-history');
 print '<div class="div-table-responsive-no-min">';
 print '<form method="get" action="'.$_SERVER['PHP_SELF'].'">';
 print '<table class="noborder centpercent">';
-print '<tbody><tr class="pair"><td class="titlefieldcreate">'.$langs->trans('SelectVehicle').'</td><td>';
+print '<tbody>';
+print '<tr class="pair">';
+print '<td class="titlefieldcreate">'.$langs->trans('SelectVehicle').'</td>';
+print '<td>';
+
 if (empty($all_veiculos)) {
+
     print '<div class="warning">'.$langs->trans('NoVehicleRegistered').'</div>';
+
 } else {
-    $options = '<option value="">&nbsp;</option>';
-    if (is_array($all_veiculos)) {
-        foreach ($all_veiculos as $v) {
-            $selected = ($fk_veiculo == $v->id) ? ' selected' : '';
-            $options .= '<option value="'.$v->id.'"'.$selected.'>'.dol_escape_htmltag($v->label).'</option>';
-        }
+
+    // Build options array
+    $veiculo_options = array();
+    foreach ($all_veiculos as $v) {
+        $veiculo_options[$v->id] = $v->label;
     }
-    print '<select class="flat minwidth300" id="fk_veiculo" name="fk_veiculo" onchange="this.form.submit()">'.$options.'</select>';
+
+    // Dolibarr combobox
+    print $form->selectarray(
+        'fk_veiculo',           // field name
+        $veiculo_options,       // options
+        $fk_veiculo,            // selected value
+        1,                      // show empty option
+        0,
+        0,
+        'onchange="this.form.submit()"',
+        0,
+        0,
+        0,
+        'minwidth100'
+    );
 }
-print '</td></tr></tbody>';
+
+print '</td>';
+print '</tr>';
+print '</tbody>';
 print '</table>';
 print '</form>';
 print '</div><br>';
