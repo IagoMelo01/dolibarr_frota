@@ -222,7 +222,6 @@ if (empty($reshook)) {
 
 
 
-
 /*
  * View
  */
@@ -231,7 +230,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("CompraCombustivel")." - ".$langs->trans('Card');
+$title = $langs->trans("Combustivel")." - ".$langs->trans('Card');
 //$title = $object->ref." - ".$langs->trans('Card');
 if ($action == 'create') {
 	$title = $langs->trans("NewObject", $langs->transnoentitiesnoconv("CompraCombustivel"));

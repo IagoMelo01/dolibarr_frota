@@ -277,7 +277,7 @@ $form = new Form($db);
 
 $now = dol_now();
 
-$title = $langs->trans("CompraCombustivels");
+$title = $langs->trans("CompraCombustivel");
 //$help_url = "EN:Module_CompraCombustivel|FR:Module_CompraCombustivel_FR|ES:Módulo_CompraCombustivel";
 $help_url = '';
 $morejs = array();
