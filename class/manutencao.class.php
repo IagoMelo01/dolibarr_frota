@@ -281,7 +281,7 @@ class Manutencao extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->nb == 0) {
 						$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
-						$sql_insert.= " (fk_veiculo, fk_manutenção, quilometragem, horimetro, fk_user, observacao, date_registro)";
+						$sql_insert.= " (fk_veiculo, fk_manutencao, quilometragem, horimetro, fk_user, observacao, date_registro)";
 						$sql_insert.= " VALUES (" . 
 								$this->fk_veiculo . ", " .
 								$this->id . ", " .  // id da manutenção recém criada
@@ -578,7 +578,7 @@ class Manutencao extends CommonObject
 			// Procura por registro desta manutenção
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
 				   WHERE fk_veiculo = " . $this->fk_veiculo . " 
-				   AND fk_manutenção = " . $this->id . "
+				   AND fk_manutencao = " . $this->id . "
 				   ORDER BY date_registro DESC LIMIT 1"; // Pega o registro mais recente
 
 			$resql = $this->db->query($sql);
@@ -595,7 +595,7 @@ class Manutencao extends CommonObject
 			} else {
 				// Se não encontrou, insere novo registro
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
-				$sql.= " (fk_veiculo, fk_manutenção, quilometragem, horimetro, fk_user, observacao, date_registro)"; 
+				$sql.= " (fk_veiculo, fk_manutencao, quilometragem, horimetro, fk_user, observacao, date_registro)"; 
 				$sql.= " VALUES (" . 
 						$this->fk_veiculo . ", " .
 						$this->id . ", " .  // id da manutenção 
@@ -638,7 +638,7 @@ class Manutencao extends CommonObject
 		// Delete related vehicle history records
 		if (!empty($this->fk_veiculo)) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
-				   WHERE fk_manutenção = " . $this->id . "
+				   WHERE fk_manutencao = " . $this->id . "
 				   AND fk_veiculo = " . $this->fk_veiculo;
 			$resql = $this->db->query($sql);
 			if (!$resql) {
