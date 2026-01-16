@@ -332,7 +332,7 @@ print '
         </div>
 
         <div class="dashboard-card border-blue">
-            <div class="dashboard-icon"><i class="fa fa-money"></i></div>
+            <div class="dashboard-icon"><i class="fa fa-money-bill-wave"></i></div>
             <div class="dashboard-info">
                 <div class="dashboard-title">'.$langs->trans("TotalMonthlyExpenses").'</div>
                 <div class="dashboard-value">'.price($total_monthly_expenses).'</div>
@@ -394,8 +394,8 @@ if ($res_maintenance_vehicles_list && $db->num_rows($res_maintenance_vehicles_li
     print '<thead><tr class="liste_titre">';
     print '<th><i class="fa fa-tools"></i> '.$langs->trans("REF.").'</th>';
     print '<th><i class="fa fa-car"></i> '.$langs->trans("VEÍCULO REF.").'</th>';
-    print '<th><i class="fa fa-calendar"></i> '.$langs->trans("DATA").'</th>';
-    print '<th><i class="fa fa-dollar"></i> '.$langs->trans("ESTIMATIVA DE PREÇO").'</th>';
+    print '<th><i class="fa fa-calendar-alt"></i> '.$langs->trans("DATA").'</th>';
+    print '<th><i class="fa fa-dollar-sign"></i> '.$langs->trans("ESTIMATIVA DE PREÇO").'</th>';
     print '</tr></thead><tbody>';
 
     $manutencao_static = new Manutencao($db);
@@ -448,7 +448,7 @@ usort($all_expenses, fn($a, $b) => strtotime($b->date) - strtotime($a->date));
 
 if (count($all_expenses) > 0) {
     print '<div class="dashboard-section border-blue-section">';
-    print '<h3 class="section-title"><i class="fa fa-money"></i> '.$langs->trans("TotalMonthlyExpenses").'</h3>';
+    print '<h3 class="section-title"><i class="fa fa-money-bill-wave"></i> '.$langs->trans("TotalMonthlyExpenses").'</h3>';
     print '<div class="div-table-responsive">';
     print '<table class="noborder centpercent modern-table">';
     print '<thead><tr class="liste_titre">';
@@ -677,9 +677,9 @@ if (count($manutencoes) > 0) {
     print '<tr class="liste_titre">';
     print '<th><i class="fa fa-tools"></i> '.$langs->trans("MaintenanceRef").'</th>';
     print '<th><i class="fa fa-car"></i> '.$langs->trans("VehicleRef").'</th>';
-    print '<th><i class="fa fa-calendar-check-o"></i> '.$langs->trans("ScheduledDate").'</th>';
-    print '<th><i class="fa fa-calendar"></i> '.$langs->trans("CompletionDate").'</th>';
-    print '<th><i class="fa fa-dollar"></i> '.$langs->trans("Cost").'</th>';
+    print '<th><i class="fa fa-calendar-check"></i> '.$langs->trans("ScheduledDate").'</th>';
+    print '<th><i class="fa fa-calendar-alt"></i> '.$langs->trans("CompletionDate").'</th>';
+    print '<th><i class="fa fa-dollar-sign"></i> '.$langs->trans("Cost").'</th>';
     print '</tr>';
     print '</thead>';
     print '<tbody>';
