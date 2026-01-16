@@ -62,7 +62,7 @@ class Manutencao extends CommonObject
 	/**
 	 * @var string String with name of icon for manutencao. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'manutencao@frota' if picto is file 'img/object_manutencao.png'.
 	 */
-	public $picto = 'fa-tools';
+	public $picto = 'fa-wrench';
 
 
 	const STATUS_DRAFT = 0;

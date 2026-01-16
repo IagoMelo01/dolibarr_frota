@@ -475,7 +475,7 @@ class modFrota extends DolibarrModules
 			 'fk_menu' => 'fk_mainmenu=frota',
 			 'type' => 'left',
 			 'titre' => 'Implemento',
-			 'prefix' => img_picto('', 'car-battery-solid-full.svg@frota', 'class="pictofixedwidth valignmiddle"'),
+			 'prefix' => img_picto('', 'implemento.svg@frota', 'class="pictofixedwidth valignmiddle"'),
 			 'mainmenu' => 'frota',
 			 'leftmenu' => 'implemento',
 			 'url' => '/frota/implemento_list.php',

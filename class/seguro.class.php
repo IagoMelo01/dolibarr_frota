@@ -62,7 +62,7 @@ class Seguro extends CommonObject
 	/**
 	 * @var string String with name of icon for seguro. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'seguro@frota' if picto is file 'img/object_seguro.png'.
 	 */
-	public $picto = 'fa-file';
+	public $picto = 'fa-file-signature';
 
 
 	const STATUS_DRAFT = 0;

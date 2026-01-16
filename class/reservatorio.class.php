@@ -62,7 +62,7 @@ class Reservatorio extends CommonObject
 	/**
 	 * @var string String with name of icon for reservatorio. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'reservatorio@frota' if picto is file 'img/object_reservatorio.png'.
 	 */
-	public $picto = 'fa-flask';
+	public $picto = 'fa-fill-drip';
 
 
 	const STATUS_DRAFT = 0;

@@ -62,7 +62,7 @@ class CompraCombustivel extends CommonObject
 	/**
 	 * @var string String with name of icon for compracombustivel. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'compracombustivel@frota' if picto is file 'img/object_compracombustivel.png'.
 	 */
-	public $picto = 'fa-money-bill-wave';
+	public $picto = 'fa-fire';
 
 
 	const STATUS_DRAFT = 0;

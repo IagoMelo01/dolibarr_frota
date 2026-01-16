@@ -62,7 +62,7 @@ class Aluguel extends CommonObject
 	/**
 	 * @var string String with name of icon for aluguel. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'aluguel@frota' if picto is file 'img/object_aluguel.png'.
 	 */
-	public $picto = 'fa-share-square';
+	public $picto = 'fa-handshake';
 
 
 	const STATUS_DRAFT = 0;

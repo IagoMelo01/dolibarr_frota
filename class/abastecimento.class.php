@@ -63,7 +63,7 @@ class Abastecimento extends CommonObject
 	 */
 	public $picto = 'fa-gas-pump';
 
-
+ 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
