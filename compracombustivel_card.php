@@ -220,7 +220,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
-
+// TODO: arrumar tradução Novo Combustíveis
 
 /*
  * View
