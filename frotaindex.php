@@ -150,7 +150,25 @@ if ($res_fuel_expenses) {
     $fuel_expenses = (float) $obj->total_amount;
 }
 
-$total_monthly_expenses = $maintenance_expenses + $fuel_expenses;
+// Rent Expenses
+$sql_rent_expenses = "SELECT SUM(amount) as total_amount FROM ".MAIN_DB_PREFIX."frota_aluguel WHERE status = 1 AND inicio BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'";
+$res_rent_expenses = $db->query($sql_rent_expenses);
+$rent_expenses = 0;
+if ($res_rent_expenses) {
+    $obj = $db->fetch_object($res_rent_expenses);
+    $rent_expenses = (float) $obj->total_amount;
+}
+
+// Insurance Expenses
+$sql_insurance_expenses = "SELECT SUM(amount) as total_amount FROM ".MAIN_DB_PREFIX."frota_seguro WHERE status = 1 AND inicio BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'";
+$res_insurance_expenses = $db->query($sql_insurance_expenses);
+$insurance_expenses = 0;
+if ($res_insurance_expenses) {
+    $obj = $db->fetch_object($res_insurance_expenses);
+    $insurance_expenses = (float) $obj->total_amount;
+}
+
+$total_monthly_expenses = $maintenance_expenses + $fuel_expenses + $rent_expenses + $insurance_expenses;
 
 print '<style>
 .dashboard-wrapper {
@@ -442,6 +460,30 @@ $res_fuel_expenses_list = $db->query($sql_fuel_expenses_list);
 if ($res_fuel_expenses_list) {
     while ($obj = $db->fetch_object($res_fuel_expenses_list)) $all_expenses[] = $obj;
     $db->free($res_fuel_expenses_list);
+}
+
+// Rent expenses
+$sql_rent_expenses_list = "
+    SELECT rowid, inicio AS date, 'Aluguel' AS type, ref AS description, amount 
+    FROM ".MAIN_DB_PREFIX."frota_aluguel 
+    WHERE status = 1 AND inicio BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'
+";
+$res_rent_expenses_list = $db->query($sql_rent_expenses_list);
+if ($res_rent_expenses_list) {
+    while ($obj = $db->fetch_object($res_rent_expenses_list)) $all_expenses[] = $obj;
+    $db->free($res_rent_expenses_list);
+}
+
+// Insurance expenses
+$sql_insurance_expenses_list = "
+    SELECT rowid, inicio AS date, 'Seguro' AS type, ref AS description, amount 
+    FROM ".MAIN_DB_PREFIX."frota_seguro 
+    WHERE status = 1 AND inicio BETWEEN '".$db->escape($current_month_start)."' AND '".$db->escape($current_month_end)."'
+";
+$res_insurance_expenses_list = $db->query($sql_insurance_expenses_list);
+if ($res_insurance_expenses_list) {
+    while ($obj = $db->fetch_object($res_insurance_expenses_list)) $all_expenses[] = $obj;
+    $db->free($res_insurance_expenses_list);
 }
 
 usort($all_expenses, fn($a, $b) => strtotime($b->date) - strtotime($a->date));
