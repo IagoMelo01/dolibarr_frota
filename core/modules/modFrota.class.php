@@ -571,6 +571,56 @@ class modFrota extends DolibarrModules
 		);
 		/* END LEFTMENU NEW ALUGUEL */
 
+		/* LEFTMENU IMPLEMENTO */
+		$this->menu[$r++]=array(
+			 'fk_menu' => 'fk_mainmenu=frota',
+			 'type' => 'left',
+			 'titre' => 'Implemento',
+			 'prefix' => img_picto('', 'fa-car-battery', 'class="paddingright pictofixedwidth valignmiddle"'),
+			 'mainmenu' => 'frota',
+			 'leftmenu' => 'implemento',
+			 'url' => '/frota/implemento_list.php',
+			 'langs' => 'frota@frota',
+			 'position' => 1000 + $r,
+			 'enabled' => 'isModEnabled(\'frota\')',
+			 'perms' => '$user->hasRight(\'frota\', \'implemento\', \'read\')',
+			 'target' => '',
+			 'user' => 2,
+		);
+		/* END LEFTMENU IMPLEMENTO */
+		/* LEFTMENU LISTA IMPLEMENTO */
+		$this->menu[$r++]=array(
+			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=implemento',
+			 'type' => 'left',
+			 'titre' => 'Lista de Implementos',
+			 'mainmenu' => 'frota',
+			 'leftmenu' => 'frota_implemento_list',
+			 'url' => '/frota/implemento_list.php',
+			 'langs' => 'frota@frota',
+			 'position' => 1000 + $r,
+			 'enabled' => 'isModEnabled(\'frota\')',
+			 'perms' => '$user->hasRight(\'frota\', \'implemento\', \'read\')',
+			 'target' => '',
+			 'user' => 2,
+		);
+		/* END LEFTMENU LISTA IMPLEMENTO */
+		/* LEFTMENU NOVO IMPLEMENTO */
+		$this->menu[$r++]=array(
+			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=implemento',
+			 'type' => 'left',
+			 'titre' => 'Adicionar Implemento',
+			 'mainmenu' => 'frota',
+			 'leftmenu' => 'frota_implemento_new',
+			 'url' => '/frota/implemento_card.php?action=create',
+			 'langs' => 'frota@frota',
+			 'position' => 1000 + $r,
+			 'enabled' => 'isModEnabled(\'frota\')',
+			 'perms' => '$user->hasRight(\'frota\', \'implemento\', \'write\')',
+			 'target' => '',
+			 'user' => 2,
+		);
+		/* END LEFTMENU NOVO IMPLEMENTO */
+
 		/* LEFTMENU MANUTENCAO */
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota',
@@ -636,56 +686,6 @@ class modFrota extends DolibarrModules
 			 'user' => 2,
 		);
 		/* END LEFTMENU RELATORIO MANUTENCAO */
-
-		/* LEFTMENU IMPLEMENTO */
-		$this->menu[$r++]=array(
-			 'fk_menu' => 'fk_mainmenu=frota',
-			 'type' => 'left',
-			 'titre' => 'Implemento',
-			 'prefix' => img_picto('', 'fa-car-battery', 'class="paddingright pictofixedwidth valignmiddle"'),
-			 'mainmenu' => 'frota',
-			 'leftmenu' => 'implemento',
-			 'url' => '/frota/implemento_list.php',
-			 'langs' => 'frota@frota',
-			 'position' => 1000 + $r,
-			 'enabled' => 'isModEnabled(\'frota\')',
-			 'perms' => '$user->hasRight(\'frota\', \'implemento\', \'read\')',
-			 'target' => '',
-			 'user' => 2,
-		);
-		/* END LEFTMENU IMPLEMENTO */
-		/* LEFTMENU LISTA IMPLEMENTO */
-		$this->menu[$r++]=array(
-			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=implemento',
-			 'type' => 'left',
-			 'titre' => 'Lista de Implementos',
-			 'mainmenu' => 'frota',
-			 'leftmenu' => 'frota_implemento_list',
-			 'url' => '/frota/implemento_list.php',
-			 'langs' => 'frota@frota',
-			 'position' => 1000 + $r,
-			 'enabled' => 'isModEnabled(\'frota\')',
-			 'perms' => '$user->hasRight(\'frota\', \'implemento\', \'read\')',
-			 'target' => '',
-			 'user' => 2,
-		);
-		/* END LEFTMENU LISTA IMPLEMENTO */
-		/* LEFTMENU NOVO IMPLEMENTO */
-		$this->menu[$r++]=array(
-			 'fk_menu' => 'fk_mainmenu=frota,fk_leftmenu=implemento',
-			 'type' => 'left',
-			 'titre' => 'Adicionar Implemento',
-			 'mainmenu' => 'frota',
-			 'leftmenu' => 'frota_implemento_new',
-			 'url' => '/frota/implemento_card.php?action=create',
-			 'langs' => 'frota@frota',
-			 'position' => 1000 + $r,
-			 'enabled' => 'isModEnabled(\'frota\')',
-			 'perms' => '$user->hasRight(\'frota\', \'implemento\', \'write\')',
-			 'target' => '',
-			 'user' => 2,
-		);
-		/* END LEFTMENU NOVO IMPLEMENTO */
 
 		/*LEFTMENU COMPRACOMBUSTIVEL*/
 		$this->menu[$r++]=array(
