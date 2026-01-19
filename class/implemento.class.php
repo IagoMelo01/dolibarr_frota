@@ -115,7 +115,7 @@ class Implemento extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'index'=>1, 'searchall'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(IMPLEMENTO_)', 'index'=>1, 'searchall'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'alwayseditable'=>'1', 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'validate'=>'1',),
 		'amount' => array('type'=>'price', 'label'=>'Amount', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help text for amount", 'validate'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150', 'help'=>"OrganizationEventLinkToThirdParty", 'validate'=>'1',),
@@ -1104,15 +1104,15 @@ class Implemento extends CommonObject
 		global $langs, $conf;
 		$langs->load("frota@frota");
 
-		if (!getDolGlobalString('FROTA_MYOBJECT_ADDON')) {
-			$conf->global->FROTA_MYOBJECT_ADDON = 'mod_implemento_standard';
+		if (!getDolGlobalString('FROTA_IMPLEMENTO_ADDON')) {
+			$conf->global->FROTA_IMPLEMENTO_ADDON = 'mod_implemento_standard';
 		}
 
-		if (getDolGlobalString('FROTA_MYOBJECT_ADDON')) {
+		if (getDolGlobalString('FROTA_IMPLEMENTO_ADDON')) {
 			$mybool = false;
 
-			$file = getDolGlobalString('FROTA_MYOBJECT_ADDON').".php";
-			$classname = getDolGlobalString('FROTA_MYOBJECT_ADDON');
+			$file = getDolGlobalString('FROTA_IMPLEMENTO_ADDON').".php";
+			$classname = getDolGlobalString('FROTA_IMPLEMENTO_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

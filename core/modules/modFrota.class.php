@@ -938,6 +938,7 @@ class modFrota extends DolibarrModules
 		$moduledir = dol_sanitizeFileName('frota');
 		$myTmpObjects = array();
 		$myTmpObjects['Veiculo'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
+		$myTmpObjects['Implemento'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			
