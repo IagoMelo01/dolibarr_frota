@@ -941,6 +941,8 @@ class modFrota extends DolibarrModules
 		$myTmpObjects['Implemento'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 		$myTmpObjects['Reservatorio']=array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 		$myTmpObjects['Combustivel']=array('includerefgeneration'=>1, 'includedocgeneration'=>1);
+		$myTmpObjects['Abastecimento']=array('includerefgeneration'=>1, 'includedocgeneration'=>1);
+		
 
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
