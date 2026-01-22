@@ -171,7 +171,59 @@ class InterfaceFrotaTriggers extends DolibarrTriggers
 					while ($obj_man = $this->db->fetch_object($resql)) {
 						$manutencao = new Manutencao($this->db);
 						$manutencao->fetch($obj_man->rowid);
-						$manutencao->delete($user);
+						if ($manutencao->delete($user) < 0) {
+							$this->error = $manutencao->error;
+							$this->errors = $manutencao->errors;
+							return -1;
+						}
+					}
+				}
+
+				// Delete linked seguros
+				dol_include_once('/frota/class/seguro.class.php');
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."frota_seguro WHERE fk_veiculo = ".((int)$object->id);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					while ($obj_seg = $this->db->fetch_object($resql)) {
+						$seguro = new Seguro($this->db);
+						$seguro->fetch($obj_seg->rowid);
+						if ($seguro->delete($user) < 0) {
+							$this->error = $seguro->error;
+							$this->errors = $seguro->errors;
+							return -1;
+						}
+					}
+				}
+
+				// Delete linked alugueis
+				dol_include_once('/frota/class/aluguel.class.php');
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."frota_aluguel WHERE veiculo = ".((int)$object->id);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					while ($obj_alu = $this->db->fetch_object($resql)) {
+						$aluguel = new Aluguel($this->db);
+						$aluguel->fetch($obj_alu->rowid);
+						if ($aluguel->delete($user) < 0) {
+							$this->error = $aluguel->error;
+							$this->errors = $aluguel->errors;
+							return -1;
+						}
+					}
+				}
+
+				// Delete linked abastecimentos
+				dol_include_once('/frota/class/abastecimento.class.php');
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."frota_abastecimento WHERE fk_veiculo = ".((int)$object->id);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					while ($obj_abs = $this->db->fetch_object($resql)) {
+						$abastecimento = new Abastecimento($this->db);
+						$abastecimento->fetch($obj_abs->rowid);
+						if ($abastecimento->delete($user) < 0) {
+							$this->error = $abastecimento->error;
+							$this->errors = $abastecimento->errors;
+							return -1;
+						}
 					}
 				}
 			break;
