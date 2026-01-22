@@ -687,51 +687,6 @@ class modFrota extends DolibarrModules
 		);
 		/* END LEFTMENU RELATORIO MANUTENCAO */
 
-		/*LEFTMENU COMPRACOMBUSTIVEL*/
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=frota',
-			'type'=>'left',
-			'titre'=>'Combustível',
-			'prefix' => img_picto('', 'fa-fire', 'class="paddingright pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'frota',
-			'leftmenu'=>'compracombustivel',
-			'url'=>'/frota/compracombustivel_list.php',
-			'langs'=>'frota@frota',
-			'position'=>1000 + $r,
-			'enabled'=>'isModEnabled("frota")',
-			'perms'=>'$user->hasRight("frota", "compracombustivel", "read")',
-			'target'=>'',
-			'user'=>2,
-		);
-        $this->menu[$r++]=array(
-            'fk_menu'=>'fk_mainmenu=frota,fk_leftmenu=compracombustivel',
-            'type'=>'left',
-            'titre'=>'Lista de Combustíveis',
-            'mainmenu'=>'frota',
-            'leftmenu'=>'frota_compracombustivel_list',
-            'url'=>'/frota/compracombustivel_list.php',
-            'langs'=>'frota@frota',
-            'position'=>1000 + $r,
-            'enabled'=>'isModEnabled("frota")',
-			'perms'=>'$user->hasRight("frota", "compracombustivel", "read")',
-            'target'=>'',
-            'user'=>2,
-        );
-        $this->menu[$r++]=array(
-            'fk_menu'=>'fk_mainmenu=frota,fk_leftmenu=compracombustivel',
-            'type'=>'left',
-            'titre'=>'Adicionar Combustível',
-            'mainmenu'=>'frota',
-            'leftmenu'=>'frota_compracombustivel_new',
-            'url'=>'/frota/compracombustivel_card.php?action=create',
-            'langs'=>'frota@frota',
-            'position'=>1000 + $r,
-            'enabled'=>'isModEnabled("frota")',
-			'perms'=>'$user->hasRight("frota", "compracombustivel", "write")',
-            'target'=>'',
-            'user'=>2
-        );
-
 		/* LEFTMENU RESERVATORIO */
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota',
@@ -781,7 +736,52 @@ class modFrota extends DolibarrModules
 			 'user' => 2,
 		);
 		/* END LEFTMENU NOVO RESERVATORIO */
-		
+
+		/*LEFTMENU COMPRACOMBUSTIVEL*/
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=frota',
+			'type'=>'left',
+			'titre'=>'Combustível',
+			'prefix' => img_picto('', 'fa-fire', 'class="paddingright pictofixedwidth valignmiddle"'),
+			'mainmenu'=>'frota',
+			'leftmenu'=>'compracombustivel',
+			'url'=>'/frota/compracombustivel_list.php',
+			'langs'=>'frota@frota',
+			'position'=>1000 + $r,
+			'enabled'=>'isModEnabled("frota")',
+			'perms'=>'$user->hasRight("frota", "compracombustivel", "read")',
+			'target'=>'',
+			'user'=>2,
+		);
+        $this->menu[$r++]=array(
+            'fk_menu'=>'fk_mainmenu=frota,fk_leftmenu=compracombustivel',
+            'type'=>'left',
+            'titre'=>'Lista de Combustíveis',
+            'mainmenu'=>'frota',
+            'leftmenu'=>'frota_compracombustivel_list',
+            'url'=>'/frota/compracombustivel_list.php',
+            'langs'=>'frota@frota',
+            'position'=>1000 + $r,
+            'enabled'=>'isModEnabled("frota")',
+			'perms'=>'$user->hasRight("frota", "compracombustivel", "read")',
+            'target'=>'',
+            'user'=>2,
+        );
+        $this->menu[$r++]=array(
+            'fk_menu'=>'fk_mainmenu=frota,fk_leftmenu=compracombustivel',
+            'type'=>'left',
+            'titre'=>'Adicionar Combustível',
+            'mainmenu'=>'frota',
+            'leftmenu'=>'frota_compracombustivel_new',
+            'url'=>'/frota/compracombustivel_card.php?action=create',
+            'langs'=>'frota@frota',
+            'position'=>1000 + $r,
+            'enabled'=>'isModEnabled("frota")',
+			'perms'=>'$user->hasRight("frota", "compracombustivel", "write")',
+            'target'=>'',
+            'user'=>2
+        );
+
 		/* LEFTMENU ABASTECIMENTO */
 		$this->menu[$r++]=array(
 			 'fk_menu' => 'fk_mainmenu=frota',
