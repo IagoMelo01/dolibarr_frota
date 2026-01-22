@@ -114,7 +114,7 @@ class CompraCombustivel extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'index'=>1, 'searchall'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(COMBUSTIVEL_)', 'index'=>1, 'searchall'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'alwayseditable'=>'1', 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>"Help text", 'showoncombobox'=>'2', 'validate'=>'1',),
 		'amount' => array('type'=>'price', 'label'=>'Preço por litro', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help text for amount", 'validate'=>'1',),
 		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity", 'validate'=>'1',),
@@ -1090,15 +1090,15 @@ class CompraCombustivel extends CommonObject
 		global $langs, $conf;
 		$langs->load("frota@frota");
 
-		if (!getDolGlobalString('FROTA_MYOBJECT_ADDON')) {
-			$conf->global->FROTA_MYOBJECT_ADDON = 'mod_compracombustivel_standard';
+		if (!getDolGlobalString('FROTA_COMBUSTIVEL_ADDON')) {
+			$conf->global->FROTA_COMBUSTIVEL_ADDON = 'mod_compracombustivel_standard';
 		}
 
-		if (getDolGlobalString('FROTA_MYOBJECT_ADDON')) {
+		if (getDolGlobalString('FROTA_COMBUSTIVEL_ADDON')) {
 			$mybool = false;
 
-			$file = getDolGlobalString('FROTA_MYOBJECT_ADDON').".php";
-			$classname = getDolGlobalString('FROTA_MYOBJECT_ADDON');
+			$file = getDolGlobalString('FROTA_COMBUSTIVEL_ADDON').".php";
+			$classname = getDolGlobalString('FROTA_COMBUSTIVEL_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
