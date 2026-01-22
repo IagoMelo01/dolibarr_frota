@@ -269,6 +269,30 @@ class InterfaceFrotaTriggers extends DolibarrTriggers
 
 			break;
 
+			case "RESERVATORIO_DELETE":
+
+				// Delete linked compras de combustível
+				$sql = "SELECT rowid 
+						FROM ".MAIN_DB_PREFIX."frota_compracombustivel 
+						WHERE fk_reservatorio = ".((int) $object->id);
+
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					while ($obj_comp = $this->db->fetch_object($resql)) {
+						$compra = new CompraCombustivel($this->db);
+						$compra->fetch($obj_comp->rowid);
+
+						if ($compra->delete($user) < 0) {
+							$this->error  = $compra->error;
+							$this->errors = $compra->errors;
+							return -1;
+						}
+					}
+				}
+
+			break;
+
+
 			case "ABASTECIMENTO_CREATE":
 
 				$abastecimento = new Abastecimento($object->db);
