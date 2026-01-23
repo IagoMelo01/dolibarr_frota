@@ -163,6 +163,8 @@ class InterfaceFrotaTriggers extends DolibarrTriggers
 							$manutencao->fk_user_creat = $user->id;
 							$manutencao->status = 0; // Rascunho
 							$manutencao->data_prevista = $nextMonthDate;
+							$manutencao->quilometragem = $current_km;
+							$manutencao->horimetro = $current_horimetro;
 
 							$manutencao->create($user);
 						}

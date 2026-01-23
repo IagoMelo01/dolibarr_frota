@@ -264,45 +264,6 @@ class Manutencao extends CommonObject
 		$resultcreate = $this->createCommon($user, $notrigger);
 
 		if ($resultcreate > 0) {
-			if (!empty($this->fk_veiculo)) {
-				// Se não houver data prevista, usa a data atual
-				if (empty($this->data_prevista)) {
-					$this->data_prevista = dol_now();
-				}
-
-				// Verifica se já existe um registro idêntico nos últimos 5 segundos
-				$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
-					WHERE fk_veiculo = " . $this->fk_veiculo . "
-					AND date_registro >= DATE_SUB(NOW(), INTERVAL 5 SECOND)
-					AND quilometragem = " . (!empty($this->quilometragem) ? $this->quilometragem : "0") . "
-					AND horimetro = " . (!empty($this->horimetro) ? $this->horimetro : "0");
-				$resql = $this->db->query($sql);
-				if ($resql) {
-					$obj = $this->db->fetch_object($resql);
-					if ($obj->nb == 0) {
-						$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
-						$sql_insert.= " (fk_veiculo, fk_manutencao, quilometragem, horimetro, fk_user, observacao, date_registro)";
-						$sql_insert.= " VALUES (" . 
-								$this->fk_veiculo . ", " .
-								$this->id . ", " .  // id da manutenção recém criada
-								(!empty($this->quilometragem) ? $this->quilometragem : "0") . ", " .
-								(!empty($this->horimetro) ? $this->horimetro : "0") . ", " .
-								$user->id . ", " .
-								($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . ", " .
-								"NOW()" . // Data atual do servidor
-								")";
-						$resql_insert = $this->db->query($sql_insert);
-						if (! $resql_insert) {
-							$this->error = "Error " . $this->db->lasterror();
-							$error++;
-						}
-					}
-				} else {
-					$this->error = "Error " . $this->db->lasterror();
-					$error++;
-				}
-			}
-
 		} else {
 			$error++;
 		}
@@ -593,18 +554,34 @@ class Manutencao extends CommonObject
 					   observacao = " . ($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") .
 					   " WHERE rowid = " . $obj->rowid;
 			} else {
-				// Se não encontrou, insere novo registro
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
-				$sql.= " (fk_veiculo, fk_manutencao, quilometragem, horimetro, fk_user, observacao, date_registro)"; 
-				$sql.= " VALUES (" . 
-						$this->fk_veiculo . ", " .
-						$this->id . ", " .  // id da manutenção 
-						(!empty($this->quilometragem) ? $this->quilometragem : "0") . ", " .
-						(!empty($this->horimetro) ? $this->horimetro : "0") . ", " .
-						$user->id . ", " .
-						($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . ", " .
-						"NOW()" . // Data atual do servidor
-						")";
+				// Verifica se existe um registro de histórico órfão (sem manutenção) criado recentemente com os mesmos dados (evita duplicação por gatilho)
+				$sql_dup = "SELECT rowid FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico 
+						WHERE fk_veiculo = " . $this->fk_veiculo . "
+						AND quilometragem = " . (!empty($this->quilometragem) ? $this->quilometragem : "0") . "
+						AND horimetro = " . (!empty($this->horimetro) ? $this->horimetro : "0") . "
+						AND date_registro >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+						AND (fk_manutencao IS NULL OR fk_manutencao = 0)
+						ORDER BY date_registro DESC LIMIT 1";
+				$res_dup = $this->db->query($sql_dup);
+
+				if ($res_dup && $this->db->num_rows($res_dup) > 0) {
+					// Encontrou o registro original, apenas vincula a manutenção e atualiza a observação
+					$obj_dup = $this->db->fetch_object($res_dup);
+					$sql = "UPDATE " . MAIN_DB_PREFIX . "frota_veiculo_historico SET fk_manutencao = " . $this->id . ", observacao = " . ($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . " WHERE rowid = " . $obj_dup->rowid;
+				} else {
+					// Se não encontrou, insere novo registro
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+					$sql.= " (fk_veiculo, fk_manutencao, quilometragem, horimetro, fk_user, observacao, date_registro)"; 
+					$sql.= " VALUES (" . 
+							$this->fk_veiculo . ", " .
+							$this->id . ", " .  // id da manutenção 
+							(!empty($this->quilometragem) ? $this->quilometragem : "0") . ", " .
+							(!empty($this->horimetro) ? $this->horimetro : "0") . ", " .
+							$user->id . ", " .
+							($this->description ? "'".$this->db->escape($this->description)."'" : "NULL") . ", " .
+							"NOW()" . // Data atual do servidor
+							")";
+				}
 			}
 
 			$resql = $this->db->query($sql);

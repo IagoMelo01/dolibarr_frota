@@ -145,6 +145,24 @@ class Historico extends CommonObject
      */
     public function create(User $user, $notrigger = false)
     {
+        // Se quilometragem ou horímetro forem 0 ou nulos, busca o último registro para preencher
+        if (!empty($this->fk_veiculo) && (empty($this->quilometragem) || empty($this->horimetro))) {
+            $sql = "SELECT quilometragem, horimetro FROM " . MAIN_DB_PREFIX . "frota_veiculo_historico";
+            $sql .= " WHERE fk_veiculo = " . ((int)$this->fk_veiculo);
+            $sql .= " ORDER BY date_registro DESC, rowid DESC LIMIT 1";
+
+            $resql = $this->db->query($sql);
+            if ($resql && $this->db->num_rows($resql) > 0) {
+                $last = $this->db->fetch_object($resql);
+                if (empty($this->quilometragem)) {
+                    $this->quilometragem = $last->quilometragem;
+                }
+                if (empty($this->horimetro)) {
+                    $this->horimetro = $last->horimetro;
+                }
+            }
+        }
+
         return $this->createCommon($user, $notrigger);
     }
 
