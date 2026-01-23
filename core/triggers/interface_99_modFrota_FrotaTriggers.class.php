@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/custom/frota/class/reservatorio.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/frota/class/abastecimento.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/frota/class/veiculo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/frota/class/manutencao.class.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/frota/class/historico.class.php';
 
 
 /**
@@ -119,6 +120,55 @@ class InterfaceFrotaTriggers extends DolibarrTriggers
 		// Or you can execute some code here
 		switch ($action) {
 
+			case "HISTORICO_CREATE":
+				// Constantes de limite (poderiam vir de configurações do módulo)
+				$KM_THRESHOLD = 1000;
+				$HORIMETRO_THRESHOLD = 100;
+
+				$fk_veiculo = $object->fk_veiculo;
+				$current_km = (float)$object->quilometragem;
+				$current_horimetro = (float)$object->horimetro;
+
+				// Busca o último registro histórico do veículo (excluindo o atual que acabou de ser criado)
+				$sql = "SELECT quilometragem, horimetro FROM ".MAIN_DB_PREFIX."frota_veiculo_historico
+						WHERE fk_veiculo = ".((int)$fk_veiculo)."
+						AND rowid != ".((int)$object->id)."
+						ORDER BY date_registro DESC, rowid DESC LIMIT 1";
+				
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$last_record = $this->db->fetch_object($resql);
+					if ($last_record) {
+						$last_km = (float)$last_record->quilometragem;
+						$last_horimetro = (float)$last_record->horimetro;
+
+						$km_diff = $current_km - $last_km;
+						$horimetro_diff = $current_horimetro - $last_horimetro;
+
+						if ($km_diff > $KM_THRESHOLD || $horimetro_diff > $HORIMETRO_THRESHOLD) {
+							// Gera referência e descrição
+							$ref_manutencao = '(PROV)'; // Deixa o Dolibarr gerar ou usa provisório
+							$reason = $km_diff > $KM_THRESHOLD ? $langs->trans('HighMileage') : $langs->trans('HighHourmeter');
+							$description = $langs->trans('PreventiveMaintenanceDescription') . ' ' . $langs->trans('DueTo') . ' ' . $reason;
+							$nextMonthDate = date('Y-m-d', strtotime('+1 month'));
+
+							// Cria o objeto Manutenção
+							$manutencao = new Manutencao($this->db);
+							$manutencao->fk_veiculo = $fk_veiculo;
+							$manutencao->tipo = 0; // Preventiva
+							$manutencao->ref = $ref_manutencao;
+							$manutencao->label = $langs->trans('PreventiveMaintenance');
+							$manutencao->description = $description;
+							$manutencao->date_creation = dol_now();
+							$manutencao->fk_user_creat = $user->id;
+							$manutencao->status = 0; // Rascunho
+							$manutencao->data_prevista = $nextMonthDate;
+
+							$manutencao->create($user);
+						}
+					}
+				}
+			break;
 
 
 			case "COMPRACOMBUSTIVEL_CREATE":

@@ -57,19 +57,6 @@ if (empty($user->rights->frota->write) && empty($user->admin)) accessforbidden()
 
 $errors = array();
 
-// Define constants for thresholds
-const KM_THRESHOLD = 1000; // Threshold for quilometragem
-const HORIMETRO_THRESHOLD = 50; // Threshold for horímetro
-
-// Function to schedule preventive maintenance
-function schedulePreventiveMaintenance($db, $langs, $fk_veiculo, $ref, $user, $reason) {
-    $description = $langs->trans('PreventiveMaintenanceDescription') . ' ' . $langs->trans('DueTo') . ' ' . $reason;
-    $nextMonthDate = date('Y-m-d', strtotime('+1 month'));
-    $sql_insert = "INSERT INTO ".MAIN_DB_PREFIX."frota_manutencao (fk_veiculo, tipo, ref, label, description, date_creation, fk_user_creat, status, data_prevista)
-                   VALUES (".(int)$fk_veiculo.", 0, '".$db->escape($ref)."', '".$db->escape($langs->trans('PreventiveMaintenance'))."', '".$db->escape($description)."', '".date('Y-m-d')."', " .(int)$user->id. ", 0, '".$nextMonthDate."')";
-    return $db->query($sql_insert);
-}
-
 // Load data for edit
 if ($action === 'edit' && $rowid) {
     $res = $object->fetch($rowid);
@@ -107,42 +94,6 @@ if ($action === 'create') {
         $obj->horimetro = $horimetro !== '' ? (float)$horimetro : 0;
         $obj->observacao = $observacoes !== '' ? $observacoes : null;
         $obj->fk_user = $user->id;
-
-        // Fetch the last historical record for the vehicle
-        $sql = "SELECT quilometragem, horimetro FROM ".MAIN_DB_PREFIX."frota_veiculo_historico
-                WHERE fk_veiculo = ".(int)$fk_veiculo."
-                ORDER BY date_registro DESC, rowid DESC LIMIT 1";
-        $resql = $db->query($sql);
-        $last_km = 0;
-        $last_horimetro = 0;
-        if ($resql) {
-            $last_record = $db->fetch_object($resql);
-            if ($last_record) {
-                $last_km = (float)$last_record->quilometragem;
-                $last_horimetro = (float)$last_record->horimetro;
-            }
-        }
-
-        // Check if the increase is too large
-        $km_diff = $obj->quilometragem - $last_km;
-        $horimetro_diff = $obj->horimetro - $last_horimetro;
-
-        if ($km_diff > KM_THRESHOLD || $horimetro_diff > HORIMETRO_THRESHOLD) {
-            // Generate a reference for the maintenance entry
-            $ref = 'preventiva-' . (int)$fk_veiculo;
-
-            // Determine the reason for preventive maintenance
-            $reason = $km_diff > KM_THRESHOLD ? $langs->trans('HighMileage') : $langs->trans('HighHourmeter');
-
-            // Schedule a preventive maintenance
-            $res_insert = schedulePreventiveMaintenance($db, $langs, $fk_veiculo, $ref, $user, $reason);
-
-            if ($res_insert) {
-                setEventMessages($langs->trans('PreventiveMaintenanceScheduled'), null);
-            } else {
-                setEventMessages($langs->trans('ErrorPreventiveMaintenance').': '.$db->lasterror(), null, 'errors');
-            }
-        }
 
         // Save the historical record
         $rescreate = $obj->create($user);
@@ -212,6 +163,8 @@ llxHeader('', $langs->trans('Historico'));
 
 $page_title = ($action === 'edit') ? $langs->trans('EditHistory') : $langs->trans('Novo Histórico');
 print load_fiche_titre($page_title, '', 'object_historico.png');
+
+
 
 foreach ($errors as $e) print '<div class="error">'.dol_escape_htmltag($e)."</div>";
 
