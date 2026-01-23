@@ -122,7 +122,7 @@ if ($res_active_vehicles) {
 }
 
 // Vehicles in Maintenance
-$sql_maintenance_vehicles = "SELECT COUNT(DISTINCT fk_veiculo) as total_maintenance FROM ".MAIN_DB_PREFIX."frota_manutencao WHERE status = 0 AND (data_concluida IS NULL OR data_concluida > NOW())";
+$sql_maintenance_vehicles = "SELECT COUNT(DISTINCT fk_veiculo) as total_maintenance FROM ".MAIN_DB_PREFIX."frota_manutencao WHERE status = 1 AND (data_concluida IS NULL OR data_concluida > NOW())";
 $res_maintenance_vehicles = $db->query($sql_maintenance_vehicles);
 $vehicles_in_maintenance = 0;
 if ($res_maintenance_vehicles) {
@@ -399,7 +399,7 @@ if ($res_active_vehicles_list && $db->num_rows($res_active_vehicles_list) > 0) {
 $sql_maintenance_vehicles_list = "
     SELECT m.rowid, m.ref, m.data_prevista, m.amount, m.fk_veiculo 
     FROM ".MAIN_DB_PREFIX."frota_manutencao AS m
-    WHERE m.status = 0 AND (m.data_concluida IS NULL OR m.data_concluida > NOW())
+    WHERE m.status = 1 AND (m.data_concluida IS NULL OR m.data_concluida > NOW())
     ORDER BY m.data_prevista ASC
 ";
 $res_maintenance_vehicles_list = $db->query($sql_maintenance_vehicles_list);
