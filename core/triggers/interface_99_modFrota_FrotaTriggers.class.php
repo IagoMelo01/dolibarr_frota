@@ -365,24 +365,6 @@ class InterfaceFrotaTriggers extends DolibarrTriggers
 
 			break;
 
-			case "ABASTECIMENTO_UPDATE":
-				$abastecimento = new Abastecimento($object->db);
-				$abastecimento->fetch($object->id);
-				if($abastecimento->qty_real != $abastecimento->qty){
-					$reservatorio = new Reservatorio($object->db);
-					$reservatorio->fetch($abastecimento->fk_reservatorio);
-					$reservatorio->nivel += $abastecimento->qty;
-					$reservatorio->nivel -= $abastecimento->qty_real;
-					$r = $reservatorio->update($user, true);
-					if($r == 1){
-						dol_syslog("Trigger abastecimento rodado em $abastecimento->rowid, retornando $r para o update de ref: $abastecimento->ref");
-					}
-					$abastecimento->qty = $abastecimento->qty_real;
-
-				}
-				
-			break;
-
 			// Users
 			//case 'USER_CREATE':
 			//case 'USER_MODIFY':

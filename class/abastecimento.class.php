@@ -479,7 +479,35 @@ class Abastecimento extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		return $this->updateCommon($user, $notrigger);
+		// Get old values before update
+		$old_object = new self($this->db);
+		$old_object->fetch($this->id);
+
+		$result = $this->updateCommon($user, $notrigger);
+
+		if ($result > 0) {
+			dol_include_once('/frota/class/reservatorio.class.php');
+
+			// Revert old values (add back to old reservoir)
+			if (!empty($old_object->fk_reservatorio)) {
+				$reservatorio_old = new Reservatorio($this->db);
+				if ($reservatorio_old->fetch($old_object->fk_reservatorio) > 0) {
+					$reservatorio_old->nivel += $old_object->qty;
+					$reservatorio_old->update($user, true);
+				}
+			}
+
+			// Apply new values (subtract from new reservoir)
+			if (!empty($this->fk_reservatorio)) {
+				$reservatorio_new = new Reservatorio($this->db);
+				if ($reservatorio_new->fetch($this->fk_reservatorio) > 0) {
+					$reservatorio_new->nivel -= $this->qty;
+					$reservatorio_new->update($user, true);
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
