@@ -1,0 +1,29 @@
+sequenceDiagram
+    actor Usuario
+    participant Tela as Frota UI
+    participant Dominio as Abastecimento/Manutencao
+    participant Estoque as FrotaStockService
+    participant Dolibarr as MouvementStock
+    participant DB as Banco
+
+    Usuario->>Tela: Confirmar abastecimento / concluir manutenção
+    Tela->>Dominio: ação com permissão e token
+    Dominio->>Estoque: validar produto, armazém e saldo
+    Estoque->>DB: consultar produto_stock
+    DB-->>Estoque: saldo atual
+    alt saldo insuficiente ou cadastro inválido
+        Estoque-->>Dominio: erro sem movimento
+        Dominio-->>Tela: rollback + mensagem
+    else validação OK
+        Dominio->>DB: begin
+        Dominio->>Estoque: criar baixa com origem
+        Estoque->>Dolibarr: livraison()
+        Dolibarr->>DB: stock_mouvement + atualização de saldo
+        Estoque-->>Dominio: fk_stock_movement
+        Dominio->>DB: status + custos + leituras da máquina
+        opt manutenção periódica
+            Dominio->>DB: cria próxima ocorrência e copia produtos planejados sem baixa
+        end
+        Dominio->>DB: commit
+        Dominio-->>Tela: operação concluída
+    end

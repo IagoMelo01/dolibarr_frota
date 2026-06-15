@@ -1,57 +1,220 @@
-# Copyright (C) ---Put here your own copyright and developer email---
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-#
-# Generic
-#
-
-# Module label 'ModuleMyModuleName'
-ModuleMyModuleName = MyModule
-# Module description 'ModuleMyModuleDesc'
-ModuleMyModuleDesc = MyModule description
-
-#
-# Admin page
-#
-MyModuleSetup = MyModule setup
-Settings = Configurações
-MyModuleSetupPage = MyModule setup page
-MYMODULE_MYPARAM1 = My param 1
-MYMODULE_MYPARAM1Tooltip = My param 1 tooltip
-MYMODULE_MYPARAM2=My param 2
-MYMODULE_MYPARAM2Tooltip=My param 2 tooltip
-
-
-#
-# About page
-#
-About = About
-MyModuleAbout = About MyModule
-MyModuleAboutPage = MyModule about page
-
-#
-# Sample page
-#
-MyModuleArea = Home MyModule
-MyPageName = My page name
-
-#
-# Sample widget
-#
-MyWidget = My widget
-MyWidgetDescription = My widget description
-
-
-New = Novo
+ModuleFrotaName=Frota Agrícola
+FrotaDescription=Gestão de frota agrícola integrada ao estoque nativo
+FrotaVehicle=Veículo
+FrotaVehicles=Veículos
+FrotaImplement=Implemento
+FrotaImplements=Implementos
+FrotaFueling=Abastecimento
+FrotaFuelings=Abastecimentos
+FrotaMaintenance=Manutenção
+FrotaMaintenances=Manutenções
+FrotaMaintenanceAgenda=Agenda de manutenções
+FrotaMaintenanceAgendaIntro=Priorize manutenções vencidas e planeje intervenções por data, horímetro ou odômetro.
+FrotaMaintenancePlan=Plano de manutenção
+FrotaMaintenanceSchedule=Programação
+FrotaMaintenanceAsset=Ativo em manutenção
+FrotaMaintenanceAssetType=Tipo de ativo
+FrotaVehicleMaintenances=Manutenções de veículos
+FrotaImplementMaintenances=Manutenções de implementos
+FrotaPlannedDate=Data prevista
+FrotaPeriodicMaintenance=Manutenção periódica
+FrotaPeriodicMaintenances=Manutenções periódicas
+FrotaPeriodDays=Periodicidade em dias
+FrotaPeriodHours=Periodicidade em horas
+FrotaPeriodKm=Periodicidade em quilômetros
+FrotaPreviousMaintenance=Manutenção anterior
+FrotaNextMaintenance=Próxima manutenção
+FrotaMaintenanceDueHorimeter=Horímetro de vencimento
+FrotaMaintenanceDueOdometer=Odômetro de vencimento
+FrotaDueStatus=Situação do vencimento
+FrotaMaintenanceDue=Manutenção vencida
+FrotaMaintenanceDueSoon=Vencimento próximo
+FrotaMaintenanceScheduled=Programada
+FrotaMaintenanceNoTrigger=Sem critério de vencimento
+FrotaMaintenanceDueByDate=Data prevista atingida
+FrotaMaintenanceDueByHorimeter=Horímetro atingido
+FrotaMaintenanceDueByOdometer=Odômetro atingido
+FrotaMaintenanceDueByDateOrMeter=Data ou leitura da máquina atingida
+FrotaOverdueMaintenances=Manutenções vencidas
+FrotaUpcomingMaintenances=Próximas manutenções
+FrotaLaterMaintenances=Manutenções futuras
+FrotaNoOverdueMaintenances=Nenhuma manutenção vencida.
+FrotaNoUpcomingMaintenances=Nenhuma manutenção prevista neste horizonte.
+FrotaNoLaterMaintenances=Nenhuma manutenção futura cadastrada.
+FrotaDueWithinDays=Vencem em %s dias
+FrotaPlanningHorizon=Horizonte de planejamento
+FrotaDays=%s dias
+FrotaMaintenancePlanning=Planejamento preventivo da frota
+FrotaAutomaticNextMaintenance=Próxima ocorrência gerada ao concluir
+FrotaEveryDays=A cada %s dias
+FrotaEveryHours=A cada %s horas
+FrotaEveryKm=A cada %s km
+FrotaHorimeterShort=Horímetro
+FrotaOdometerShort=Odômetro
+FrotaUsage=Apontamento operacional
+FrotaUsages=Apontamentos operacionais
+FrotaVehicleType=Tipo de veículo
+FrotaOperationType=Tipo de operação
+FrotaBrand=Marca
+FrotaModel=Modelo
+FrotaYear=Ano
+FrotaPlate=Placa
+FrotaChassis=Chassi
+FrotaAssetNumber=Patrimônio
+FrotaHorimeter=Horímetro
+FrotaOdometer=Odômetro
+FrotaEstimatedHourCost=Custo estimado/hora
+FrotaEstimatedTotalCost=Custo total estimado
+FrotaFuelingDate=Data do abastecimento
+FrotaAverageConsumption=Consumo médio
+FrotaConsumptionBasis=Base do consumo
+FrotaConfirmedAt=Confirmado em
+FrotaConfirmedBy=Confirmado por
+FrotaLaborCost=Custo de mão de obra
+FrotaPartsCost=Custo de produtos
+FrotaTotalCost=Custo total
+FrotaAssignedUser=Responsável
+FrotaPreventive=Preventiva
+FrotaCorrective=Corretiva
+FrotaUsageDate=Data de uso
+FrotaHorimeterStart=Horímetro inicial
+FrotaHorimeterEnd=Horímetro final
+FrotaWorkedHours=Horas trabalhadas
+FrotaAreaHa=Área (ha)
+FrotaOperator=Operador
+FrotaMaintenanceItems=Produtos consumidos
+FrotaConfirm=Confirmar
+FrotaComplete=Concluir
+FrotaStart=Iniciar
+FrotaCancel=Cancelar
+FrotaRunSeed=Executar seed inicial
+FrotaSeedCompleted=Seed executado com sucesso
+FrotaDashboard=Dashboard da frota
+FrotaActiveVehicles=Veículos ativos
+FrotaDraftFuelings=Abastecimentos em rascunho
+FrotaOpenMaintenances=Manutenções abertas
+FrotaUsageHours=Horas apontadas
+FrotaStatusDraft=Rascunho
+FrotaStatusConfirmed=Confirmado
+FrotaStatusInProgress=Em andamento
+FrotaStatusCompleted=Concluída
+FrotaStatusCanceled=Cancelado
+FrotaErrorInvalidStockParameters=Produto, armazém ou quantidade inválidos
+FrotaErrorProductOrWarehouseNotFound=Produto ou armazém não encontrado para esta entidade
+FrotaErrorProductNotStockManaged=O produto não é físico ou não controla estoque
+FrotaErrorWarehouseClosed=O armazém está fechado
+FrotaErrorInsufficientStock=Saldo insuficiente no armazém selecionado
+FrotaErrorStockMovement=Não foi possível gerar a baixa de estoque
+FrotaErrorStockValidation=Falha ao validar o estoque
+FrotaErrorConfirmedRecordLocked=Registro confirmado não pode ser alterado
+FrotaErrorCompletedRecordLocked=Registro concluído ou cancelado não pode ser alterado
+FrotaErrorInvalidStatusTransition=Transição de status inválida
+FrotaErrorVehicleNotFound=Veículo não encontrado para esta entidade
+FrotaErrorImplementNotFound=Implemento não encontrado para esta entidade
+FrotaErrorMaintenanceAssetRequired=Selecione um veículo ou um implemento para a manutenção
+FrotaErrorMaintenanceSingleAsset=Selecione somente um ativo: veículo ou implemento
+FrotaErrorImplementMaintenanceMeterPeriod=Manutenções de implementos aceitam periodicidade por dias, mas não horímetro ou odômetro
+FrotaErrorMaintenanceLineAlreadyConsumed=Uma linha de manutenção já possui movimento de estoque
+FrotaErrorConsumedLineLocked=Linha consumida não pode ser alterada
+FrotaErrorMaintenanceNotFound=Manutenção não encontrada
+FrotaErrorEntityMismatch=Os registros pertencem a entidades diferentes
+FrotaErrorInvalidHorimeterRange=O horímetro final deve ser maior ou igual ao horímetro inicial
+FrotaErrorPeriodicMaintenanceMustBePreventive=A periodicidade só pode ser aplicada a manutenção preventiva
+FrotaErrorPeriodicMaintenanceNeedsInterval=Informe ao menos uma periodicidade em dias, horas ou quilômetros
+FrotaErrorNextMaintenanceCreation=Não foi possível gerar a próxima manutenção periódica
+FrotaErrorGeneratedMaintenanceDeletion=Uma manutenção gerada por periodicidade não pode ser apagada; cancele-a para interromper o plano
+FrotaCompleteMaintenance=Concluir manutenção e baixar estoque
+FrotaConfirmFueling=Confirmar abastecimento e baixar estoque
+FrotaDashboardWelcome=Visão operacional da frota
+FrotaDashboardIntro=Acompanhe cadastros, atividades, pendências e custos estimados em um único lugar.
+FrotaActiveImplements=Implementos ativos
+FrotaReadyForOperation=Disponíveis para operação
+FrotaAwaitingConfirmation=Aguardando confirmação
+FrotaAreaWorked=Área trabalhada
+FrotaConfirmedFuel=Combustível confirmado
+FrotaFuelLast30Days=Combustível nos últimos 30 dias
+FrotaFuelLast30DaysNote=%s abastecimentos confirmados · %s
+FrotaFuelAverageUnitCost=Custo médio por unidade
+FrotaFuelAverageUnitCostNote=%s veículos abastecidos nos últimos 30 dias
+FrotaEstimatedOperationalCost=Custo operacional estimado
+FrotaBasedOnUsageRecords=Baseado nos apontamentos
+FrotaRegistrationHealth=Qualidade dos cadastros
+FrotaRegistrationHealthIntro=Cadastros completos melhoram relatórios, buscas e rastreabilidade.
+FrotaIncompleteRecords=Cadastros incompletos
+FrotaIncompleteVehicles=Veículos com dados incompletos
+FrotaIncompleteImplements=Implementos com dados incompletos
+FrotaInactiveVehicles=Veículos inativos
+FrotaOperationalGuide=Como manter a frota confiável
+FrotaGuideRegister=Cadastre referência, tipo, marca e modelo para facilitar a identificação.
+FrotaGuideUsage=Registre os apontamentos operacionais para consolidar horas, área e custo estimado.
+FrotaGuideStock=Confirme abastecimentos e conclua manutenções somente quando a baixa de estoque deve ocorrer.
+FrotaGuideReadings=Informe leituras atuais; o sistema nunca reduz horímetro ou odômetro do veículo.
+FrotaOk=OK
+FrotaRecentUsage=Atividades recentes
+FrotaFuelingReview=Abastecimentos para revisar
+FrotaRecentConfirmedFuelings=Abastecimentos confirmados recentes
+FrotaNoDraftFuelings=Nenhum abastecimento aguardando confirmação.
+FrotaNoConfirmedFuelings=Nenhum abastecimento confirmado.
+FrotaStockReady=Saldo suficiente
+FrotaStockInsufficient=Saldo insuficiente
+FrotaStockUnavailable=Armazém indisponível
+FrotaNoUsageYet=Nenhum apontamento operacional registrado.
+FrotaNoOpenMaintenance=Nenhuma manutenção aberta.
+FrotaNewVehicle=Novo veículo
+FrotaNewImplement=Novo implemento
+FrotaNewFueling=Novo abastecimento
+FrotaNewMaintenance=Nova manutenção
+FrotaNewUsage=Novo apontamento
+FrotaRecordDetails=Dados do registro
+FrotaNewRecordDetails=Dados do novo registro
+FrotaGoodPractices=Boas práticas
+FrotaCreateGuidance=Preencha os dados essenciais agora; detalhes complementares podem ser atualizados depois.
+FrotaEditGuidance=Mantenha os dados operacionais atualizados para preservar a qualidade dos indicadores.
+FrotaListIntroFrotaVehicle=Consulte a frota, identifique cadastros incompletos e acesse rapidamente o histórico de cada veículo.
+FrotaListIntroFrotaImplement=Organize os implementos disponíveis e acompanhe onde cada um vem sendo utilizado.
+FrotaListIntroFrotaFueling=Controle registros de abastecimento e acompanhe o que ainda aguarda confirmação.
+FrotaListIntroFrotaMaintenance=Acompanhe manutenções abertas, concluídas e seus custos associados.
+FrotaListIntroFrotaUsage=Consulte horas, áreas e custos estimados dos apontamentos operacionais.
+FrotaSearchPlaceholder=Referência, nome, marca, modelo...
+FrotaNoRecordsFound=Nenhum registro encontrado
+FrotaNoRecordsHint=Ajuste os filtros ou crie um novo registro.
+FrotaUsageRecords=Apontamentos
+FrotaVehiclesUsed=Veículos utilizados
+FrotaOperationalHistory=Histórico operacional
+FrotaAllRecordedUsage=Todo o histórico registrado
+FrotaNeedsAttention=Requer acompanhamento
+FrotaHelpVehicleRef=Use uma referência curta e estável, como TRATOR-01.
+FrotaHelpVehicleType=O tipo melhora filtros e a classificação operacional.
+FrotaHelpAssetNumber=Informe o número usado no controle patrimonial da empresa.
+FrotaHelpVehicleHorimeter=Informe a leitura atual. Leituras posteriores nunca reduzem este valor.
+FrotaHelpVehicleOdometer=Informe a leitura atual em quilômetros, quando aplicável.
+FrotaHelpEstimatedHourCost=Valor de referência atualizado pelos apontamentos operacionais.
+FrotaHelpActiveStatus=Cadastros inativos deixam de aparecer nas seleções de novos registros.
+FrotaHelpVehicleNote=Registre particularidades úteis para operação e manutenção.
+FrotaHelpImplementRef=Use uma referência curta e estável, como GRADE-01.
+FrotaHelpImplementType=Exemplo: grade aradora, plantadeira, pulverizador ou carreta.
+FrotaHelpImplementNote=Registre regulagens, capacidades ou cuidados relevantes.
+FrotaTipVehicleReadings=Abastecimentos, manutenções e apontamentos podem atualizar as leituras do veículo.
+FrotaTipVehicleCost=O custo estimado por hora considera abastecimentos confirmados, manutenções concluídas e horas apontadas.
+FrotaTipVehicleStatus=Inative o veículo quando ele não deve mais aparecer em novos lançamentos.
+FrotaTipImplementType=Padronize o tipo para facilitar buscas e relatórios.
+FrotaTipImplementUsage=Vincule o implemento aos apontamentos para construir seu histórico de uso.
+FrotaTipImplementStatus=Inative o implemento quando ele não estiver disponível para novos lançamentos.
+FrotaTipFuelingStock=A baixa de estoque ocorre somente ao confirmar o abastecimento.
+FrotaTipFuelingReadings=Horímetro e odômetro ajudam a calcular consumo e atualizar o veículo.
+FrotaTipMaintenanceStock=A baixa dos produtos ocorre somente ao concluir a manutenção.
+FrotaTipMaintenanceCompletion=Depois de concluída, a manutenção e seus itens ficam bloqueados.
+FrotaTipMaintenancePlanning=Use data prevista, horímetro ou odômetro para priorizar a agenda.
+FrotaTipMaintenancePeriodic=Ao concluir uma manutenção periódica, a próxima ocorrência e seus produtos planejados são gerados automaticamente.
+FrotaTipUsageProject=Use projeto para safra ou talhão e tarefa para o recorte operacional.
+FrotaTipUsageReadings=O horímetro final deve ser igual ou maior que o inicial.
+FrotaInactiveQuickActions=Ative este cadastro para utilizá-lo em novos lançamentos operacionais.
+FrotaHelpMaintenancePlannedDate=Data prevista usada para organizar a agenda; não inicia nem conclui a manutenção.
+FrotaHelpMaintenanceVehicle=Selecione o veículo ou deixe em branco quando a manutenção for de um implemento.
+FrotaHelpMaintenanceImplement=Selecione o implemento ou deixe em branco quando a manutenção for de um veículo. Informe somente um dos dois ativos.
+FrotaHelpMaintenanceDueHorimeter=Leitura de horímetro que torna esta manutenção vencida.
+FrotaHelpMaintenanceDueOdometer=Leitura de odômetro que torna esta manutenção vencida. Horímetro e odômetro aplicam-se somente a veículos.
+FrotaHelpPeriodicMaintenance=Disponível para preventivas; ao concluir, gera uma única próxima ocorrência.
+FrotaHelpPeriodDays=Número de dias entre uma conclusão e a próxima manutenção.
+FrotaHelpPeriodHours=Horas adicionais no horímetro para o próximo vencimento.
+FrotaHelpPeriodKm=Quilômetros adicionais no odômetro para o próximo vencimento.

@@ -1,54 +1,220 @@
-# Copyright (C) 2024 SuperAdmin
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-#
-# Generic
-#
-
-# Module label 'ModuleFrotaName'
-ModuleFrotaName = Frota
-# Module description 'ModuleFrotaDesc'
-ModuleFrotaDesc = Frota description
-
-#
-# Admin page
-#
-FrotaSetup = Frota setup
-Settings = Settings
-FrotaSetupPage = Frota setup page
-FROTA_MYPARAM1 = My param 1
-FROTA_MYPARAM1Tooltip = My param 1 tooltip
-FROTA_MYPARAM2=My param 2
-FROTA_MYPARAM2Tooltip=My param 2 tooltip
-
-
-#
-# About page
-#
-About = About
-FrotaAbout = About Frota
-FrotaAboutPage = Frota about page
-
-#
-# Sample page
-#
-FrotaArea = Home Frota
-MyPageName = My page name
-
-#
-# Sample widget
-#
-MyWidget = My widget
-MyWidgetDescription = My widget description
+ModuleFrotaName=Agricultural Fleet
+FrotaDescription=Agricultural fleet management integrated with native stock
+FrotaVehicle=Vehicle
+FrotaVehicles=Vehicles
+FrotaImplement=Implement
+FrotaImplements=Implements
+FrotaFueling=Fueling
+FrotaFuelings=Fuelings
+FrotaMaintenance=Maintenance
+FrotaMaintenances=Maintenance
+FrotaMaintenanceAgenda=Maintenance schedule
+FrotaMaintenanceAgendaIntro=Prioritize overdue maintenance and plan work by date, hour meter, or odometer.
+FrotaMaintenancePlan=Maintenance plan
+FrotaMaintenanceSchedule=Schedule
+FrotaMaintenanceAsset=Asset under maintenance
+FrotaMaintenanceAssetType=Asset type
+FrotaVehicleMaintenances=Vehicle maintenance
+FrotaImplementMaintenances=Implement maintenance
+FrotaPlannedDate=Planned date
+FrotaPeriodicMaintenance=Periodic maintenance
+FrotaPeriodicMaintenances=Periodic maintenance
+FrotaPeriodDays=Period in days
+FrotaPeriodHours=Period in hours
+FrotaPeriodKm=Period in kilometers
+FrotaPreviousMaintenance=Previous maintenance
+FrotaNextMaintenance=Next maintenance
+FrotaMaintenanceDueHorimeter=Due hour meter
+FrotaMaintenanceDueOdometer=Due odometer
+FrotaDueStatus=Due status
+FrotaMaintenanceDue=Maintenance due
+FrotaMaintenanceDueSoon=Due soon
+FrotaMaintenanceScheduled=Scheduled
+FrotaMaintenanceNoTrigger=No due criterion
+FrotaMaintenanceDueByDate=Planned date reached
+FrotaMaintenanceDueByHorimeter=Hour meter reached
+FrotaMaintenanceDueByOdometer=Odometer reached
+FrotaMaintenanceDueByDateOrMeter=Planned date or machine reading reached
+FrotaOverdueMaintenances=Overdue maintenance
+FrotaUpcomingMaintenances=Upcoming maintenance
+FrotaLaterMaintenances=Later maintenance
+FrotaNoOverdueMaintenances=No overdue maintenance.
+FrotaNoUpcomingMaintenances=No maintenance planned within this horizon.
+FrotaNoLaterMaintenances=No later maintenance scheduled.
+FrotaDueWithinDays=Due within %s days
+FrotaPlanningHorizon=Planning horizon
+FrotaDays=%s days
+FrotaMaintenancePlanning=Preventive fleet planning
+FrotaAutomaticNextMaintenance=Next occurrence generated on completion
+FrotaEveryDays=Every %s days
+FrotaEveryHours=Every %s hours
+FrotaEveryKm=Every %s km
+FrotaHorimeterShort=Hour meter
+FrotaOdometerShort=Odometer
+FrotaUsage=Operational usage
+FrotaUsages=Operational usages
+FrotaVehicleType=Vehicle type
+FrotaOperationType=Operation type
+FrotaBrand=Brand
+FrotaModel=Model
+FrotaYear=Year
+FrotaPlate=Plate
+FrotaChassis=Chassis
+FrotaAssetNumber=Asset number
+FrotaHorimeter=Hour meter
+FrotaOdometer=Odometer
+FrotaEstimatedHourCost=Estimated hourly cost
+FrotaEstimatedTotalCost=Estimated total cost
+FrotaFuelingDate=Fueling date
+FrotaAverageConsumption=Average consumption
+FrotaConsumptionBasis=Consumption basis
+FrotaLaborCost=Labor cost
+FrotaPartsCost=Product cost
+FrotaTotalCost=Total cost
+FrotaPreventive=Preventive
+FrotaCorrective=Corrective
+FrotaUsageDate=Usage date
+FrotaHorimeterStart=Starting hour meter
+FrotaHorimeterEnd=Ending hour meter
+FrotaWorkedHours=Worked hours
+FrotaAreaHa=Area (ha)
+FrotaOperator=Operator
+FrotaMaintenanceItems=Consumed products
+FrotaConfirm=Confirm
+FrotaComplete=Complete
+FrotaStart=Start
+FrotaCancel=Cancel
+FrotaRunSeed=Run initial seed
+FrotaSeedCompleted=Seed completed
+FrotaDashboard=Fleet dashboard
+FrotaActiveVehicles=Active vehicles
+FrotaDraftFuelings=Draft fuelings
+FrotaOpenMaintenances=Open maintenance
+FrotaUsageHours=Logged hours
+FrotaErrorInvalidStockParameters=Invalid product, warehouse, or quantity
+FrotaErrorProductOrWarehouseNotFound=Product or warehouse not found for this entity
+FrotaErrorProductNotStockManaged=Product is not a stock-managed physical product
+FrotaErrorWarehouseClosed=Warehouse is closed
+FrotaErrorInsufficientStock=Insufficient stock in selected warehouse
+FrotaErrorStockMovement=Unable to create stock output
+FrotaErrorStockValidation=Stock validation failed
+FrotaErrorConfirmedRecordLocked=Confirmed record cannot be changed
+FrotaErrorCompletedRecordLocked=Completed or canceled record cannot be changed
+FrotaErrorInvalidStatusTransition=Invalid status transition
+FrotaErrorVehicleNotFound=Vehicle not found for this entity
+FrotaErrorImplementNotFound=Implement not found for this entity
+FrotaErrorMaintenanceAssetRequired=Select a vehicle or an implement for the maintenance
+FrotaErrorMaintenanceSingleAsset=Select only one asset: vehicle or implement
+FrotaErrorImplementMaintenanceMeterPeriod=Implement maintenance supports day-based periodicity, but not hour meter or odometer criteria
+FrotaErrorMaintenanceLineAlreadyConsumed=A maintenance line already has a stock movement
+FrotaErrorConsumedLineLocked=Consumed line cannot be changed
+FrotaErrorMaintenanceNotFound=Maintenance record not found
+FrotaErrorEntityMismatch=Records belong to different entities
+FrotaErrorInvalidHorimeterRange=Ending hour meter must be greater than or equal to starting hour meter
+FrotaErrorPeriodicMaintenanceMustBePreventive=Periodicity can only be applied to preventive maintenance
+FrotaErrorPeriodicMaintenanceNeedsInterval=Enter at least one period in days, hours, or kilometers
+FrotaErrorNextMaintenanceCreation=Unable to generate the next periodic maintenance
+FrotaErrorGeneratedMaintenanceDeletion=A maintenance generated by periodicity cannot be deleted; cancel it to stop the plan
+FrotaAssignedUser=Assigned user
+FrotaConfirmedAt=Confirmed at
+FrotaConfirmedBy=Confirmed by
+FrotaStatusDraft=Draft
+FrotaStatusConfirmed=Confirmed
+FrotaStatusInProgress=In progress
+FrotaStatusCompleted=Completed
+FrotaStatusCanceled=Canceled
+FrotaCompleteMaintenance=Complete maintenance and issue stock
+FrotaConfirmFueling=Confirm fueling and issue stock
+FrotaDashboardWelcome=Fleet operational overview
+FrotaDashboardIntro=Monitor records, activities, pending work, and estimated costs in one place.
+FrotaActiveImplements=Active implements
+FrotaReadyForOperation=Ready for operation
+FrotaAwaitingConfirmation=Awaiting confirmation
+FrotaAreaWorked=Worked area
+FrotaConfirmedFuel=Confirmed fuel
+FrotaFuelLast30Days=Fuel in the last 30 days
+FrotaFuelLast30DaysNote=%s confirmed fuelings · %s
+FrotaFuelAverageUnitCost=Average unit cost
+FrotaFuelAverageUnitCostNote=%s vehicles fueled in the last 30 days
+FrotaEstimatedOperationalCost=Estimated operational cost
+FrotaBasedOnUsageRecords=Based on usage records
+FrotaRegistrationHealth=Registration quality
+FrotaRegistrationHealthIntro=Complete records improve reports, searches, and traceability.
+FrotaIncompleteRecords=Incomplete records
+FrotaIncompleteVehicles=Vehicles with incomplete data
+FrotaIncompleteImplements=Implements with incomplete data
+FrotaInactiveVehicles=Inactive vehicles
+FrotaOperationalGuide=How to keep fleet data reliable
+FrotaGuideRegister=Register reference, type, brand, and model to make identification easier.
+FrotaGuideUsage=Record operational usage to consolidate hours, area, and estimated cost.
+FrotaGuideStock=Confirm fuelings and complete maintenance only when stock should be issued.
+FrotaGuideReadings=Enter current readings; the system never reduces a vehicle hour meter or odometer.
+FrotaOk=OK
+FrotaRecentUsage=Recent activities
+FrotaFuelingReview=Fuelings to review
+FrotaRecentConfirmedFuelings=Recent confirmed fuelings
+FrotaNoDraftFuelings=No fuelings awaiting confirmation.
+FrotaNoConfirmedFuelings=No confirmed fuelings.
+FrotaStockReady=Sufficient stock
+FrotaStockInsufficient=Insufficient stock
+FrotaStockUnavailable=Warehouse unavailable
+FrotaNoUsageYet=No operational usage recorded.
+FrotaNoOpenMaintenance=No open maintenance.
+FrotaNewVehicle=New vehicle
+FrotaNewImplement=New implement
+FrotaNewFueling=New fueling
+FrotaNewMaintenance=New maintenance
+FrotaNewUsage=New usage record
+FrotaRecordDetails=Record details
+FrotaNewRecordDetails=New record details
+FrotaGoodPractices=Good practices
+FrotaCreateGuidance=Fill in the essential data now; complementary details can be updated later.
+FrotaEditGuidance=Keep operational data current to preserve indicator quality.
+FrotaListIntroFrotaVehicle=Browse the fleet, identify incomplete records, and quickly access each vehicle history.
+FrotaListIntroFrotaImplement=Organize available implements and track where each one is being used.
+FrotaListIntroFrotaFueling=Control fueling records and monitor what still awaits confirmation.
+FrotaListIntroFrotaMaintenance=Monitor open and completed maintenance and their associated costs.
+FrotaListIntroFrotaUsage=Browse hours, areas, and estimated costs from operational usage.
+FrotaSearchPlaceholder=Reference, name, brand, model...
+FrotaNoRecordsFound=No records found
+FrotaNoRecordsHint=Adjust the filters or create a new record.
+FrotaUsageRecords=Usage records
+FrotaVehiclesUsed=Vehicles used
+FrotaOperationalHistory=Operational history
+FrotaAllRecordedUsage=All recorded history
+FrotaNeedsAttention=Needs attention
+FrotaHelpVehicleRef=Use a short, stable reference such as TRACTOR-01.
+FrotaHelpVehicleType=The type improves filters and operational classification.
+FrotaHelpAssetNumber=Enter the number used by the company's asset control.
+FrotaHelpVehicleHorimeter=Enter the current reading. Later readings never reduce this value.
+FrotaHelpVehicleOdometer=Enter the current reading in kilometers when applicable.
+FrotaHelpEstimatedHourCost=Reference value updated by operational usage records.
+FrotaHelpActiveStatus=Inactive records no longer appear in new record selections.
+FrotaHelpVehicleNote=Record useful operating and maintenance details.
+FrotaHelpImplementRef=Use a short, stable reference such as HARROW-01.
+FrotaHelpImplementType=For example: disc harrow, planter, sprayer, or trailer.
+FrotaHelpImplementNote=Record relevant settings, capacities, or precautions.
+FrotaTipVehicleReadings=Fuelings, maintenance, and usage records may update vehicle readings.
+FrotaTipVehicleCost=Estimated hourly cost considers confirmed fuelings, completed maintenance, and logged hours.
+FrotaTipVehicleStatus=Deactivate the vehicle when it should no longer appear in new entries.
+FrotaTipImplementType=Standardize the type to improve searches and reports.
+FrotaTipImplementUsage=Link the implement to usage records to build its operational history.
+FrotaTipImplementStatus=Deactivate the implement when it is unavailable for new entries.
+FrotaTipFuelingStock=Stock is issued only when the fueling is confirmed.
+FrotaTipFuelingReadings=Hour meter and odometer readings help calculate consumption and update the vehicle.
+FrotaTipMaintenanceStock=Product stock is issued only when maintenance is completed.
+FrotaTipMaintenanceCompletion=After completion, the maintenance record and its items are locked.
+FrotaTipMaintenancePlanning=Use planned date, hour meter, or odometer to prioritize the schedule.
+FrotaTipMaintenancePeriodic=Completing periodic maintenance automatically generates the next occurrence and its planned products.
+FrotaTipUsageProject=Use project for crop or field and task for the operational scope.
+FrotaTipUsageReadings=The ending hour meter must be equal to or greater than the starting reading.
+FrotaInactiveQuickActions=Activate this record to use it in new operational entries.
+FrotaHelpMaintenancePlannedDate=Planned date used to organize the schedule; it does not start or complete maintenance.
+FrotaHelpMaintenanceVehicle=Select the vehicle, or leave blank when this maintenance belongs to an implement.
+FrotaHelpMaintenanceImplement=Select the implement, or leave blank when this maintenance belongs to a vehicle. Enter only one asset.
+FrotaHelpMaintenanceDueHorimeter=Hour meter reading that makes this maintenance due.
+FrotaHelpMaintenanceDueOdometer=Odometer reading that makes this maintenance due. Hour meter and odometer apply only to vehicles.
+FrotaHelpPeriodicMaintenance=Available for preventive maintenance; completing it generates exactly one next occurrence.
+FrotaHelpPeriodDays=Number of days between completion and the next maintenance.
+FrotaHelpPeriodHours=Additional hour meter hours for the next due threshold.
+FrotaHelpPeriodKm=Additional odometer kilometers for the next due threshold.

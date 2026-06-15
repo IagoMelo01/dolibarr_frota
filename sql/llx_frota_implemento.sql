@@ -1,45 +1,19 @@
--- Copyright (C) 2024 SuperAdmin
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see https://www.gnu.org/licenses/.
-
-
-CREATE TABLE llx_frota_implemento(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) NOT NULL, 
-	label varchar(255) NOT NULL, 
-	amount double, 
-	fk_soc integer, 
-	fk_project integer, 
-	description text, 
-	note_public text, 
-	note_private text, 
-	date_creation datetime NOT NULL, 
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	last_main_doc varchar(255), 
-	import_key varchar(14), 
-	model_pdf varchar(255), 
-	status integer NOT NULL, 
-	marca varchar(255) NOT NULL, 
-	tipo varchar(255), 
-	ano_fab varchar(10), 
-	num_identificacao varchar(32), 
-	capacidade double(12,2), 
-	largura_trab double(12,2), 
-	ultima_manutencao date, 
-	documento varchar(128)
-	-- END MODULEBUILDER FIELDS
+CREATE TABLE llx_frota_implemento (
+    rowid INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    entity INTEGER NOT NULL DEFAULT 1,
+    ref VARCHAR(128) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(128),
+    brand VARCHAR(128),
+    model VARCHAR(128),
+    year INTEGER,
+    status INTEGER NOT NULL DEFAULT 1,
+    note TEXT,
+    fk_user_creat INTEGER NOT NULL,
+    fk_user_modif INTEGER,
+    datec DATETIME NOT NULL,
+    tms TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uk_frota_implemento_ref (entity, ref),
+    INDEX idx_frota_implemento_entity (entity),
+    INDEX idx_frota_implemento_status (status)
 ) ENGINE=innodb;

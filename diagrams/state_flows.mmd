@@ -1,0 +1,20 @@
+stateDiagram-v2
+    state Abastecimento {
+        [*] --> Rascunho
+        Rascunho --> Confirmado: confirmar / baixa de estoque
+        Rascunho --> Cancelado: cancelar
+        Confirmado --> [*]
+        Cancelado --> [*]
+    }
+
+    state Manutencao {
+        [*] --> Rascunho
+        Rascunho: alvo exclusivo veículo ou implemento
+        Rascunho --> EmAndamento: iniciar
+        Rascunho --> Concluida: concluir / baixas de estoque / gera próxima periódica
+        EmAndamento --> Concluida: concluir / baixas de estoque / gera próxima periódica
+        Rascunho --> Cancelada: cancelar
+        EmAndamento --> Cancelada: cancelar
+        Concluida --> [*]
+        Cancelada --> [*]
+    }

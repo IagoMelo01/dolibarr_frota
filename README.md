@@ -1,96 +1,54 @@
-# FROTA FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
+# Frota Agrícola para Dolibarr
 
-## Features
+MVP de gestão de frota agrícola integrado aos produtos, categorias, armazéns,
+estoque, projetos e tarefas nativos do Dolibarr 23.
 
-Description of the module...
+## Escopo do MVP
 
-<!--
-![Screenshot frota](img/screenshot_frota.png?raw=true "Frota"){imgmd}
--->
+- veículos e implementos;
+- tipos agrícolas de veículo e operação;
+- abastecimento com baixa de estoque;
+- manutenção preventiva/corretiva com agenda, periodicidade e consumo de produtos;
+- apontamento operacional por projeto/tarefa;
+- dashboard básico e seeds idempotentes.
 
-Other external modules are available on [Dolistore.com](https://www.dolistore.com).
+## Instalação
 
-## Translations
+1. Habilite Produtos, Estoque, Categorias e Projetos.
+2. Habilite o módulo **Frota Agrícola**.
+3. A ativação cria as tabelas e executa o seed inicial.
+4. Dê entrada de saldo nos armazéns antes de confirmar consumos.
 
-Translations can be completed manually by editing files into directories *langs*.
+O módulo não cria saldo inicial e não duplica seeds existentes.
 
-<!--
-This module contains also a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service.
+Nos abastecimentos, a referência é gerada automaticamente no formato
+`ABS-AAAAMMDD-000123`. Veículo, produto físico controlado em estoque e armazém
+aberto são selecionados pelos campos relacionais pesquisáveis do Dolibarr.
 
-For more information, see the [translator's documentation](https://wiki.dolibarr.org/index.php/Translator_documentation).
+Nas manutenções, a referência também é automática no formato
+`MAN-AAAAMMDD-000123`, usando a data prevista ou, quando ausente, a data de
+início/criação.
 
-There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-template) for this module.
--->
+## Planejamento de manutenção
 
+- cada manutenção pertence exclusivamente a um veículo ou a um implemento;
+- a agenda prioriza registros vencidos por data prevista, horímetro ou odômetro;
+- manutenções preventivas podem repetir por dias, horas e/ou quilômetros;
+- manutenções de implementos, como plantadeiras, podem ser periódicas por dias;
+  critérios de horímetro e odômetro permanecem exclusivos dos veículos;
+- ao concluir uma manutenção periódica, o sistema gera uma única próxima
+  ocorrência vinculada e copia os produtos planejados;
+- a ocorrência futura não movimenta estoque; a baixa continua ocorrendo somente
+  quando cada manutenção é concluída;
+- limites futuros de horímetro/odômetro são separados das leituras reais usadas
+  para atualizar o veículo.
 
-## Installation
+## Validação local
 
-Prerequisites: You must have the Dolibarr ERP CRM software installed. You can down it from [Dolistore.org](https://www.dolibarr.org).
-You can also get a ready to use instance in the cloud from htts://saas.dolibarr.org
-
-
-### From the ZIP file and GUI interface
-
-If the module is a ready to deploy zip file, so with a name module_xxx-version.zip (like when downloading it from a market place like [Dolistore](https://www.dolistore.com)),
-go into menu ```Home - Setup - Modules - Deploy external module``` and upload the zip file.
-
-Note: If this screen tell you that there is no "custom" directory, check that your setup is correct:
-
-<!--
-
-- In your Dolibarr installation directory, edit the ```htdocs/conf/conf.php``` file and check that following lines are not commented:
-
-    ```php
-    //$dolibarr_main_url_root_alt ...
-    //$dolibarr_main_document_root_alt ...
-    ```
-
-- Uncomment them if necessary (delete the leading ```//```) and assign a sensible value according to your Dolibarr installation
-
-    For example :
-
-    - UNIX:
-        ```php
-        $dolibarr_main_url_root_alt = '/custom';
-        $dolibarr_main_document_root_alt = '/var/www/Dolibarr/htdocs/custom';
-        ```
-
-    - Windows:
-        ```php
-        $dolibarr_main_url_root_alt = '/custom';
-        $dolibarr_main_document_root_alt = 'C:/My Web Sites/Dolibarr/htdocs/custom';
-        ```
--->
-
-<!--
-
-### From a GIT repository
-
-Clone the repository in ```$dolibarr_main_document_root_alt/frota```
-
-```sh
-cd ....../custom
-git clone git@github.com:gitlogin/frota.git frota
+```powershell
+.\build\ci\checks.ps1
 ```
 
--->
-
-### Final steps
-
-From your browser:
-
-  - Log into Dolibarr as a super-administrator
-  - Go to "Setup" -> "Modules"
-  - You should now be able to find and enable the module
-
-
-
-## Licenses
-
-### Main code
-
-GPLv3 or (at your option) any later version. See file COPYING for more information.
-
-### Documentation
-
-All texts and readmes are licensed under GFDL.
+Com uma instância local configurada, o teste transacional de integração pode ser
+executado com `php tests/integration.php`. Ele cria dados temporários, valida os
+fluxos de estoque e encerra com rollback.

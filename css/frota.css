@@ -1,0 +1,295 @@
+.frota-intro {
+	background: linear-gradient(135deg, rgba(43, 120, 71, .14), rgba(43, 120, 71, .03));
+	border: 1px solid rgba(43, 120, 71, .22);
+	border-radius: 8px;
+	margin-bottom: 18px;
+	padding: 18px 20px;
+}
+
+.frota-intro h2,
+.frota-panel h3 {
+	margin: 0 0 6px;
+}
+
+.frota-intro p,
+.frota-panel p {
+	margin: 0;
+}
+
+.frota-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 14px;
+}
+
+.frota-kpi-grid {
+	display: grid;
+	gap: 14px;
+	grid-template-columns: repeat(4, minmax(170px, 1fr));
+	margin: 0 0 18px;
+}
+
+.frota-kpi-card,
+.frota-panel {
+	background: var(--colorbacklineimpair, #fff);
+	border: 1px solid rgba(127, 127, 127, .24);
+	border-radius: 8px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+}
+
+.frota-kpi-card {
+	color: inherit;
+	display: flex;
+	gap: 12px;
+	min-height: 78px;
+	padding: 14px;
+	text-decoration: none;
+}
+
+a.frota-kpi-card:hover {
+	border-color: rgba(43, 120, 71, .55);
+	box-shadow: 0 3px 10px rgba(0, 0, 0, .08);
+	text-decoration: none;
+}
+
+.frota-kpi-icon {
+	align-items: center;
+	background: rgba(43, 120, 71, .12);
+	border-radius: 8px;
+	color: #2b7847;
+	display: flex;
+	flex: 0 0 42px;
+	font-size: 20px;
+	height: 42px;
+	justify-content: center;
+}
+
+.frota-kpi-value {
+	font-size: 1.45em;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.frota-kpi-label {
+	font-weight: 600;
+	margin-top: 3px;
+}
+
+.frota-kpi-note,
+.frota-muted,
+.frota-field-help {
+	color: #777;
+	font-size: .9em;
+}
+
+.frota-page-grid {
+	display: grid;
+	gap: 18px;
+	grid-template-columns: minmax(0, 2fr) minmax(250px, .8fr);
+}
+
+.frota-dashboard-columns {
+	display: grid;
+	gap: 18px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.frota-panel {
+	margin-bottom: 18px;
+	padding: 16px;
+}
+
+.frota-panel-title {
+	align-items: center;
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+
+.frota-panel-title h3 {
+	margin: 0;
+}
+
+.frota-status {
+	border-radius: 999px;
+	display: inline-block;
+	font-size: .85em;
+	font-weight: 600;
+	line-height: 1.2;
+	padding: 4px 9px;
+	white-space: nowrap;
+}
+
+.frota-status-active,
+.frota-status-confirmed,
+.frota-status-completed {
+	background: rgba(36, 143, 73, .14);
+	color: #17733a;
+}
+
+.frota-status-draft {
+	background: rgba(72, 112, 170, .14);
+	color: #315f9b;
+}
+
+.frota-status-progress {
+	background: rgba(218, 142, 20, .16);
+	color: #9a6108;
+}
+
+.frota-status-inactive,
+.frota-status-canceled {
+	background: rgba(127, 127, 127, .16);
+	color: #666;
+}
+
+.frota-filterbar {
+	align-items: end;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.frota-filterbar > div {
+	min-width: 0;
+}
+
+.frota-filterbar label {
+	display: block;
+	font-size: .9em;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.frota-filter-field {
+	flex: 1 1 220px;
+}
+
+.frota-filter-field-relation {
+	flex-basis: 300px;
+	min-width: 260px !important;
+}
+
+.frota-filter-field-compact {
+	flex: 0 1 200px;
+	min-width: 170px !important;
+}
+
+.frota-filter-action {
+	flex: 0 0 auto;
+}
+
+.frota-filter-field select,
+.frota-filter-field input,
+.frota-filter-field .select2-container {
+	box-sizing: border-box;
+	max-width: 100%;
+	min-width: 0 !important;
+	width: 100% !important;
+}
+
+.frota-object-hero {
+	align-items: flex-start;
+	display: flex;
+	gap: 14px;
+	justify-content: space-between;
+}
+
+.frota-object-hero h2 {
+	margin: 0 0 4px;
+}
+
+.frota-object-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 14px;
+	margin-top: 10px;
+}
+
+.frota-tip-list {
+	margin: 8px 0 0;
+	padding-left: 19px;
+}
+
+.frota-tip-list li {
+	margin-bottom: 8px;
+}
+
+.frota-field-help {
+	display: block;
+	margin-top: 4px;
+	max-width: 680px;
+}
+
+.frota-primary-cell {
+	font-weight: 600;
+}
+
+.frota-table-secondary {
+	color: #777;
+	display: block;
+	font-size: .85em;
+	margin-top: 2px;
+}
+
+.frota-empty {
+	padding: 30px 15px !important;
+	text-align: center;
+}
+
+.frota-empty strong {
+	display: block;
+	font-size: 1.05em;
+	margin-bottom: 4px;
+}
+
+.frota-health-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.frota-health-list li {
+	align-items: center;
+	border-bottom: 1px solid rgba(127, 127, 127, .18);
+	display: flex;
+	gap: 10px;
+	justify-content: space-between;
+	padding: 9px 0;
+}
+
+.frota-health-list li:last-child {
+	border-bottom: 0;
+}
+
+@media (max-width: 1100px) {
+	.frota-kpi-grid {
+		grid-template-columns: repeat(2, minmax(170px, 1fr));
+	}
+}
+
+@media (max-width: 800px) {
+	.frota-dashboard-columns,
+	.frota-page-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 520px) {
+	.frota-kpi-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.frota-object-hero {
+		display: block;
+	}
+
+	.frota-filter-field,
+	.frota-filter-field-compact,
+	.frota-filter-field-relation {
+		flex-basis: 100%;
+		min-width: 100% !important;
+	}
+}

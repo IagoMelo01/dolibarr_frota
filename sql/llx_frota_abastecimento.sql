@@ -1,44 +1,33 @@
--- Copyright (C) 2024 SuperAdmin
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see https://www.gnu.org/licenses/.
-
-
-CREATE TABLE llx_frota_abastecimento(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) NOT NULL, 
-	label varchar(255), 
-	amount double DEFAULT NULL, 
-	qty real, 
-	fk_soc integer, 
-	fk_project integer, 
-	description text, 
-	note_public text, 
-	note_private text, 
-	date_creation datetime NOT NULL, 
-	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	last_main_doc varchar(255), 
-	import_key varchar(14), 
-	model_pdf varchar(255), 
-	status integer NOT NULL, 
-	fk_veiculo integer NOT NULL, 
-	fk_reservatorio integer NOT NULL, 
-	qty_real double(12,2), 
-	km double(12,2), 
-	horas_op double(12,2), 
-	data_ab datetime NOT NULL
-	-- END MODULEBUILDER FIELDS
+CREATE TABLE llx_frota_abastecimento (
+    rowid INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    entity INTEGER NOT NULL DEFAULT 1,
+    ref VARCHAR(128) NOT NULL,
+    fk_veiculo INTEGER NOT NULL,
+    fk_product INTEGER NOT NULL,
+    fk_warehouse INTEGER NOT NULL,
+    fk_stock_movement INTEGER,
+    date_fueling DATETIME NOT NULL,
+    qty DOUBLE(24,8) NOT NULL,
+    unit_price DOUBLE(24,8) NOT NULL DEFAULT 0,
+    total_amount DOUBLE(24,8) NOT NULL DEFAULT 0,
+    horimeter DOUBLE(24,8),
+    odometer DOUBLE(24,8),
+    average_consumption DOUBLE(24,8),
+    consumption_basis VARCHAR(16),
+    status INTEGER NOT NULL DEFAULT 0,
+    date_confirmed DATETIME,
+    fk_user INTEGER,
+    fk_user_confirm INTEGER,
+    note TEXT,
+    fk_user_creat INTEGER NOT NULL,
+    fk_user_modif INTEGER,
+    datec DATETIME NOT NULL,
+    tms TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uk_frota_abastecimento_ref (entity, ref),
+    INDEX idx_frota_abastecimento_entity (entity),
+    INDEX idx_frota_abastecimento_veiculo (fk_veiculo),
+    INDEX idx_frota_abastecimento_product (fk_product),
+    INDEX idx_frota_abastecimento_warehouse (fk_warehouse),
+    INDEX idx_frota_abastecimento_status (status),
+    INDEX idx_frota_abastecimento_date (date_fueling)
 ) ENGINE=innodb;
